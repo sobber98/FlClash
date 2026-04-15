@@ -15,7 +15,6 @@ import 'package:fl_clash/widgets/list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_js/flutter_js.dart';
-import 'package:material_color_utilities/palettes/core_palette.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,7 +38,8 @@ class GlobalState {
   late CommonTheme theme;
   late Color accentColor;
   bool needInitStatus = true;
-  CorePalette? corePalette;
+  ColorScheme? dynamicLightColorScheme;
+  ColorScheme? dynamicDarkColorScheme;
   DateTime? startTime;
   UpdateTasks tasks = [];
   SetupState? lastSetupState;
@@ -63,7 +63,13 @@ class GlobalState {
 
   Future<void> _initDynamicColor() async {
     try {
-      corePalette = await DynamicColorPlugin.getCorePalette();
+      final corePalette = await DynamicColorPlugin.getCorePalette();
+      if (corePalette != null) {
+        dynamicLightColorScheme = corePalette.toColorScheme();
+        dynamicDarkColorScheme = corePalette.toColorScheme(
+          brightness: Brightness.dark,
+        );
+      }
       accentColor =
           await DynamicColorPlugin.getAccentColor() ??
           Color(defaultPrimaryColor);
