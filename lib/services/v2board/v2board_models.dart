@@ -3,12 +3,34 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'generated/v2board_models.freezed.dart';
 part 'generated/v2board_models.g.dart';
 
+bool v2boardBoolFromJson(Object? value) {
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  if (value is String) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty) return false;
+    if (normalized == 'true') return true;
+    if (normalized == 'false') return false;
+    final numericValue = num.tryParse(normalized);
+    if (numericValue != null) return numericValue != 0;
+  }
+  return false;
+}
+
+Object? v2boardBoolToJson(bool value) => value;
+
 /// Login/Register response
 @freezed
 abstract class V2BoardAuth with _$V2BoardAuth {
   const factory V2BoardAuth({
     @Default('') String token,
-    @Default(false) @JsonKey(name: 'is_admin') bool isAdmin,
+    @Default(false)
+    @JsonKey(
+      name: 'is_admin',
+      fromJson: v2boardBoolFromJson,
+      toJson: v2boardBoolToJson,
+    )
+    bool isAdmin,
     @Default('') @JsonKey(name: 'auth_data') String authData,
   }) = _V2BoardAuth;
 
@@ -32,8 +54,20 @@ abstract class V2BoardUser with _$V2BoardUser {
     @Default(0) @JsonKey(name: 'commission_balance') int commissionBalance,
     @JsonKey(name: 'created_at') int? createdAt,
     @JsonKey(name: 'updated_at') int? updatedAt,
-    @Default(false) @JsonKey(name: 'remind_expire') bool remindExpire,
-    @Default(false) @JsonKey(name: 'remind_traffic') bool remindTraffic,
+    @Default(false)
+    @JsonKey(
+      name: 'remind_expire',
+      fromJson: v2boardBoolFromJson,
+      toJson: v2boardBoolToJson,
+    )
+    bool remindExpire,
+    @Default(false)
+    @JsonKey(
+      name: 'remind_traffic',
+      fromJson: v2boardBoolFromJson,
+      toJson: v2boardBoolToJson,
+    )
+    bool remindTraffic,
   }) = _V2BoardUser;
 
   factory V2BoardUser.fromJson(Map<String, Object?> json) =>
@@ -101,11 +135,29 @@ abstract class V2BoardNotice with _$V2BoardNotice {
 abstract class V2BoardCommConfig with _$V2BoardCommConfig {
   const factory V2BoardCommConfig({
     @JsonKey(name: 'tos_url') String? tosUrl,
-    @Default(false) @JsonKey(name: 'is_email_verify') bool isEmailVerify,
-    @Default(false) @JsonKey(name: 'is_invite_force') bool isInviteForce,
+    @Default(false)
+    @JsonKey(
+      name: 'is_email_verify',
+      fromJson: v2boardBoolFromJson,
+      toJson: v2boardBoolToJson,
+    )
+    bool isEmailVerify,
+    @Default(false)
+    @JsonKey(
+      name: 'is_invite_force',
+      fromJson: v2boardBoolFromJson,
+      toJson: v2boardBoolToJson,
+    )
+    bool isInviteForce,
     @JsonKey(name: 'email_whitelist_suffix') List<String>?
         emailWhitelistSuffix,
-    @Default(false) @JsonKey(name: 'is_recaptcha') bool isRecaptcha,
+    @Default(false)
+    @JsonKey(
+      name: 'is_recaptcha',
+      fromJson: v2boardBoolFromJson,
+      toJson: v2boardBoolToJson,
+    )
+    bool isRecaptcha,
     @JsonKey(name: 'recaptcha_site_key') String? recaptchaSiteKey,
     @JsonKey(name: 'app_description') String? appDescription,
     @JsonKey(name: 'app_url') String? appUrl,
@@ -141,7 +193,9 @@ abstract class V2BoardProps with _$V2BoardProps {
     @Default('') String subscribeToken,
     @Default('') String email,
     DateTime? lastLoginDate,
-    @Default(true) bool autoSync,
+    @Default(true)
+    @JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)
+    bool autoSync,
   }) = _V2BoardProps;
 
   factory V2BoardProps.fromJson(Map<String, Object?> json) =>

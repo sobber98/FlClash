@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$V2BoardAuth {
 
- String get token;@JsonKey(name: 'is_admin') bool get isAdmin;@JsonKey(name: 'auth_data') String get authData;
+ String get token;@JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool get isAdmin;@JsonKey(name: 'auth_data') String get authData;
 /// Create a copy of V2BoardAuth
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $V2BoardAuthCopyWith<$Res>  {
   factory $V2BoardAuthCopyWith(V2BoardAuth value, $Res Function(V2BoardAuth) _then) = _$V2BoardAuthCopyWithImpl;
 @useResult
 $Res call({
- String token,@JsonKey(name: 'is_admin') bool isAdmin,@JsonKey(name: 'auth_data') String authData
+ String token,@JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isAdmin,@JsonKey(name: 'auth_data') String authData
 });
 
 
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String token, @JsonKey(name: 'is_admin')  bool isAdmin, @JsonKey(name: 'auth_data')  String authData)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String token, @JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isAdmin, @JsonKey(name: 'auth_data')  String authData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _V2BoardAuth() when $default != null:
 return $default(_that.token,_that.isAdmin,_that.authData);case _:
@@ -176,7 +176,7 @@ return $default(_that.token,_that.isAdmin,_that.authData);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String token, @JsonKey(name: 'is_admin')  bool isAdmin, @JsonKey(name: 'auth_data')  String authData)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String token, @JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isAdmin, @JsonKey(name: 'auth_data')  String authData)  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardAuth():
 return $default(_that.token,_that.isAdmin,_that.authData);case _:
@@ -196,7 +196,7 @@ return $default(_that.token,_that.isAdmin,_that.authData);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String token, @JsonKey(name: 'is_admin')  bool isAdmin, @JsonKey(name: 'auth_data')  String authData)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String token, @JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isAdmin, @JsonKey(name: 'auth_data')  String authData)?  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardAuth() when $default != null:
 return $default(_that.token,_that.isAdmin,_that.authData);case _:
@@ -211,11 +211,11 @@ return $default(_that.token,_that.isAdmin,_that.authData);case _:
 @JsonSerializable()
 
 class _V2BoardAuth implements V2BoardAuth {
-  const _V2BoardAuth({this.token = '', @JsonKey(name: 'is_admin') this.isAdmin = false, @JsonKey(name: 'auth_data') this.authData = ''});
+  const _V2BoardAuth({this.token = '', @JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) this.isAdmin = false, @JsonKey(name: 'auth_data') this.authData = ''});
   factory _V2BoardAuth.fromJson(Map<String, dynamic> json) => _$V2BoardAuthFromJson(json);
 
 @override@JsonKey() final  String token;
-@override@JsonKey(name: 'is_admin') final  bool isAdmin;
+@override@JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) final  bool isAdmin;
 @override@JsonKey(name: 'auth_data') final  String authData;
 
 /// Create a copy of V2BoardAuth
@@ -251,7 +251,7 @@ abstract mixin class _$V2BoardAuthCopyWith<$Res> implements $V2BoardAuthCopyWith
   factory _$V2BoardAuthCopyWith(_V2BoardAuth value, $Res Function(_V2BoardAuth) _then) = __$V2BoardAuthCopyWithImpl;
 @override @useResult
 $Res call({
- String token,@JsonKey(name: 'is_admin') bool isAdmin,@JsonKey(name: 'auth_data') String authData
+ String token,@JsonKey(name: 'is_admin', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isAdmin,@JsonKey(name: 'auth_data') String authData
 });
 
 
@@ -284,7 +284,7 @@ as String,
 /// @nodoc
 mixin _$V2BoardUser {
 
- int get id; String get email;@JsonKey(name: 'transfer_enable') int get transferEnable;@JsonKey(name: 'plan_id') int? get planId;@JsonKey(name: 'u') int get upload;@JsonKey(name: 'd') int get download;@JsonKey(name: 'expired_at') int? get expiredAt; String get uuid; int get balance;@JsonKey(name: 'commission_balance') int get commissionBalance;@JsonKey(name: 'created_at') int? get createdAt;@JsonKey(name: 'updated_at') int? get updatedAt;@JsonKey(name: 'remind_expire') bool get remindExpire;@JsonKey(name: 'remind_traffic') bool get remindTraffic;
+ int get id; String get email;@JsonKey(name: 'transfer_enable') int get transferEnable;@JsonKey(name: 'plan_id') int? get planId;@JsonKey(name: 'u') int get upload;@JsonKey(name: 'd') int get download;@JsonKey(name: 'expired_at') int? get expiredAt; String get uuid; int get balance;@JsonKey(name: 'commission_balance') int get commissionBalance;@JsonKey(name: 'created_at') int? get createdAt;@JsonKey(name: 'updated_at') int? get updatedAt;@JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool get remindExpire;@JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool get remindTraffic;
 /// Create a copy of V2BoardUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -317,7 +317,7 @@ abstract mixin class $V2BoardUserCopyWith<$Res>  {
   factory $V2BoardUserCopyWith(V2BoardUser value, $Res Function(V2BoardUser) _then) = _$V2BoardUserCopyWithImpl;
 @useResult
 $Res call({
- int id, String email,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'plan_id') int? planId,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'expired_at') int? expiredAt, String uuid, int balance,@JsonKey(name: 'commission_balance') int commissionBalance,@JsonKey(name: 'created_at') int? createdAt,@JsonKey(name: 'updated_at') int? updatedAt,@JsonKey(name: 'remind_expire') bool remindExpire,@JsonKey(name: 'remind_traffic') bool remindTraffic
+ int id, String email,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'plan_id') int? planId,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'expired_at') int? expiredAt, String uuid, int balance,@JsonKey(name: 'commission_balance') int commissionBalance,@JsonKey(name: 'created_at') int? createdAt,@JsonKey(name: 'updated_at') int? updatedAt,@JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool remindExpire,@JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool remindTraffic
 });
 
 
@@ -435,7 +435,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String email, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan_id')  int? planId, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'expired_at')  int? expiredAt,  String uuid,  int balance, @JsonKey(name: 'commission_balance')  int commissionBalance, @JsonKey(name: 'created_at')  int? createdAt, @JsonKey(name: 'updated_at')  int? updatedAt, @JsonKey(name: 'remind_expire')  bool remindExpire, @JsonKey(name: 'remind_traffic')  bool remindTraffic)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String email, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan_id')  int? planId, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'expired_at')  int? expiredAt,  String uuid,  int balance, @JsonKey(name: 'commission_balance')  int commissionBalance, @JsonKey(name: 'created_at')  int? createdAt, @JsonKey(name: 'updated_at')  int? updatedAt, @JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool remindExpire, @JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool remindTraffic)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _V2BoardUser() when $default != null:
 return $default(_that.id,_that.email,_that.transferEnable,_that.planId,_that.upload,_that.download,_that.expiredAt,_that.uuid,_that.balance,_that.commissionBalance,_that.createdAt,_that.updatedAt,_that.remindExpire,_that.remindTraffic);case _:
@@ -456,7 +456,7 @@ return $default(_that.id,_that.email,_that.transferEnable,_that.planId,_that.upl
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String email, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan_id')  int? planId, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'expired_at')  int? expiredAt,  String uuid,  int balance, @JsonKey(name: 'commission_balance')  int commissionBalance, @JsonKey(name: 'created_at')  int? createdAt, @JsonKey(name: 'updated_at')  int? updatedAt, @JsonKey(name: 'remind_expire')  bool remindExpire, @JsonKey(name: 'remind_traffic')  bool remindTraffic)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String email, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan_id')  int? planId, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'expired_at')  int? expiredAt,  String uuid,  int balance, @JsonKey(name: 'commission_balance')  int commissionBalance, @JsonKey(name: 'created_at')  int? createdAt, @JsonKey(name: 'updated_at')  int? updatedAt, @JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool remindExpire, @JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool remindTraffic)  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardUser():
 return $default(_that.id,_that.email,_that.transferEnable,_that.planId,_that.upload,_that.download,_that.expiredAt,_that.uuid,_that.balance,_that.commissionBalance,_that.createdAt,_that.updatedAt,_that.remindExpire,_that.remindTraffic);case _:
@@ -476,7 +476,7 @@ return $default(_that.id,_that.email,_that.transferEnable,_that.planId,_that.upl
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String email, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan_id')  int? planId, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'expired_at')  int? expiredAt,  String uuid,  int balance, @JsonKey(name: 'commission_balance')  int commissionBalance, @JsonKey(name: 'created_at')  int? createdAt, @JsonKey(name: 'updated_at')  int? updatedAt, @JsonKey(name: 'remind_expire')  bool remindExpire, @JsonKey(name: 'remind_traffic')  bool remindTraffic)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String email, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan_id')  int? planId, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'expired_at')  int? expiredAt,  String uuid,  int balance, @JsonKey(name: 'commission_balance')  int commissionBalance, @JsonKey(name: 'created_at')  int? createdAt, @JsonKey(name: 'updated_at')  int? updatedAt, @JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool remindExpire, @JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool remindTraffic)?  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardUser() when $default != null:
 return $default(_that.id,_that.email,_that.transferEnable,_that.planId,_that.upload,_that.download,_that.expiredAt,_that.uuid,_that.balance,_that.commissionBalance,_that.createdAt,_that.updatedAt,_that.remindExpire,_that.remindTraffic);case _:
@@ -491,7 +491,7 @@ return $default(_that.id,_that.email,_that.transferEnable,_that.planId,_that.upl
 @JsonSerializable()
 
 class _V2BoardUser implements V2BoardUser {
-  const _V2BoardUser({this.id = 0, this.email = '', @JsonKey(name: 'transfer_enable') this.transferEnable = 0, @JsonKey(name: 'plan_id') this.planId, @JsonKey(name: 'u') this.upload = 0, @JsonKey(name: 'd') this.download = 0, @JsonKey(name: 'expired_at') this.expiredAt, this.uuid = '', this.balance = 0, @JsonKey(name: 'commission_balance') this.commissionBalance = 0, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'updated_at') this.updatedAt, @JsonKey(name: 'remind_expire') this.remindExpire = false, @JsonKey(name: 'remind_traffic') this.remindTraffic = false});
+  const _V2BoardUser({this.id = 0, this.email = '', @JsonKey(name: 'transfer_enable') this.transferEnable = 0, @JsonKey(name: 'plan_id') this.planId, @JsonKey(name: 'u') this.upload = 0, @JsonKey(name: 'd') this.download = 0, @JsonKey(name: 'expired_at') this.expiredAt, this.uuid = '', this.balance = 0, @JsonKey(name: 'commission_balance') this.commissionBalance = 0, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'updated_at') this.updatedAt, @JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) this.remindExpire = false, @JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) this.remindTraffic = false});
   factory _V2BoardUser.fromJson(Map<String, dynamic> json) => _$V2BoardUserFromJson(json);
 
 @override@JsonKey() final  int id;
@@ -506,8 +506,8 @@ class _V2BoardUser implements V2BoardUser {
 @override@JsonKey(name: 'commission_balance') final  int commissionBalance;
 @override@JsonKey(name: 'created_at') final  int? createdAt;
 @override@JsonKey(name: 'updated_at') final  int? updatedAt;
-@override@JsonKey(name: 'remind_expire') final  bool remindExpire;
-@override@JsonKey(name: 'remind_traffic') final  bool remindTraffic;
+@override@JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) final  bool remindExpire;
+@override@JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) final  bool remindTraffic;
 
 /// Create a copy of V2BoardUser
 /// with the given fields replaced by the non-null parameter values.
@@ -542,7 +542,7 @@ abstract mixin class _$V2BoardUserCopyWith<$Res> implements $V2BoardUserCopyWith
   factory _$V2BoardUserCopyWith(_V2BoardUser value, $Res Function(_V2BoardUser) _then) = __$V2BoardUserCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String email,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'plan_id') int? planId,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'expired_at') int? expiredAt, String uuid, int balance,@JsonKey(name: 'commission_balance') int commissionBalance,@JsonKey(name: 'created_at') int? createdAt,@JsonKey(name: 'updated_at') int? updatedAt,@JsonKey(name: 'remind_expire') bool remindExpire,@JsonKey(name: 'remind_traffic') bool remindTraffic
+ int id, String email,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'plan_id') int? planId,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'expired_at') int? expiredAt, String uuid, int balance,@JsonKey(name: 'commission_balance') int commissionBalance,@JsonKey(name: 'created_at') int? createdAt,@JsonKey(name: 'updated_at') int? updatedAt,@JsonKey(name: 'remind_expire', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool remindExpire,@JsonKey(name: 'remind_traffic', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool remindTraffic
 });
 
 
@@ -1444,7 +1444,7 @@ as int?,
 /// @nodoc
 mixin _$V2BoardCommConfig {
 
-@JsonKey(name: 'tos_url') String? get tosUrl;@JsonKey(name: 'is_email_verify') bool get isEmailVerify;@JsonKey(name: 'is_invite_force') bool get isInviteForce;@JsonKey(name: 'email_whitelist_suffix') List<String>? get emailWhitelistSuffix;@JsonKey(name: 'is_recaptcha') bool get isRecaptcha;@JsonKey(name: 'recaptcha_site_key') String? get recaptchaSiteKey;@JsonKey(name: 'app_description') String? get appDescription;@JsonKey(name: 'app_url') String? get appUrl; String? get logo;
+@JsonKey(name: 'tos_url') String? get tosUrl;@JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool get isEmailVerify;@JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool get isInviteForce;@JsonKey(name: 'email_whitelist_suffix') List<String>? get emailWhitelistSuffix;@JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool get isRecaptcha;@JsonKey(name: 'recaptcha_site_key') String? get recaptchaSiteKey;@JsonKey(name: 'app_description') String? get appDescription;@JsonKey(name: 'app_url') String? get appUrl; String? get logo;
 /// Create a copy of V2BoardCommConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1477,7 +1477,7 @@ abstract mixin class $V2BoardCommConfigCopyWith<$Res>  {
   factory $V2BoardCommConfigCopyWith(V2BoardCommConfig value, $Res Function(V2BoardCommConfig) _then) = _$V2BoardCommConfigCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'tos_url') String? tosUrl,@JsonKey(name: 'is_email_verify') bool isEmailVerify,@JsonKey(name: 'is_invite_force') bool isInviteForce,@JsonKey(name: 'email_whitelist_suffix') List<String>? emailWhitelistSuffix,@JsonKey(name: 'is_recaptcha') bool isRecaptcha,@JsonKey(name: 'recaptcha_site_key') String? recaptchaSiteKey,@JsonKey(name: 'app_description') String? appDescription,@JsonKey(name: 'app_url') String? appUrl, String? logo
+@JsonKey(name: 'tos_url') String? tosUrl,@JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isEmailVerify,@JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isInviteForce,@JsonKey(name: 'email_whitelist_suffix') List<String>? emailWhitelistSuffix,@JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isRecaptcha,@JsonKey(name: 'recaptcha_site_key') String? recaptchaSiteKey,@JsonKey(name: 'app_description') String? appDescription,@JsonKey(name: 'app_url') String? appUrl, String? logo
 });
 
 
@@ -1590,7 +1590,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'tos_url')  String? tosUrl, @JsonKey(name: 'is_email_verify')  bool isEmailVerify, @JsonKey(name: 'is_invite_force')  bool isInviteForce, @JsonKey(name: 'email_whitelist_suffix')  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha')  bool isRecaptcha, @JsonKey(name: 'recaptcha_site_key')  String? recaptchaSiteKey, @JsonKey(name: 'app_description')  String? appDescription, @JsonKey(name: 'app_url')  String? appUrl,  String? logo)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'tos_url')  String? tosUrl, @JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isEmailVerify, @JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isInviteForce, @JsonKey(name: 'email_whitelist_suffix')  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isRecaptcha, @JsonKey(name: 'recaptcha_site_key')  String? recaptchaSiteKey, @JsonKey(name: 'app_description')  String? appDescription, @JsonKey(name: 'app_url')  String? appUrl,  String? logo)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _V2BoardCommConfig() when $default != null:
 return $default(_that.tosUrl,_that.isEmailVerify,_that.isInviteForce,_that.emailWhitelistSuffix,_that.isRecaptcha,_that.recaptchaSiteKey,_that.appDescription,_that.appUrl,_that.logo);case _:
@@ -1611,7 +1611,7 @@ return $default(_that.tosUrl,_that.isEmailVerify,_that.isInviteForce,_that.email
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'tos_url')  String? tosUrl, @JsonKey(name: 'is_email_verify')  bool isEmailVerify, @JsonKey(name: 'is_invite_force')  bool isInviteForce, @JsonKey(name: 'email_whitelist_suffix')  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha')  bool isRecaptcha, @JsonKey(name: 'recaptcha_site_key')  String? recaptchaSiteKey, @JsonKey(name: 'app_description')  String? appDescription, @JsonKey(name: 'app_url')  String? appUrl,  String? logo)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'tos_url')  String? tosUrl, @JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isEmailVerify, @JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isInviteForce, @JsonKey(name: 'email_whitelist_suffix')  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isRecaptcha, @JsonKey(name: 'recaptcha_site_key')  String? recaptchaSiteKey, @JsonKey(name: 'app_description')  String? appDescription, @JsonKey(name: 'app_url')  String? appUrl,  String? logo)  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardCommConfig():
 return $default(_that.tosUrl,_that.isEmailVerify,_that.isInviteForce,_that.emailWhitelistSuffix,_that.isRecaptcha,_that.recaptchaSiteKey,_that.appDescription,_that.appUrl,_that.logo);case _:
@@ -1631,7 +1631,7 @@ return $default(_that.tosUrl,_that.isEmailVerify,_that.isInviteForce,_that.email
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'tos_url')  String? tosUrl, @JsonKey(name: 'is_email_verify')  bool isEmailVerify, @JsonKey(name: 'is_invite_force')  bool isInviteForce, @JsonKey(name: 'email_whitelist_suffix')  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha')  bool isRecaptcha, @JsonKey(name: 'recaptcha_site_key')  String? recaptchaSiteKey, @JsonKey(name: 'app_description')  String? appDescription, @JsonKey(name: 'app_url')  String? appUrl,  String? logo)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'tos_url')  String? tosUrl, @JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isEmailVerify, @JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isInviteForce, @JsonKey(name: 'email_whitelist_suffix')  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool isRecaptcha, @JsonKey(name: 'recaptcha_site_key')  String? recaptchaSiteKey, @JsonKey(name: 'app_description')  String? appDescription, @JsonKey(name: 'app_url')  String? appUrl,  String? logo)?  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardCommConfig() when $default != null:
 return $default(_that.tosUrl,_that.isEmailVerify,_that.isInviteForce,_that.emailWhitelistSuffix,_that.isRecaptcha,_that.recaptchaSiteKey,_that.appDescription,_that.appUrl,_that.logo);case _:
@@ -1646,12 +1646,12 @@ return $default(_that.tosUrl,_that.isEmailVerify,_that.isInviteForce,_that.email
 @JsonSerializable()
 
 class _V2BoardCommConfig implements V2BoardCommConfig {
-  const _V2BoardCommConfig({@JsonKey(name: 'tos_url') this.tosUrl, @JsonKey(name: 'is_email_verify') this.isEmailVerify = false, @JsonKey(name: 'is_invite_force') this.isInviteForce = false, @JsonKey(name: 'email_whitelist_suffix') final  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha') this.isRecaptcha = false, @JsonKey(name: 'recaptcha_site_key') this.recaptchaSiteKey, @JsonKey(name: 'app_description') this.appDescription, @JsonKey(name: 'app_url') this.appUrl, this.logo}): _emailWhitelistSuffix = emailWhitelistSuffix;
+  const _V2BoardCommConfig({@JsonKey(name: 'tos_url') this.tosUrl, @JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) this.isEmailVerify = false, @JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) this.isInviteForce = false, @JsonKey(name: 'email_whitelist_suffix') final  List<String>? emailWhitelistSuffix, @JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) this.isRecaptcha = false, @JsonKey(name: 'recaptcha_site_key') this.recaptchaSiteKey, @JsonKey(name: 'app_description') this.appDescription, @JsonKey(name: 'app_url') this.appUrl, this.logo}): _emailWhitelistSuffix = emailWhitelistSuffix;
   factory _V2BoardCommConfig.fromJson(Map<String, dynamic> json) => _$V2BoardCommConfigFromJson(json);
 
 @override@JsonKey(name: 'tos_url') final  String? tosUrl;
-@override@JsonKey(name: 'is_email_verify') final  bool isEmailVerify;
-@override@JsonKey(name: 'is_invite_force') final  bool isInviteForce;
+@override@JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) final  bool isEmailVerify;
+@override@JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) final  bool isInviteForce;
  final  List<String>? _emailWhitelistSuffix;
 @override@JsonKey(name: 'email_whitelist_suffix') List<String>? get emailWhitelistSuffix {
   final value = _emailWhitelistSuffix;
@@ -1661,7 +1661,7 @@ class _V2BoardCommConfig implements V2BoardCommConfig {
   return EqualUnmodifiableListView(value);
 }
 
-@override@JsonKey(name: 'is_recaptcha') final  bool isRecaptcha;
+@override@JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) final  bool isRecaptcha;
 @override@JsonKey(name: 'recaptcha_site_key') final  String? recaptchaSiteKey;
 @override@JsonKey(name: 'app_description') final  String? appDescription;
 @override@JsonKey(name: 'app_url') final  String? appUrl;
@@ -1700,7 +1700,7 @@ abstract mixin class _$V2BoardCommConfigCopyWith<$Res> implements $V2BoardCommCo
   factory _$V2BoardCommConfigCopyWith(_V2BoardCommConfig value, $Res Function(_V2BoardCommConfig) _then) = __$V2BoardCommConfigCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'tos_url') String? tosUrl,@JsonKey(name: 'is_email_verify') bool isEmailVerify,@JsonKey(name: 'is_invite_force') bool isInviteForce,@JsonKey(name: 'email_whitelist_suffix') List<String>? emailWhitelistSuffix,@JsonKey(name: 'is_recaptcha') bool isRecaptcha,@JsonKey(name: 'recaptcha_site_key') String? recaptchaSiteKey,@JsonKey(name: 'app_description') String? appDescription,@JsonKey(name: 'app_url') String? appUrl, String? logo
+@JsonKey(name: 'tos_url') String? tosUrl,@JsonKey(name: 'is_email_verify', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isEmailVerify,@JsonKey(name: 'is_invite_force', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isInviteForce,@JsonKey(name: 'email_whitelist_suffix') List<String>? emailWhitelistSuffix,@JsonKey(name: 'is_recaptcha', fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool isRecaptcha,@JsonKey(name: 'recaptcha_site_key') String? recaptchaSiteKey,@JsonKey(name: 'app_description') String? appDescription,@JsonKey(name: 'app_url') String? appUrl, String? logo
 });
 
 
@@ -2017,7 +2017,7 @@ as int?,
 /// @nodoc
 mixin _$V2BoardProps {
 
- String get serverUrl; String get authData; String get subscribeToken; String get email; DateTime? get lastLoginDate; bool get autoSync;
+ String get serverUrl; String get authData; String get subscribeToken; String get email; DateTime? get lastLoginDate;@JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool get autoSync;
 /// Create a copy of V2BoardProps
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2050,7 +2050,7 @@ abstract mixin class $V2BoardPropsCopyWith<$Res>  {
   factory $V2BoardPropsCopyWith(V2BoardProps value, $Res Function(V2BoardProps) _then) = _$V2BoardPropsCopyWithImpl;
 @useResult
 $Res call({
- String serverUrl, String authData, String subscribeToken, String email, DateTime? lastLoginDate, bool autoSync
+ String serverUrl, String authData, String subscribeToken, String email, DateTime? lastLoginDate,@JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool autoSync
 });
 
 
@@ -2160,7 +2160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String serverUrl,  String authData,  String subscribeToken,  String email,  DateTime? lastLoginDate,  bool autoSync)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String serverUrl,  String authData,  String subscribeToken,  String email,  DateTime? lastLoginDate, @JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool autoSync)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _V2BoardProps() when $default != null:
 return $default(_that.serverUrl,_that.authData,_that.subscribeToken,_that.email,_that.lastLoginDate,_that.autoSync);case _:
@@ -2181,7 +2181,7 @@ return $default(_that.serverUrl,_that.authData,_that.subscribeToken,_that.email,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String serverUrl,  String authData,  String subscribeToken,  String email,  DateTime? lastLoginDate,  bool autoSync)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String serverUrl,  String authData,  String subscribeToken,  String email,  DateTime? lastLoginDate, @JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool autoSync)  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardProps():
 return $default(_that.serverUrl,_that.authData,_that.subscribeToken,_that.email,_that.lastLoginDate,_that.autoSync);case _:
@@ -2201,7 +2201,7 @@ return $default(_that.serverUrl,_that.authData,_that.subscribeToken,_that.email,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String serverUrl,  String authData,  String subscribeToken,  String email,  DateTime? lastLoginDate,  bool autoSync)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String serverUrl,  String authData,  String subscribeToken,  String email,  DateTime? lastLoginDate, @JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson)  bool autoSync)?  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardProps() when $default != null:
 return $default(_that.serverUrl,_that.authData,_that.subscribeToken,_that.email,_that.lastLoginDate,_that.autoSync);case _:
@@ -2216,7 +2216,7 @@ return $default(_that.serverUrl,_that.authData,_that.subscribeToken,_that.email,
 @JsonSerializable()
 
 class _V2BoardProps implements V2BoardProps {
-  const _V2BoardProps({this.serverUrl = '', this.authData = '', this.subscribeToken = '', this.email = '', this.lastLoginDate, this.autoSync = true});
+  const _V2BoardProps({this.serverUrl = '', this.authData = '', this.subscribeToken = '', this.email = '', this.lastLoginDate, @JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) this.autoSync = true});
   factory _V2BoardProps.fromJson(Map<String, dynamic> json) => _$V2BoardPropsFromJson(json);
 
 @override@JsonKey() final  String serverUrl;
@@ -2224,7 +2224,7 @@ class _V2BoardProps implements V2BoardProps {
 @override@JsonKey() final  String subscribeToken;
 @override@JsonKey() final  String email;
 @override final  DateTime? lastLoginDate;
-@override@JsonKey() final  bool autoSync;
+@override@JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) final  bool autoSync;
 
 /// Create a copy of V2BoardProps
 /// with the given fields replaced by the non-null parameter values.
@@ -2259,7 +2259,7 @@ abstract mixin class _$V2BoardPropsCopyWith<$Res> implements $V2BoardPropsCopyWi
   factory _$V2BoardPropsCopyWith(_V2BoardProps value, $Res Function(_V2BoardProps) _then) = __$V2BoardPropsCopyWithImpl;
 @override @useResult
 $Res call({
- String serverUrl, String authData, String subscribeToken, String email, DateTime? lastLoginDate, bool autoSync
+ String serverUrl, String authData, String subscribeToken, String email, DateTime? lastLoginDate,@JsonKey(fromJson: v2boardBoolFromJson, toJson: v2boardBoolToJson) bool autoSync
 });
 
 

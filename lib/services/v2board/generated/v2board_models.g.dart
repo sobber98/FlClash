@@ -8,14 +8,16 @@ part of '../v2board_models.dart';
 
 _V2BoardAuth _$V2BoardAuthFromJson(Map<String, dynamic> json) => _V2BoardAuth(
   token: json['token'] as String? ?? '',
-  isAdmin: json['is_admin'] as bool? ?? false,
+  isAdmin: json['is_admin'] == null
+      ? false
+      : v2boardBoolFromJson(json['is_admin']),
   authData: json['auth_data'] as String? ?? '',
 );
 
 Map<String, dynamic> _$V2BoardAuthToJson(_V2BoardAuth instance) =>
     <String, dynamic>{
       'token': instance.token,
-      'is_admin': instance.isAdmin,
+      'is_admin': v2boardBoolToJson(instance.isAdmin),
       'auth_data': instance.authData,
     };
 
@@ -32,8 +34,12 @@ _V2BoardUser _$V2BoardUserFromJson(Map<String, dynamic> json) => _V2BoardUser(
   commissionBalance: (json['commission_balance'] as num?)?.toInt() ?? 0,
   createdAt: (json['created_at'] as num?)?.toInt(),
   updatedAt: (json['updated_at'] as num?)?.toInt(),
-  remindExpire: json['remind_expire'] as bool? ?? false,
-  remindTraffic: json['remind_traffic'] as bool? ?? false,
+  remindExpire: json['remind_expire'] == null
+      ? false
+      : v2boardBoolFromJson(json['remind_expire']),
+  remindTraffic: json['remind_traffic'] == null
+      ? false
+      : v2boardBoolFromJson(json['remind_traffic']),
 );
 
 Map<String, dynamic> _$V2BoardUserToJson(_V2BoardUser instance) =>
@@ -50,8 +56,8 @@ Map<String, dynamic> _$V2BoardUserToJson(_V2BoardUser instance) =>
       'commission_balance': instance.commissionBalance,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
-      'remind_expire': instance.remindExpire,
-      'remind_traffic': instance.remindTraffic,
+      'remind_expire': v2boardBoolToJson(instance.remindExpire),
+      'remind_traffic': v2boardBoolToJson(instance.remindTraffic),
     };
 
 _V2BoardPlan _$V2BoardPlanFromJson(Map<String, dynamic> json) => _V2BoardPlan(
@@ -133,12 +139,18 @@ Map<String, dynamic> _$V2BoardNoticeToJson(_V2BoardNotice instance) =>
 _V2BoardCommConfig _$V2BoardCommConfigFromJson(Map<String, dynamic> json) =>
     _V2BoardCommConfig(
       tosUrl: json['tos_url'] as String?,
-      isEmailVerify: json['is_email_verify'] as bool? ?? false,
-      isInviteForce: json['is_invite_force'] as bool? ?? false,
+      isEmailVerify: json['is_email_verify'] == null
+          ? false
+          : v2boardBoolFromJson(json['is_email_verify']),
+      isInviteForce: json['is_invite_force'] == null
+          ? false
+          : v2boardBoolFromJson(json['is_invite_force']),
       emailWhitelistSuffix: (json['email_whitelist_suffix'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      isRecaptcha: json['is_recaptcha'] as bool? ?? false,
+      isRecaptcha: json['is_recaptcha'] == null
+          ? false
+          : v2boardBoolFromJson(json['is_recaptcha']),
       recaptchaSiteKey: json['recaptcha_site_key'] as String?,
       appDescription: json['app_description'] as String?,
       appUrl: json['app_url'] as String?,
@@ -148,10 +160,10 @@ _V2BoardCommConfig _$V2BoardCommConfigFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$V2BoardCommConfigToJson(_V2BoardCommConfig instance) =>
     <String, dynamic>{
       'tos_url': instance.tosUrl,
-      'is_email_verify': instance.isEmailVerify,
-      'is_invite_force': instance.isInviteForce,
+      'is_email_verify': v2boardBoolToJson(instance.isEmailVerify),
+      'is_invite_force': v2boardBoolToJson(instance.isInviteForce),
       'email_whitelist_suffix': instance.emailWhitelistSuffix,
-      'is_recaptcha': instance.isRecaptcha,
+      'is_recaptcha': v2boardBoolToJson(instance.isRecaptcha),
       'recaptcha_site_key': instance.recaptchaSiteKey,
       'app_description': instance.appDescription,
       'app_url': instance.appUrl,
@@ -187,7 +199,9 @@ _V2BoardProps _$V2BoardPropsFromJson(Map<String, dynamic> json) =>
       lastLoginDate: json['lastLoginDate'] == null
           ? null
           : DateTime.parse(json['lastLoginDate'] as String),
-      autoSync: json['autoSync'] as bool? ?? true,
+      autoSync: json['autoSync'] == null
+          ? true
+          : v2boardBoolFromJson(json['autoSync']),
     );
 
 Map<String, dynamic> _$V2BoardPropsToJson(_V2BoardProps instance) =>
@@ -197,5 +211,5 @@ Map<String, dynamic> _$V2BoardPropsToJson(_V2BoardProps instance) =>
       'subscribeToken': instance.subscribeToken,
       'email': instance.email,
       'lastLoginDate': instance.lastLoginDate?.toIso8601String(),
-      'autoSync': instance.autoSync,
+      'autoSync': v2boardBoolToJson(instance.autoSync),
     };
