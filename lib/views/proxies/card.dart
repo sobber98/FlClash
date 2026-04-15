@@ -36,36 +36,55 @@ class ProxyCard extends StatelessWidget {
       height: measure.labelSmallHeight,
       child: Consumer(
         builder: (context, ref, _) {
+          final autoTestState = ref.watch(autoTestStateProvider);
           final delay = ref.watch(
             getDelayProvider(proxyName: proxy.name, testUrl: testUrl),
           );
+          final updatedAt = autoTestState.lastUpdatedAt;
+          final updatedText = updatedAt == null
+              ? ''
+              : '${updatedAt.hour.toString().padLeft(2, '0')}:${updatedAt.minute.toString().padLeft(2, '0')}';
           return FadeThroughBox(
             alignment: type == ProxyCardType.expand
                 ? Alignment.centerLeft
                 : Alignment.centerRight,
-            child: delay == 0 || delay == null
-                ? SizedBox(
-                    height: measure.labelSmallHeight,
-                    width: measure.labelSmallHeight,
-                    child: delay == 0
-                        ? const CircularProgressIndicator(strokeWidth: 2)
-                        : IconButton(
-                            icon: const Icon(Icons.bolt),
-                            iconSize: globalState.measure.labelSmallHeight,
-                            padding: EdgeInsets.zero,
-                            onPressed: _handleTestCurrentDelay,
-                          ),
-                  )
-                : GestureDetector(
-                    onTap: _handleTestCurrentDelay,
-                    child: Text(
-                      delay > 0 ? '$delay ms' : 'Timeout',
-                      style: context.textTheme.labelSmall?.copyWith(
-                        overflow: TextOverflow.ellipsis,
-                        color: utils.getDelayColor(delay),
-                      ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (type == ProxyCardType.expand && updatedText.isNotEmpty) ...[
+                  Text(
+                    updatedText,
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
                     ),
                   ),
+                  const SizedBox(width: 8),
+                ],
+                delay == 0 || delay == null
+                    ? SizedBox(
+                        height: measure.labelSmallHeight,
+                        width: measure.labelSmallHeight,
+                        child: delay == 0
+                            ? const CircularProgressIndicator(strokeWidth: 2)
+                            : IconButton(
+                                icon: const Icon(Icons.bolt),
+                                iconSize: globalState.measure.labelSmallHeight,
+                                padding: EdgeInsets.zero,
+                                onPressed: _handleTestCurrentDelay,
+                              ),
+                      )
+                    : GestureDetector(
+                        onTap: _handleTestCurrentDelay,
+                        child: Text(
+                          delay > 0 ? '$delay ms' : 'Timeout',
+                          style: context.textTheme.labelSmall?.copyWith(
+                            overflow: TextOverflow.ellipsis,
+                            color: utils.getDelayColor(delay),
+                          ),
+                        ),
+                      ),
+              ],
+            ),
           );
         },
       ),

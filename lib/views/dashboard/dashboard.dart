@@ -1,389 +1,259 @@
-import 'dart:math';
-
-import 'package:defer_pointer/defer_pointer.dart';
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/dashboard/widgets/intranet_ip.dart';
+import 'package:fl_clash/views/dashboard/widgets/network_detection.dart'
+    as dashboard_widgets;
+import 'package:fl_clash/views/dashboard/widgets/network_speed.dart';
+import 'package:fl_clash/views/dashboard/widgets/traffic_usage.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'widgets/start_button.dart';
-
-typedef _IsEditWidgetBuilder = Widget Function(bool isEdit);
-
-class DashboardView extends ConsumerStatefulWidget {
+class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
 
   @override
-  ConsumerState<DashboardView> createState() => _DashboardViewState();
-}
-
-class _DashboardViewState extends ConsumerState<DashboardView> {
-  final key = GlobalKey<SuperGridState>();
-  final _isEditNotifier = ValueNotifier<bool>(false);
-  final _addedWidgetsNotifier = ValueNotifier<List<GridItem>>([]);
-
-  @override
-  dispose() {
-    _isEditNotifier.dispose();
-    _addedWidgetsNotifier.dispose();
-    super.dispose();
-  }
-
-  Widget _buildIsEdit(_IsEditWidgetBuilder builder) {
-    return ValueListenableBuilder(
-      valueListenable: _isEditNotifier,
-      builder: (_, isEdit, _) {
-        return builder(isEdit);
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final contentWidth = ref.watch(contentWidthProvider);
+    final currentGroupName = ref.watch(
+      currentProfileProvider.select((state) => state?.currentGroupName),
     );
-  }
-
-  Future<void> _handleConnection() async {
-    final coreStatus = ref.read(coreStatusProvider);
-    if (coreStatus == CoreStatus.connecting) {
-      return;
-    }
-    final tip = coreStatus == CoreStatus.connected
-        ? appLocalizations.forceRestartCoreTip
-        : appLocalizations.restartCoreTip;
-    final res = await globalState.showMessage(message: TextSpan(text: tip));
-    if (res != true) {
-      return;
-    }
-    appController.restartCore();
-  }
-
-  List<Widget> _buildActions(bool isEdit) {
-    return [
-      if (!isEdit)
-        Consumer(
-          builder: (_, ref, _) {
-            final coreStatus = ref.watch(coreStatusProvider);
-            return Tooltip(
-              message: appLocalizations.coreStatus,
-              child: FadeScaleBox(
-                alignment: Alignment.centerRight,
-                child: coreStatus == CoreStatus.connected
-                    ? IconButton.filled(
-                        visualDensity: VisualDensity.compact,
-                        iconSize: 20,
-                        padding: EdgeInsets.zero,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.greenAccent,
-                          foregroundColor: switch (Theme.brightnessOf(
-                            context,
-                          )) {
-                            Brightness.light =>
-                              context.colorScheme.onSurfaceVariant,
-                            Brightness.dark =>
-                              context.colorScheme.onPrimaryFixedVariant,
-                          },
-                        ),
-                        onPressed: _handleConnection,
-                        icon: Icon(Icons.check, fontWeight: FontWeight.w900),
-                      )
-                    : FilledButton.icon(
-                        key: ValueKey(coreStatus),
-                        onPressed: _handleConnection,
-                        style: FilledButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          backgroundColor: switch (coreStatus) {
-                            CoreStatus.connecting => null,
-                            CoreStatus.connected => Colors.greenAccent,
-                            CoreStatus.disconnected =>
-                              context.colorScheme.error,
-                          },
-                          foregroundColor: switch (coreStatus) {
-                            CoreStatus.connecting => null,
-                            CoreStatus.connected => switch (Theme.brightnessOf(
-                              context,
-                            )) {
-                              Brightness.light =>
-                                context.colorScheme.onSurfaceVariant,
-                              Brightness.dark => null,
-                            },
-                            CoreStatus.disconnected =>
-                              context.colorScheme.onError,
-                          },
-                        ),
-                        icon: SizedBox(
-                          height: globalState.measure.bodyMediumHeight,
-                          width: globalState.measure.bodyMediumHeight,
-                          child: switch (coreStatus) {
-                            CoreStatus.connecting => Padding(
-                              padding: EdgeInsets.all(2),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                color: context.colorScheme.onPrimary,
-                                backgroundColor: Colors.transparent,
-                              ),
-                            ),
-                            CoreStatus.connected => Icon(
-                              Icons.check_sharp,
-                              fontWeight: FontWeight.w900,
-                            ),
-                            CoreStatus.disconnected => Icon(
-                              Icons.restart_alt_sharp,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          },
-                        ),
-                        label: Text(switch (coreStatus) {
-                          CoreStatus.connecting => appLocalizations.connecting,
-                          CoreStatus.connected => appLocalizations.connected,
-                          CoreStatus.disconnected =>
-                            appLocalizations.disconnected,
-                        }),
-                      ),
-              ),
-            );
-          },
-        ),
-      if (isEdit)
-        ValueListenableBuilder(
-          valueListenable: _addedWidgetsNotifier,
-          builder: (_, addedChildren, child) {
-            if (addedChildren.isEmpty) {
-              return Container();
-            }
-            return child!;
-          },
-          child: IconButton(
-            onPressed: () {
-              _showAddWidgetsModal();
-            },
-            icon: Icon(Icons.add_circle),
-          ),
-        ),
-      FadeRotationScaleBox(
-        child: isEdit
-            ? IconButton(
-                key: ValueKey(true),
-                icon: Icon(Icons.save, key: ValueKey('save-icon')),
-                onPressed: _handleUpdateIsEdit,
-              )
-            : IconButton(
-                key: ValueKey(false),
-                icon: Icon(Icons.edit, key: ValueKey('edit-icon')),
-                onPressed: _handleUpdateIsEdit,
-              ),
-      ),
-    ];
-  }
-
-  void _showAddWidgetsModal() {
-    showSheet(
-      builder: (_, type) {
-        return ValueListenableBuilder(
-          valueListenable: _addedWidgetsNotifier,
-          builder: (_, value, _) {
-            return AdaptiveSheetScaffold(
-              type: type,
-              body: _AddDashboardWidgetModal(
-                items: value,
-                onAdd: (gridItem) {
-                  key.currentState?.handleAdd(gridItem);
-                },
-              ),
-              title: appLocalizations.add,
-            );
-          },
-        );
-      },
-      context: context,
-    );
-  }
-
-  Future<void> _handleUpdateIsEdit() async {
-    if (_isEditNotifier.value == true) {
-      await _handleSave();
-    }
-    _isEditNotifier.value = !_isEditNotifier.value;
-  }
-
-  Future<void> _handleSave() async {
-    final currentState = key.currentState;
-    if (currentState == null) {
-      return;
-    }
-    if (mounted) {
-      await currentState.isTransformCompleter;
-      final dashboardWidgets = currentState.children
-          .map((item) => DashboardWidget.getDashboardWidget(item))
-          .toList();
-      ref
-          .read(appSettingProvider.notifier)
-          .update(
-            (state) => state.copyWith(dashboardWidgets: dashboardWidgets),
+    final selectedProxyName = currentGroupName == null
+        ? null
+        : ref.watch(getSelectedProxyNameProvider(currentGroupName));
+    final isAndroid = system.isAndroid;
+    final isTunEnabled = isAndroid
+        ? ref.watch(vpnSettingProvider.select((state) => state.enable))
+        : ref.watch(
+            patchClashConfigProvider.select((state) => state.tun.enable),
           );
-    }
-  }
+    final gridColumns = contentWidth > 920 ? 2 : 1;
 
-  @override
-  Widget build(BuildContext context) {
-    final dashboardState = ref.watch(dashboardStateProvider);
-    final columns = max(4 * ((dashboardState.contentWidth / 280).ceil()), 8);
-    final spacing = 14.mAp;
-    final children = [
-      ...dashboardState.dashboardWidgets
-          .where(
-            (item) => item.platforms.contains(SupportPlatform.currentPlatform),
-          )
-          .map((item) => item.widget),
-    ];
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _addedWidgetsNotifier.value = DashboardWidget.values
-          .where(
-            (item) =>
-                !children.contains(item.widget) &&
-                item.platforms.contains(SupportPlatform.currentPlatform),
-          )
-          .map((item) => item.widget)
-          .toList();
-    });
-    return _buildIsEdit(
-      (isEdit) => CommonScaffold(
-        title: appLocalizations.dashboard,
-        actions: _buildActions(isEdit),
-        floatingActionButton: const StartButton(),
-        body: Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16).copyWith(bottom: 88),
-            child: isEdit
-                ? SystemBackBlock(
-                    child: CommonPopScope(
-                      child: SuperGrid(
-                        key: key,
-                        crossAxisCount: columns,
-                        crossAxisSpacing: spacing,
-                        mainAxisSpacing: spacing,
-                        children: [
-                          ...dashboardState.dashboardWidgets
-                              .where(
-                                (item) => item.platforms.contains(
-                                  SupportPlatform.currentPlatform,
-                                ),
-                              )
-                              .map((item) => item.widget),
-                        ],
-                        onUpdate: () {
-                          _handleSave();
-                        },
-                      ),
-                      onPop: (context) {
-                        _handleUpdateIsEdit();
-                        return false;
-                      },
-                    ),
-                  )
-                : Grid(
-                    crossAxisCount: columns,
-                    crossAxisSpacing: spacing,
-                    mainAxisSpacing: spacing,
-                    children: children,
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AddDashboardWidgetModal extends StatelessWidget {
-  final List<GridItem> items;
-  final Function(GridItem item) onAdd;
-
-  const _AddDashboardWidgetModal({required this.items, required this.onAdd});
-
-  @override
-  Widget build(BuildContext context) {
-    return DeferredPointerHandler(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Grid(
-          crossAxisCount: 8,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          children: items
-              .map(
-                (item) => item.wrap(
-                  builder: (child) {
-                    return _AddedContainer(
-                      onAdd: () {
-                        onAdd(item);
-                      },
-                      child: child,
-                    );
+    return CommonScaffold(
+      title: appLocalizations.dashboard,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _ConnectionHeroCard(currentNodeName: selectedProxyName),
+            const SizedBox(height: 16),
+            Grid.baseGap(
+              crossAxisCount: gridColumns,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              children: [
+                _ToggleCard(
+                  title: isAndroid ? 'VPN / TUN' : appLocalizations.tun,
+                  subtitle: isTunEnabled
+                      ? appLocalizations.connected
+                      : appLocalizations.disconnected,
+                  icon: Icons.stacked_line_chart,
+                  value: isTunEnabled,
+                  onChanged: (value) {
+                    if (isAndroid) {
+                      ref
+                          .read(vpnSettingProvider.notifier)
+                          .update((state) => state.copyWith(enable: value));
+                    } else {
+                      ref
+                          .read(patchClashConfigProvider.notifier)
+                          .update((state) => state.copyWith.tun(enable: value));
+                    }
                   },
                 ),
-              )
-              .toList(),
+                const ModeSelector(),
+                const NodeSelector(),
+                SubscriptionCard(
+                  onPressed: () =>
+                      ref.read(currentPageLabelProvider.notifier).value =
+                          PageLabel.subscription,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Grid.baseGap(
+              crossAxisCount: gridColumns,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              children: const [
+                NetworkSpeed(),
+                TrafficUsage(),
+                dashboard_widgets.NetworkDetection(),
+                IntranetIP(),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _AddedContainer extends StatefulWidget {
-  final Widget child;
-  final VoidCallback onAdd;
+class _ConnectionHeroCard extends ConsumerWidget {
+  final String? currentNodeName;
 
-  const _AddedContainer({required this.child, required this.onAdd});
+  const _ConnectionHeroCard({required this.currentNodeName});
 
   @override
-  State<_AddedContainer> createState() => _AddedContainerState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final status = ref.watch(coreStatusProvider);
+    final runTime = ref.watch(runTimeProvider);
+    final currentMode = ref.watch(
+      patchClashConfigProvider.select((state) => state.mode),
+    );
+    return CommonCard(
+      type: CommonCardType.filled,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompact = constraints.maxWidth < 640;
+            final details = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('连接控制', style: context.textTheme.headlineSmall),
+                const SizedBox(height: 8),
+                Text(
+                  switch (status) {
+                    CoreStatus.connected => '代理核心已连接，可以直接切换节点与模式',
+                    CoreStatus.connecting => '正在连接核心与同步配置',
+                    CoreStatus.disconnected => '当前未连接，点击按钮开始连接',
+                  },
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    _MetaChip(
+                      icon: Icons.timer_outlined,
+                      label: '连接时长 ${utils.getTimeText(runTime)}',
+                    ),
+                    _MetaChip(
+                      icon: Icons.share_arrival_time_outlined,
+                      label: '出站模式 ${currentMode.name.toUpperCase()}',
+                    ),
+                    _MetaChip(
+                      icon: Icons.hub_outlined,
+                      label: currentNodeName?.isNotEmpty == true
+                          ? '当前节点 $currentNodeName'
+                          : '尚未选择节点',
+                    ),
+                  ],
+                ),
+              ],
+            );
+            if (isCompact) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Align(
+                    alignment: Alignment.center,
+                    child: ConnectButton(size: 104),
+                  ),
+                  const SizedBox(height: 20),
+                  details,
+                ],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const ConnectButton(),
+                const SizedBox(width: 24),
+                Expanded(child: details),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
-class _AddedContainerState extends State<_AddedContainer> {
-  @override
-  void initState() {
-    super.initState();
-  }
+class _ToggleCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
-  @override
-  void didUpdateWidget(_AddedContainer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.child != widget.child) {}
-  }
-
-  Future<void> _handleAdd() async {
-    widget.onAdd();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  const _ToggleCard({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        ActivateBox(child: widget.child),
-        Positioned(
-          top: -8,
-          right: -8,
-          child: DeferPointer(
-            child: SizedBox(
-              width: 24,
-              height: 24,
-              child: IconButton.filled(
-                iconSize: 20,
-                padding: EdgeInsets.all(2),
-                onPressed: _handleAdd,
-                icon: Icon(Icons.add),
+    return CommonCard(
+      type: CommonCardType.filled,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: context.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, color: context.colorScheme.onPrimaryContainer),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: context.textTheme.titleMedium?.toSoftBold),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
+            Switch(value: value, onChanged: onChanged),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _MetaChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: context.colorScheme.onSurfaceVariant),
+          const SizedBox(width: 8),
+          Text(label, style: context.textTheme.bodySmall),
+        ],
+      ),
     );
   }
 }

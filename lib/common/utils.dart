@@ -22,8 +22,9 @@ class Utils {
   Color? getDelayColor(int? delay) {
     if (delay == null) return null;
     if (delay < 0) return Colors.red;
-    if (delay < 600) return Colors.green;
-    return const Color(0xFFC57F0A);
+    if (delay < 200) return Colors.green;
+    if (delay < 500) return const Color(0xFFC57F0A);
+    return Colors.redAccent;
   }
 
   String get id {
@@ -224,7 +225,6 @@ class Utils {
 
   ViewMode getViewMode(double viewWidth) {
     if (viewWidth <= maxMobileWidth) return ViewMode.mobile;
-    if (viewWidth <= maxLaptopWidth) return ViewMode.laptop;
     return ViewMode.desktop;
   }
 

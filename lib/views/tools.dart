@@ -10,7 +10,12 @@ import 'package:fl_clash/views/access.dart';
 import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/config.dart';
+import 'package:fl_clash/views/connection/connections.dart';
+import 'package:fl_clash/views/connection/requests.dart';
 import 'package:fl_clash/views/hotkey.dart';
+import 'package:fl_clash/views/logs.dart';
+import 'package:fl_clash/views/profiles/profiles.dart';
+import 'package:fl_clash/views/resources.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,27 +34,17 @@ class ToolsView extends ConsumerStatefulWidget {
 }
 
 class _ToolViewState extends ConsumerState<ToolsView> {
-  Widget _buildNavigationMenuItem(NavigationItem navigationItem) {
+  Widget _buildOpenItem({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required Widget child,
+  }) {
     return ListItem.open(
-      leading: navigationItem.icon,
-      title: Text(Intl.message(navigationItem.label.name)),
-      subtitle: navigationItem.description != null
-          ? Text(Intl.message(navigationItem.description!))
-          : null,
-      delegate: OpenDelegate(widget: navigationItem.builder(context)),
-    );
-  }
-
-  Widget _buildNavigationMenu(List<NavigationItem> navigationItems) {
-    return Column(
-      children: [
-        for (final navigationItem in navigationItems) ...[
-          _buildNavigationMenuItem(navigationItem),
-          navigationItems.last != navigationItem
-              ? const Divider(height: 0)
-              : Container(),
-        ],
-      ],
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: subtitle != null ? Text(subtitle) : null,
+      delegate: OpenDelegate(widget: child),
     );
   }
 
@@ -66,17 +61,71 @@ class _ToolViewState extends ConsumerState<ToolsView> {
 
   List<Widget> _getSettingList() {
     return generateSection(
-      title: context.appLocalizations.settings,
+      title: '基础设置',
       items: [
         const _LocaleItem(),
         const _ThemeItem(),
-        const _BackupItem(),
-        if (system.isDesktop) const _HotkeyItem(),
-        if (system.isWindows) const _LoopbackItem(),
-        if (system.isAndroid) const _AccessItem(),
         const _ConfigItem(),
         const _AdvancedConfigItem(),
         const _SettingItem(),
+      ],
+    );
+  }
+
+  List<Widget> _getNetworkTools() {
+    return generateSection(
+      title: '网络工具',
+      items: [
+        _buildOpenItem(
+          icon: Icons.swap_horiz,
+          title: context.appLocalizations.connections,
+          subtitle: context.appLocalizations.connectionsDesc,
+          child: const ConnectionsView(),
+        ),
+        _buildOpenItem(
+          icon: Icons.view_timeline,
+          title: context.appLocalizations.requests,
+          subtitle: context.appLocalizations.requestsDesc,
+          child: const RequestsView(),
+        ),
+        _buildOpenItem(
+          icon: Icons.adb,
+          title: context.appLocalizations.logs,
+          subtitle: context.appLocalizations.logsDesc,
+          child: const LogsView(),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _getDataTools() {
+    return generateSection(
+      title: '数据管理',
+      items: [
+        _buildOpenItem(
+          icon: Icons.folder_outlined,
+          title: context.appLocalizations.profile,
+          subtitle: context.appLocalizations.addProfile,
+          child: const ProfilesView(),
+        ),
+        _buildOpenItem(
+          icon: Icons.storage_outlined,
+          title: context.appLocalizations.resources,
+          subtitle: context.appLocalizations.resourcesDesc,
+          child: const ResourcesView(),
+        ),
+        const _BackupItem(),
+      ],
+    );
+  }
+
+  List<Widget> _getPlatformTools() {
+    return generateSection(
+      title: '平台能力',
+      items: [
+        if (system.isDesktop) const _HotkeyItem(),
+        if (system.isWindows) const _LoopbackItem(),
+        if (system.isAndroid) const _AccessItem(),
       ],
     );
   }
@@ -89,21 +138,10 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       ),
     );
     final items = [
-      Consumer(
-        builder: (_, ref, _) {
-          final state = ref.watch(moreToolsSelectorStateProvider);
-          if (state.navigationItems.isEmpty) {
-            return Container();
-          }
-          return Column(
-            children: [
-              ListHeader(title: context.appLocalizations.more),
-              _buildNavigationMenu(state.navigationItems),
-            ],
-          );
-        },
-      ),
       ..._getSettingList(),
+      ..._getNetworkTools(),
+      ..._getDataTools(),
+      ..._getPlatformTools(),
       ..._getOtherList(vm2.b),
     ];
     return CommonScaffold(

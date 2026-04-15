@@ -25,7 +25,12 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
   bool _hasProviders = false;
   bool _isTab = false;
 
+  Future<void> _runAutoTest() async {
+    await ref.read(autoTestControllerProvider).runNow();
+  }
+
   List<Widget> _buildActions() {
+    final autoTestState = ref.watch(autoTestStateProvider);
     return [
       if (_isTab)
         IconButton(
@@ -34,6 +39,16 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
           },
           icon: Icon(Icons.adjust, weight: 1),
         ),
+      IconButton(
+        onPressed: autoTestState.isTesting ? null : _runAutoTest,
+        icon: autoTestState.isTesting
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.network_ping_outlined),
+      ),
       CommonPopupBox(
         targetBuilder: (open) {
           return IconButton(
@@ -138,6 +153,10 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       proxiesStyleSettingProvider.select((state) => state.type),
     );
     final isLoading = ref.watch(loadingProvider(LoadingTag.proxies));
+    final autoTestState = ref.watch(autoTestStateProvider);
+    final lastTestText = autoTestState.lastUpdatedAt == null
+        ? '未测速'
+        : '最近测速 ${autoTestState.lastUpdatedAt!.hour.toString().padLeft(2, '0')}:${autoTestState.lastUpdatedAt!.minute.toString().padLeft(2, '0')}';
     return CommonScaffold(
       key: _scaffoldKey,
       isLoading: isLoading,
@@ -146,10 +165,59 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       actions: _buildActions(),
       title: appLocalizations.proxies,
       searchState: AppBarSearchState(onSearch: _onSearch),
-      body: switch (proxiesType) {
-        ProxiesType.tab => ProxiesTabView(key: _proxiesTabKey),
-        ProxiesType.list => const ProxiesListView(),
-      },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: CommonCard(
+              type: CommonCardType.filled,
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '节点状态与延迟',
+                            style: context.textTheme.titleMedium?.toSoftBold,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            lastTestText,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FilledButton.icon(
+                      onPressed: autoTestState.isTesting ? null : _runAutoTest,
+                      icon: autoTestState.isTesting
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.bolt),
+                      label: Text(autoTestState.isTesting ? '测速中' : '测试全部'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: switch (proxiesType) {
+              ProxiesType.tab => ProxiesTabView(key: _proxiesTabKey),
+              ProxiesType.list => const ProxiesListView(),
+            },
+          ),
+        ],
+      ),
     );
   }
 }

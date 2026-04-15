@@ -18,7 +18,7 @@ class V2BoardApi {
   String _authData = '';
 
   V2BoardApi({required String baseUrl}) {
-    _endpoints = V2BoardEndpoints(baseUrl);
+    _endpoints = V2BoardEndpoints(_normalizeBaseUrl(baseUrl));
     _dio = Dio(
       BaseOptions(
         connectTimeout: const Duration(seconds: 10),
@@ -41,7 +41,7 @@ class V2BoardApi {
   V2BoardEndpoints get endpoints => _endpoints;
 
   void updateBaseUrl(String baseUrl) {
-    _endpoints = V2BoardEndpoints(baseUrl);
+    _endpoints = V2BoardEndpoints(_normalizeBaseUrl(baseUrl));
   }
 
   void setAuthData(String authData) {
@@ -102,10 +102,7 @@ class V2BoardApi {
     String? inviteCode,
     String? emailCode,
   }) async {
-    final data = <String, dynamic>{
-      'email': email,
-      'password': password,
-    };
+    final data = <String, dynamic>{'email': email, 'password': password};
     if (inviteCode != null && inviteCode.isNotEmpty) {
       data['invite_code'] = inviteCode;
     }
@@ -145,11 +142,7 @@ class V2BoardApi {
     final response = await _request(
       () => _dio.post(
         _endpoints.forget,
-        data: {
-          'email': email,
-          'password': password,
-          'email_code': emailCode,
-        },
+        data: {'email': email, 'password': password, 'email_code': emailCode},
       ),
     );
     final body = _extractData(response);
@@ -161,9 +154,7 @@ class V2BoardApi {
   Future<V2BoardUser> getUserInfo() async {
     final response = await _request(() => _dio.get(_endpoints.userInfo));
     final body = _extractData(response);
-    return V2BoardUser.fromJson(
-      body['data'] as Map<String, dynamic>? ?? {},
-    );
+    return V2BoardUser.fromJson(body['data'] as Map<String, dynamic>? ?? {});
   }
 
   Future<V2BoardSubscription> getSubscribe() async {
@@ -205,6 +196,105 @@ class V2BoardApi {
         .toList();
   }
 
+  Future<Map<String, dynamic>> createOrder({
+    required int planId,
+    required String period,
+    String? couponCode,
+  }) async {
+    final payload = <String, dynamic>{'plan_id': planId, 'period': period};
+    if (couponCode != null && couponCode.isNotEmpty) {
+      payload['coupon_code'] = couponCode;
+    }
+    final response = await _request(
+      () => _dio.post(_endpoints.orderSave, data: payload),
+    );
+    return _extractDynamicData(response);
+  }
+
+  Future<List<V2BoardOrder>> fetchOrders() async {
+    final response = await _request(() => _dio.get(_endpoints.orderFetch));
+    final body = _extractData(response);
+    final list = body['data'] as List<dynamic>? ?? [];
+    return list
+        .map((item) => V2BoardOrder.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+  }
+
+  Future<Map<String, dynamic>> getOrderDetail(String tradeNo) async {
+    final response = await _request(
+      () => _dio.get(
+        _endpoints.orderDetail,
+        queryParameters: {'trade_no': tradeNo},
+      ),
+    );
+    return _extractDynamicData(response);
+  }
+
+  Future<Map<String, dynamic>> checkoutOrder(
+    String tradeNo,
+    String paymentMethod,
+  ) async {
+    final response = await _request(
+      () => _dio.post(
+        _endpoints.orderCheckout,
+        data: {
+          'trade_no': tradeNo,
+          if (paymentMethod.isNotEmpty) 'method': paymentMethod,
+        },
+      ),
+    );
+    return _extractDynamicData(response);
+  }
+
+  Future<bool> checkOrderStatus(String tradeNo) async {
+    final response = await _request(
+      () => _dio.get(
+        _endpoints.orderCheck,
+        queryParameters: {'trade_no': tradeNo},
+      ),
+    );
+    final body = _extractData(response);
+    final data = body['data'];
+    if (data is bool) {
+      return data;
+    }
+    if (data is num) {
+      return data != 0;
+    }
+    if (data is Map<String, dynamic>) {
+      final status = data['status'];
+      if (status is num) {
+        return status == 1;
+      }
+      final paid = data['paid'];
+      if (paid is bool) {
+        return paid;
+      }
+    }
+    return false;
+  }
+
+  Future<bool> cancelOrder(String tradeNo) async {
+    final response = await _request(
+      () => _dio.post(_endpoints.orderCancel, data: {'trade_no': tradeNo}),
+    );
+    final body = _extractData(response);
+    final data = body['data'];
+    return data == true || data != null;
+  }
+
+  Future<List<dynamic>> getPaymentMethods() async {
+    final response = await _request(
+      () => _dio.get(_endpoints.orderPaymentMethod),
+    );
+    final body = _extractData(response);
+    final data = body['data'];
+    if (data is List<dynamic>) {
+      return data;
+    }
+    return const [];
+  }
+
   Future<bool> changePassword({
     required String oldPassword,
     required String newPassword,
@@ -212,14 +302,27 @@ class V2BoardApi {
     final response = await _request(
       () => _dio.post(
         _endpoints.userChangePassword,
-        data: {
-          'old_password': oldPassword,
-          'new_password': newPassword,
-        },
+        data: {'old_password': oldPassword, 'new_password': newPassword},
       ),
     );
     final body = _extractData(response);
     return body['data'] == true;
+  }
+
+  Map<String, dynamic> _extractDynamicData(Response response) {
+    final body = _extractData(response);
+    final data = body['data'];
+    if (data is Map<String, dynamic>) {
+      return data;
+    }
+    if (data is Map) {
+      return Map<String, dynamic>.from(data);
+    }
+    return {'data': data};
+  }
+
+  String _normalizeBaseUrl(String baseUrl) {
+    return baseUrl.trim().replaceFirst(RegExp(r'/+$'), '');
   }
 
   Future<Response> _request(Future<Response> Function() fn) async {

@@ -25,7 +25,12 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
   void initState() {
     super.initState();
     final props = ref.read(v2boardSettingProvider);
-    _serverController = TextEditingController(text: props?.serverUrl ?? '');
+    final configuredServer = ref.read(appServerUrlProvider);
+    _serverController = TextEditingController(
+      text: configuredServer.isNotEmpty
+          ? configuredServer
+          : props?.serverUrl ?? '',
+    );
     _emailController = TextEditingController(text: props?.email ?? '');
     _passwordController = TextEditingController();
   }
@@ -52,7 +57,10 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
-      final serverUrl = _serverController.text.trim();
+      final configuredServer = ref.read(appServerUrlProvider);
+      final serverUrl = configuredServer.isNotEmpty
+          ? configuredServer
+          : _serverController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
@@ -67,10 +75,9 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
         lastLoginDate: DateTime.now(),
       );
 
-      ref.read(v2boardApiClientProvider.notifier).init(
-            serverUrl,
-            authData: auth.authData,
-          );
+      ref
+          .read(v2boardApiClientProvider.notifier)
+          .init(serverUrl, authData: auth.authData);
 
       if (mounted) {
         await _syncSubscriptionAfterAuth();
@@ -96,6 +103,8 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final configuredServer = ref.watch(appServerUrlProvider);
+    final hideServerInput = configuredServer.isNotEmpty;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Form(
@@ -119,31 +128,42 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
             Text(
               appLocalizations.v2boardLoginDesc,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
-            TextFormField(
-              controller: _serverController,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.dns),
-                border: const OutlineInputBorder(),
-                labelText: appLocalizations.v2boardServer,
-                hintText: 'https://example.com/api/v1',
+            if (!hideServerInput) ...[
+              TextFormField(
+                controller: _serverController,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.dns),
+                  border: const OutlineInputBorder(),
+                  labelText: appLocalizations.v2boardServer,
+                  hintText: 'https://example.com/api/v1',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return appLocalizations.emptyTip(
+                      appLocalizations.v2boardServer,
+                    );
+                  }
+                  if (!value.startsWith('http')) {
+                    return appLocalizations.v2boardServerTip;
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return appLocalizations.emptyTip(
-                      appLocalizations.v2boardServer);
-                }
-                if (!value.startsWith('http')) {
-                  return appLocalizations.v2boardServerTip;
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ] else ...[
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.dns),
+                title: Text(appLocalizations.v2boardServer),
+                subtitle: Text(configuredServer),
+              ),
+              const SizedBox(height: 8),
+            ],
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -182,7 +202,8 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return appLocalizations.emptyTip(
-                          appLocalizations.password);
+                        appLocalizations.password,
+                      );
                     }
                     if (value.length < 8) {
                       return appLocalizations.v2boardPasswordTip;
@@ -248,7 +269,12 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
   void initState() {
     super.initState();
     final props = ref.read(v2boardSettingProvider);
-    _serverController = TextEditingController(text: props?.serverUrl ?? '');
+    final configuredServer = ref.read(appServerUrlProvider);
+    _serverController = TextEditingController(
+      text: configuredServer.isNotEmpty
+          ? configuredServer
+          : props?.serverUrl ?? '',
+    );
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _inviteCodeController = TextEditingController();
@@ -277,7 +303,10 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
   }
 
   Future<void> _loadCommConfig() async {
-    final serverUrl = _serverController.text.trim();
+    final configuredServer = ref.read(appServerUrlProvider);
+    final serverUrl = configuredServer.isNotEmpty
+        ? configuredServer
+        : _serverController.text.trim();
     if (serverUrl.isEmpty) return;
     try {
       final api = V2BoardApi(baseUrl: serverUrl);
@@ -291,7 +320,12 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
     if (email.isEmpty) return;
     setState(() => _isSendingCode = true);
     try {
-      final api = V2BoardApi(baseUrl: _serverController.text.trim());
+      final configuredServer = ref.read(appServerUrlProvider);
+      final api = V2BoardApi(
+        baseUrl: configuredServer.isNotEmpty
+            ? configuredServer
+            : _serverController.text.trim(),
+      );
       await api.sendEmailVerify(email: email);
       if (mounted) {
         globalState.showNotifier(appLocalizations.v2boardEmailSent);
@@ -312,7 +346,10 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
-      final serverUrl = _serverController.text.trim();
+      final configuredServer = ref.read(appServerUrlProvider);
+      final serverUrl = configuredServer.isNotEmpty
+          ? configuredServer
+          : _serverController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
@@ -332,10 +369,9 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
         lastLoginDate: DateTime.now(),
       );
 
-      ref.read(v2boardApiClientProvider.notifier).init(
-            serverUrl,
-            authData: auth.authData,
-          );
+      ref
+          .read(v2boardApiClientProvider.notifier)
+          .init(serverUrl, authData: auth.authData);
 
       if (mounted) {
         Navigator.pop(context);
@@ -362,6 +398,8 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final configuredServer = ref.watch(appServerUrlProvider);
+    final hideServerInput = configuredServer.isNotEmpty;
     return Scaffold(
       appBar: AppBar(title: Text(appLocalizations.v2boardRegister)),
       body: SingleChildScrollView(
@@ -371,24 +409,35 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                controller: _serverController,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.dns),
-                  border: const OutlineInputBorder(),
-                  labelText: appLocalizations.v2boardServer,
-                  hintText: 'https://example.com/api/v1',
+              if (!hideServerInput) ...[
+                TextFormField(
+                  controller: _serverController,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.dns),
+                    border: const OutlineInputBorder(),
+                    labelText: appLocalizations.v2boardServer,
+                    hintText: 'https://example.com/api/v1',
+                  ),
+                  onChanged: (_) => _loadCommConfig(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return appLocalizations.emptyTip(
+                        appLocalizations.v2boardServer,
+                      );
+                    }
+                    return null;
+                  },
                 ),
-                onChanged: (_) => _loadCommConfig(),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return appLocalizations.emptyTip(
-                        appLocalizations.v2boardServer);
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
+              ] else ...[
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.dns),
+                  title: Text(appLocalizations.v2boardServer),
+                  subtitle: Text(configuredServer),
+                ),
+                const SizedBox(height: 8),
+              ],
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -427,7 +476,8 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return appLocalizations.emptyTip(
-                            appLocalizations.password);
+                          appLocalizations.password,
+                        );
                       }
                       if (value.length < 8) {
                         return appLocalizations.v2boardPasswordTip;
@@ -451,7 +501,8 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
                       ? (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalizations.emptyTip(
-                                appLocalizations.v2boardInviteCode);
+                              appLocalizations.v2boardInviteCode,
+                            );
                           }
                           return null;
                         }
@@ -474,7 +525,8 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalizations.emptyTip(
-                                appLocalizations.v2boardEmailCode);
+                              appLocalizations.v2boardEmailCode,
+                            );
                           }
                           return null;
                         },
@@ -490,7 +542,8 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2),
+                                  strokeWidth: 2,
+                                ),
                               )
                             : Text(appLocalizations.v2boardSendCode),
                       ),

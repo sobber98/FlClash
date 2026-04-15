@@ -48,9 +48,18 @@ class ApplicationState extends ConsumerState<Application> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      final currentContext = globalState.navigatorKey.currentContext;
-      if (currentContext != null) {
-        await appController.attach(currentContext, ref);
+      final remoteConfig = await ref.read(appConfigProvider.future);
+      if (!mounted) {
+        return;
+      }
+      final defaultMode = remoteConfig.defaultMode;
+      if (defaultMode != null) {
+        ref
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith(mode: defaultMode));
+      }
+      if (mounted) {
+        await appController.attach(context, ref);
       } else {
         exit(0);
       }
@@ -112,10 +121,12 @@ class ApplicationState extends ConsumerState<Application> {
   Widget build(context) {
     return Consumer(
       builder: (_, ref, child) {
+        ref.watch(autoTestControllerProvider);
         final locale = ref.watch(
           appSettingProvider.select((state) => state.locale),
         );
         final themeProps = ref.watch(themeSettingProvider);
+        final appDisplayName = ref.watch(appDisplayNameProvider);
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           navigatorKey: globalState.navigatorKey,
@@ -135,7 +146,7 @@ class ApplicationState extends ConsumerState<Application> {
             );
           },
           scrollBehavior: BaseScrollBehavior(),
-          title: appName,
+          title: appDisplayName,
           locale: utils.getLocaleForString(locale),
           supportedLocales: AppLocalizations.delegate.supportedLocales,
           themeMode: themeProps.themeMode,

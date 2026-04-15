@@ -163,8 +163,7 @@ abstract class V2BoardCommConfig with _$V2BoardCommConfig {
       toJson: v2boardBoolToJson,
     )
     bool isInviteForce,
-    @JsonKey(name: 'email_whitelist_suffix') List<String>?
-        emailWhitelistSuffix,
+    @JsonKey(name: 'email_whitelist_suffix') List<String>? emailWhitelistSuffix,
     @Default(false)
     @JsonKey(
       name: 'is_recaptcha',
@@ -217,7 +216,9 @@ abstract class V2BoardProps with _$V2BoardProps {
 }
 
 extension V2BoardPropsExt on V2BoardProps {
-  bool get isLoggedIn => authData.isNotEmpty && serverUrl.isNotEmpty;
+  bool get isLoggedIn =>
+      authData.isNotEmpty &&
+      (serverUrl.isNotEmpty || subscribeToken.isNotEmpty);
 
   String get subscribeUrl {
     if (!isLoggedIn || subscribeToken.isEmpty) return '';

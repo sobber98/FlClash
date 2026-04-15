@@ -7,6 +7,7 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/profiles/profiles.dart';
 import 'package:fl_clash/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -398,17 +399,20 @@ extension ProfilesControllerExt on AppController {
 
   Future<String?> syncV2BoardSubscription() async {
     final props = _ref.read(v2boardSettingProvider);
-    if (props == null || !props.isLoggedIn) {
+    final configuredServerUrl = _ref.read(appServerUrlProvider);
+    final serverUrl = props?.serverUrl.trim().isNotEmpty == true
+        ? props!.serverUrl.trim()
+        : configuredServerUrl.trim();
+    if (props == null || !props.isLoggedIn || serverUrl.isEmpty) {
       return 'V2Board is not logged in';
     }
 
     try {
       final api = _ref.read(v2boardApiClientProvider);
       if (api == null) {
-        _ref.read(v2boardApiClientProvider.notifier).init(
-              props.serverUrl,
-              authData: props.authData,
-            );
+        _ref
+            .read(v2boardApiClientProvider.notifier)
+            .init(serverUrl, authData: props.authData);
       }
       final apiClient = _ref.read(v2boardApiClientProvider);
       if (apiClient == null) {
@@ -423,13 +427,14 @@ extension ProfilesControllerExt on AppController {
 
       // Update stored token
       final nextProps = props.copyWith(
+        serverUrl: serverUrl,
         subscribeToken: subscribeToken,
       );
       _ref.read(v2boardSettingProvider.notifier).value = nextProps;
 
       final subscribeUrl = sub.subscribeUrl.takeFirstValid([
         nextProps.subscribeUrl,
-        '${props.serverUrl}/client/subscribe?token=$subscribeToken',
+        '$serverUrl/client/subscribe?token=$subscribeToken',
       ]);
       if (subscribeUrl.isEmpty) {
         return 'Subscription url is empty';
@@ -441,7 +446,7 @@ extension ProfilesControllerExt on AppController {
         subscribeToken,
         props.subscribeToken.trim(),
       }.where((token) => token.isNotEmpty).toSet();
-      final expectedSubscribePrefix = '${props.serverUrl}/client/subscribe';
+      final expectedSubscribePrefix = '$serverUrl/client/subscribe';
       final existing = profiles.where((profile) {
         if (profile.url.isEmpty) return false;
         if (tokenCandidates.any(profile.url.contains)) return true;
@@ -472,11 +477,14 @@ extension ProfilesControllerExt on AppController {
 
   void initV2BoardOnStart() {
     final props = _ref.read(v2boardSettingProvider);
-    if (props == null || !props.isLoggedIn) return;
-    _ref.read(v2boardApiClientProvider.notifier).init(
-          props.serverUrl,
-          authData: props.authData,
-        );
+    final configuredServerUrl = _ref.read(appServerUrlProvider);
+    final serverUrl = props?.serverUrl.trim().isNotEmpty == true
+        ? props!.serverUrl.trim()
+        : configuredServerUrl.trim();
+    if (props == null || !props.isLoggedIn || serverUrl.isEmpty) return;
+    _ref
+        .read(v2boardApiClientProvider.notifier)
+        .init(serverUrl, authData: props.authData);
     if (props.autoSync) {
       syncV2BoardSubscription();
     }
@@ -1185,7 +1193,9 @@ extension CommonControllerExt on AppController {
   }
 
   void toProfiles() {
-    toPage(PageLabel.profiles);
+    Navigator.of(
+      _context,
+    ).push(MaterialPageRoute(builder: (_) => const ProfilesView()));
   }
 
   void updateStart() {
