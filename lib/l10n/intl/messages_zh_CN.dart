@@ -82,7 +82,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "advancedConfig": MessageLookupByLibrary.simpleMessage("进阶配置"),
     "advancedConfigDesc": MessageLookupByLibrary.simpleMessage("提供多样化配置"),
     "ago": MessageLookupByLibrary.simpleMessage("前"),
-    "agree": MessageLookupByLibrary.simpleMessage("同意"),
     "allApps": MessageLookupByLibrary.simpleMessage("所有应用"),
     "allowBypass": MessageLookupByLibrary.simpleMessage("允许应用绕过VPN"),
     "allowBypassDesc": MessageLookupByLibrary.simpleMessage("开启后部分应用可绕过VPN"),
@@ -200,10 +199,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "developerMode": MessageLookupByLibrary.simpleMessage("开发者模式"),
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage("开发者模式已启用。"),
     "direct": MessageLookupByLibrary.simpleMessage("直连"),
-    "disclaimer": MessageLookupByLibrary.simpleMessage("免责声明"),
-    "disclaimerDesc": MessageLookupByLibrary.simpleMessage(
-      "本软件仅供学习交流、科研等非商业性质的用途，严禁将本软件用于商业目的。如有任何商业行为，均与本软件无关。",
-    ),
     "disconnected": MessageLookupByLibrary.simpleMessage("已断开"),
     "discoverNewVersion": MessageLookupByLibrary.simpleMessage("发现新版本"),
     "discovery": MessageLookupByLibrary.simpleMessage("发现新版本"),

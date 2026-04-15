@@ -8,7 +8,6 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/profiles/profiles.dart';
-import 'package:fl_clash/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -59,7 +58,6 @@ extension InitControllerExt on AppController {
       window?.hide();
     }
     await _handleFailedPreference();
-    await _handlerDisclaimer();
     await _showCrashlyticsTip();
     await _connectCore();
     await _initCore();
@@ -82,31 +80,6 @@ extension InitControllerExt on AppController {
     await handleExit();
   }
 
-  Future<bool> showDisclaimer() async {
-    return await globalState.showCommonDialog<bool>(
-          dismissible: false,
-          child: CommonDialog(
-            title: appLocalizations.disclaimer,
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(_context).pop<bool>(false);
-                },
-                child: Text(appLocalizations.exit),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(_context).pop<bool>(true);
-                },
-                child: Text(appLocalizations.agree),
-              ),
-            ],
-            child: Text(appLocalizations.disclaimerDesc),
-          ),
-        ) ??
-        false;
-  }
-
   Future<void> _showCrashlyticsTip() async {
     if (!system.isAndroid) {
       return;
@@ -122,22 +95,6 @@ extension InitControllerExt on AppController {
     _ref
         .read(appSettingProvider.notifier)
         .update((state) => state.copyWith(crashlyticsTip: true));
-  }
-
-  Future<void> _handlerDisclaimer() async {
-    if (_ref.read(
-      appSettingProvider.select((state) => state.disclaimerAccepted),
-    )) {
-      return;
-    }
-    final isDisclaimerAccepted = await showDisclaimer();
-    if (!isDisclaimerAccepted) {
-      await handleExit();
-    }
-    _ref
-        .read(appSettingProvider.notifier)
-        .update((state) => state.copyWith(disclaimerAccepted: true));
-    return;
   }
 
   Future<void> _initStatus() async {
