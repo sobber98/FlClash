@@ -4,6 +4,8 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/manager/app_manager.dart';
 import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/services/v2board/v2board.dart';
+import 'package:fl_clash/views/v2board/login_view.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +14,22 @@ import 'package:intl/intl.dart';
 
 typedef OnSelected = void Function(int index);
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final props = ref.watch(v2boardSettingProvider);
+    final isLoggedIn = props?.isLoggedIn ?? false;
+    if (!isLoggedIn) {
+      return const _StartupLoginPage();
+    }
+    return const _AuthenticatedHomePage();
+  }
+}
+
+class _AuthenticatedHomePage extends StatelessWidget {
+  const _AuthenticatedHomePage();
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +123,57 @@ class HomePage extends StatelessWidget {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StartupLoginPage extends ConsumerWidget {
+  const _StartupLoginPage();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appName = ref.watch(appDisplayNameProvider);
+    return Scaffold(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final maxWidth = constraints.maxWidth > 520
+                ? 460.0
+                : constraints.maxWidth;
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        appName,
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.headlineMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '请先登录后继续使用应用。',
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: context.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      CommonCard(
+                        type: CommonCardType.filled,
+                        child: const V2BoardLoginView(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -7,14 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class V2BoardLoginView extends ConsumerStatefulWidget {
-  const V2BoardLoginView({super.key});
+  final bool showRegisterAction;
+
+  const V2BoardLoginView({
+    super.key,
+    this.showRegisterAction = true,
+  });
 
   @override
   ConsumerState<V2BoardLoginView> createState() => _V2BoardLoginViewState();
 }
 
 class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
-  late TextEditingController _serverController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   final _obscureController = ValueNotifier<bool>(true);
@@ -25,23 +29,32 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
   void initState() {
     super.initState();
     final props = ref.read(v2boardSettingProvider);
-    final configuredServer = ref.read(appServerUrlProvider);
-    _serverController = TextEditingController(
-      text: configuredServer.isNotEmpty
-          ? configuredServer
-          : props?.serverUrl ?? '',
-    );
     _emailController = TextEditingController(text: props?.email ?? '');
     _passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _serverController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _obscureController.dispose();
     super.dispose();
+  }
+
+  String _resolveServerUrl() {
+    final configuredServer = ref.read(appServerUrlProvider).trim();
+    if (configuredServer.isNotEmpty) {
+      return configuredServer;
+    }
+    final storedServer = ref.read(v2boardSettingProvider)?.serverUrl.trim();
+    return storedServer ?? '';
+  }
+
+  void _showServerUnavailableTip() {
+    globalState.showMessage(
+      title: appLocalizations.tip,
+      message: const TextSpan(text: '登录服务暂未配置，请联系管理员。'),
+    );
   }
 
   Future<void> _syncSubscriptionAfterAuth() async {
@@ -55,12 +68,13 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
+    final serverUrl = _resolveServerUrl();
+    if (serverUrl.isEmpty) {
+      _showServerUnavailableTip();
+      return;
+    }
     setState(() => _isLoading = true);
     try {
-      final configuredServer = ref.read(appServerUrlProvider);
-      final serverUrl = configuredServer.isNotEmpty
-          ? configuredServer
-          : _serverController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
@@ -103,8 +117,12 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final configuredServer = ref.watch(appServerUrlProvider);
-    final hideServerInput = configuredServer.isNotEmpty;
+    final configuredServer = ref.watch(appServerUrlProvider).trim();
+    final storedProps = ref.watch(v2boardSettingProvider);
+    final hasServerUrl =
+        configuredServer.isNotEmpty ||
+        ((storedProps?.serverUrl.trim().isNotEmpty) ?? false);
+    final enableRegistration = ref.watch(appEnableRegistrationProvider);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Form(
@@ -133,36 +151,21 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
-            if (!hideServerInput) ...[
-              TextFormField(
-                controller: _serverController,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.dns),
-                  border: const OutlineInputBorder(),
-                  labelText: appLocalizations.v2boardServer,
-                  hintText: 'https://example.com/api/v1',
+            if (!hasServerUrl) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return appLocalizations.emptyTip(
-                      appLocalizations.v2boardServer,
-                    );
-                  }
-                  if (!value.startsWith('http')) {
-                    return appLocalizations.v2boardServerTip;
-                  }
-                  return null;
-                },
+                child: Text(
+                  '登录服务暂未配置，请联系管理员。',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onErrorContainer,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
-            ] else ...[
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.dns),
-                title: Text(appLocalizations.v2boardServer),
-                subtitle: Text(configuredServer),
-              ),
-              const SizedBox(height: 8),
             ],
             TextFormField(
               controller: _emailController,
@@ -215,7 +218,7 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
             ),
             const SizedBox(height: 24),
             FilledButton(
-              onPressed: _isLoading ? null : _login,
+              onPressed: _isLoading || !hasServerUrl ? null : _login,
               child: _isLoading
                   ? const SizedBox(
                       height: 20,
@@ -224,20 +227,22 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
                     )
                   : Text(appLocalizations.v2boardLogin),
             ),
-            const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: _isLoading
-                  ? null
-                  : () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const V2BoardRegisterPage(),
-                        ),
-                      );
-                    },
-              child: Text(appLocalizations.v2boardRegister),
-            ),
+            if (widget.showRegisterAction && enableRegistration) ...[
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: _isLoading || !hasServerUrl
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const V2BoardRegisterPage(),
+                          ),
+                        );
+                      },
+                child: Text(appLocalizations.v2boardRegister),
+              ),
+            ],
           ],
         ),
       ),
@@ -254,7 +259,6 @@ class V2BoardRegisterPage extends ConsumerStatefulWidget {
 }
 
 class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
-  late TextEditingController _serverController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _inviteCodeController;
@@ -268,13 +272,6 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
   @override
   void initState() {
     super.initState();
-    final props = ref.read(v2boardSettingProvider);
-    final configuredServer = ref.read(appServerUrlProvider);
-    _serverController = TextEditingController(
-      text: configuredServer.isNotEmpty
-          ? configuredServer
-          : props?.serverUrl ?? '',
-    );
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _inviteCodeController = TextEditingController();
@@ -284,13 +281,28 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
 
   @override
   void dispose() {
-    _serverController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _inviteCodeController.dispose();
     _emailCodeController.dispose();
     _obscureController.dispose();
     super.dispose();
+  }
+
+  String _resolveServerUrl() {
+    final configuredServer = ref.read(appServerUrlProvider).trim();
+    if (configuredServer.isNotEmpty) {
+      return configuredServer;
+    }
+    final storedServer = ref.read(v2boardSettingProvider)?.serverUrl.trim();
+    return storedServer ?? '';
+  }
+
+  void _showServerUnavailableTip() {
+    globalState.showMessage(
+      title: appLocalizations.tip,
+      message: const TextSpan(text: '注册服务暂未配置，请联系管理员。'),
+    );
   }
 
   Future<void> _syncSubscriptionAfterAuth() async {
@@ -303,10 +315,7 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
   }
 
   Future<void> _loadCommConfig() async {
-    final configuredServer = ref.read(appServerUrlProvider);
-    final serverUrl = configuredServer.isNotEmpty
-        ? configuredServer
-        : _serverController.text.trim();
+    final serverUrl = _resolveServerUrl();
     if (serverUrl.isEmpty) return;
     try {
       final api = V2BoardApi(baseUrl: serverUrl);
@@ -318,14 +327,14 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
   Future<void> _sendEmailCode() async {
     final email = _emailController.text.trim();
     if (email.isEmpty) return;
+    final serverUrl = _resolveServerUrl();
+    if (serverUrl.isEmpty) {
+      _showServerUnavailableTip();
+      return;
+    }
     setState(() => _isSendingCode = true);
     try {
-      final configuredServer = ref.read(appServerUrlProvider);
-      final api = V2BoardApi(
-        baseUrl: configuredServer.isNotEmpty
-            ? configuredServer
-            : _serverController.text.trim(),
-      );
+      final api = V2BoardApi(baseUrl: serverUrl);
       await api.sendEmailVerify(email: email);
       if (mounted) {
         globalState.showNotifier(appLocalizations.v2boardEmailSent);
@@ -344,12 +353,13 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
+    final serverUrl = _resolveServerUrl();
+    if (serverUrl.isEmpty) {
+      _showServerUnavailableTip();
+      return;
+    }
     setState(() => _isLoading = true);
     try {
-      final configuredServer = ref.read(appServerUrlProvider);
-      final serverUrl = configuredServer.isNotEmpty
-          ? configuredServer
-          : _serverController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
@@ -398,8 +408,11 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final configuredServer = ref.watch(appServerUrlProvider);
-    final hideServerInput = configuredServer.isNotEmpty;
+    final configuredServer = ref.watch(appServerUrlProvider).trim();
+    final storedProps = ref.watch(v2boardSettingProvider);
+    final hasServerUrl =
+        configuredServer.isNotEmpty ||
+        ((storedProps?.serverUrl.trim().isNotEmpty) ?? false);
     return Scaffold(
       appBar: AppBar(title: Text(appLocalizations.v2boardRegister)),
       body: SingleChildScrollView(
@@ -409,34 +422,21 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!hideServerInput) ...[
-                TextFormField(
-                  controller: _serverController,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.dns),
-                    border: const OutlineInputBorder(),
-                    labelText: appLocalizations.v2boardServer,
-                    hintText: 'https://example.com/api/v1',
+              if (!hasServerUrl) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.errorContainer,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  onChanged: (_) => _loadCommConfig(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return appLocalizations.emptyTip(
-                        appLocalizations.v2boardServer,
-                      );
-                    }
-                    return null;
-                  },
+                  child: Text(
+                    '注册服务暂未配置，请联系管理员。',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
-              ] else ...[
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.dns),
-                  title: Text(appLocalizations.v2boardServer),
-                  subtitle: Text(configuredServer),
-                ),
-                const SizedBox(height: 8),
               ],
               TextFormField(
                 controller: _emailController,
@@ -553,7 +553,7 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
               ],
               const SizedBox(height: 24),
               FilledButton(
-                onPressed: _isLoading ? null : _register,
+                onPressed: _isLoading || !hasServerUrl ? null : _register,
                 child: _isLoading
                     ? const SizedBox(
                         height: 20,
