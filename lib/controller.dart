@@ -396,9 +396,11 @@ extension ProfilesControllerExt on AppController {
     await coreController.deleteFile(providersDirPath);
   }
 
-  Future<void> syncV2BoardSubscription() async {
+  Future<String?> syncV2BoardSubscription() async {
     final props = _ref.read(v2boardSettingProvider);
-    if (props == null || !props.isLoggedIn) return;
+    if (props == null || !props.isLoggedIn) {
+      return 'V2Board is not logged in';
+    }
 
     try {
       final api = _ref.read(v2boardApiClientProvider);
@@ -409,28 +411,48 @@ extension ProfilesControllerExt on AppController {
             );
       }
       final apiClient = _ref.read(v2boardApiClientProvider);
-      if (apiClient == null) return;
+      if (apiClient == null) {
+        return 'V2Board API client is unavailable';
+      }
 
       final sub = await apiClient.getSubscribe();
-      final subscribeToken = sub.token.isNotEmpty ? sub.token : props.subscribeToken;
-      if (subscribeToken.isEmpty) return;
+      final subscribeToken = sub.token.takeFirstValid([props.subscribeToken]);
+      if (subscribeToken.isEmpty) {
+        return 'Subscription token is empty';
+      }
 
       // Update stored token
-      _ref.read(v2boardSettingProvider.notifier).value = props.copyWith(
+      final nextProps = props.copyWith(
         subscribeToken: subscribeToken,
       );
+      _ref.read(v2boardSettingProvider.notifier).value = nextProps;
 
-      final subscribeUrl = sub.subscribeUrl ??
-          '${props.serverUrl}/client/subscribe?token=$subscribeToken';
+      final subscribeUrl = sub.subscribeUrl.takeFirstValid([
+        nextProps.subscribeUrl,
+        '${props.serverUrl}/client/subscribe?token=$subscribeToken',
+      ]);
+      if (subscribeUrl.isEmpty) {
+        return 'Subscription url is empty';
+      }
 
       // Find existing profile with this V2Board URL
       final profiles = _ref.read(profilesProvider);
-      final existing = profiles.where(
-        (p) => p.url.isNotEmpty && p.url.contains(subscribeToken),
-      ).firstOrNull;
+      final tokenCandidates = {
+        subscribeToken,
+        props.subscribeToken.trim(),
+      }.where((token) => token.isNotEmpty).toSet();
+      final expectedSubscribePrefix = '${props.serverUrl}/client/subscribe';
+      final existing = profiles.where((profile) {
+        if (profile.url.isEmpty) return false;
+        if (tokenCandidates.any(profile.url.contains)) return true;
+        return profile.url.startsWith(expectedSubscribePrefix);
+      }).firstOrNull;
 
       if (existing != null) {
-        await updateProfile(existing, showLoading: true);
+        final targetProfile = existing.url == subscribeUrl
+            ? existing
+            : existing.copyWith(url: subscribeUrl);
+        await updateProfile(targetProfile, showLoading: true);
       } else {
         await addProfileFormURL(subscribeUrl);
       }
@@ -438,11 +460,13 @@ extension ProfilesControllerExt on AppController {
       // Update subscription state
       _ref.read(v2boardSubscriptionProvider.notifier).fetch();
       _ref.read(v2boardUserProvider.notifier).fetch();
+      return null;
     } catch (e) {
       commonPrint.log(
         'syncV2BoardSubscription error: $e',
         logLevel: LogLevel.warning,
       );
+      return e.toString();
     }
   }
 

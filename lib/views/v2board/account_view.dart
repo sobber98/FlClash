@@ -39,10 +39,16 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
   }
 
   Future<void> _syncSubscription() async {
-    await appController.syncV2BoardSubscription();
-    if (mounted) {
+    final errorMessage = await appController.syncV2BoardSubscription();
+    if (!mounted) return;
+    if (errorMessage == null) {
       globalState.showNotifier(appLocalizations.v2boardSyncSuccess);
+      return;
     }
+    globalState.showMessage(
+      title: appLocalizations.tip,
+      message: TextSpan(text: errorMessage),
+    );
   }
 
   String _formatBytes(int bytes) {

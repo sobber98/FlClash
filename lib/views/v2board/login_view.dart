@@ -39,6 +39,15 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
     super.dispose();
   }
 
+  Future<void> _syncSubscriptionAfterAuth() async {
+    final errorMessage = await appController.syncV2BoardSubscription();
+    if (!mounted || errorMessage == null) return;
+    globalState.showMessage(
+      title: appLocalizations.tip,
+      message: TextSpan(text: errorMessage),
+    );
+  }
+
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
@@ -64,7 +73,7 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
           );
 
       if (mounted) {
-        appController.syncV2BoardSubscription();
+        await _syncSubscriptionAfterAuth();
       }
     } on V2BoardApiException catch (e) {
       if (mounted) {
@@ -258,6 +267,15 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
     super.dispose();
   }
 
+  Future<void> _syncSubscriptionAfterAuth() async {
+    final errorMessage = await appController.syncV2BoardSubscription();
+    if (!mounted || errorMessage == null) return;
+    globalState.showMessage(
+      title: appLocalizations.tip,
+      message: TextSpan(text: errorMessage),
+    );
+  }
+
   Future<void> _loadCommConfig() async {
     final serverUrl = _serverController.text.trim();
     if (serverUrl.isEmpty) return;
@@ -321,7 +339,7 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
 
       if (mounted) {
         Navigator.pop(context);
-        appController.syncV2BoardSubscription();
+        await _syncSubscriptionAfterAuth();
       }
     } on V2BoardApiException catch (e) {
       if (mounted) {
