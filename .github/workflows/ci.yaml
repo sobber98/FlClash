@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.35.7'
+  FLUTTER_VERSION: '3.41.5'
   GO_VERSION: '1.24.0'
   JAVA_VERSION: '17'
   NDK_VERSION: '28.0.13004108'
