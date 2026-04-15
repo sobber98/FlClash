@@ -1,5 +1,6 @@
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/views/v2board/v2board_view.dart';
 import 'package:fl_clash/views/views.dart';
 import 'package:flutter/material.dart';
 
@@ -65,6 +66,13 @@ class Navigation {
         modes: openLogs
             ? [NavigationItemMode.desktop, NavigationItemMode.more]
             : [],
+      ),
+      NavigationItem(
+        icon: Icon(Icons.cloud_outlined),
+        label: PageLabel.v2board,
+        builder: (_) =>
+            const V2BoardView(key: GlobalObjectKey(PageLabel.v2board)),
+        modes: [NavigationItemMode.mobile, NavigationItemMode.desktop],
       ),
       NavigationItem(
         icon: Icon(Icons.construction),

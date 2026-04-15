@@ -326,6 +326,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Редактировать глобальные правила",
     ),
     "editRule": MessageLookupByLibrary.simpleMessage("Редактировать правило"),
+    "email": MessageLookupByLibrary.simpleMessage("Email"),
     "emptyTip": m4,
     "en": MessageLookupByLibrary.simpleMessage("Английский"),
     "enableOverride": MessageLookupByLibrary.simpleMessage(
@@ -886,6 +887,50 @@ class MessageLookup extends MessageLookupByLibrary {
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системные hosts",
+    ),
+    "v2board": MessageLookupByLibrary.simpleMessage("V2Board"),
+    "v2boardActions": MessageLookupByLibrary.simpleMessage("Действия"),
+    "v2boardBalance": MessageLookupByLibrary.simpleMessage("Баланс"),
+    "v2boardEmailCode": MessageLookupByLibrary.simpleMessage(
+      "Код подтверждения",
+    ),
+    "v2boardEmailSent": MessageLookupByLibrary.simpleMessage(
+      "Код подтверждения отправлен",
+    ),
+    "v2boardExpire": MessageLookupByLibrary.simpleMessage("Истекает"),
+    "v2boardInviteCode": MessageLookupByLibrary.simpleMessage(
+      "Код приглашения",
+    ),
+    "v2boardLogin": MessageLookupByLibrary.simpleMessage("Войти"),
+    "v2boardLoginDesc": MessageLookupByLibrary.simpleMessage(
+      "Войдите в панель V2Board для управления подпиской",
+    ),
+    "v2boardLogout": MessageLookupByLibrary.simpleMessage("Выйти"),
+    "v2boardNoExpire": MessageLookupByLibrary.simpleMessage("Без срока"),
+    "v2boardNoPlan": MessageLookupByLibrary.simpleMessage("Нет плана"),
+    "v2boardNotices": MessageLookupByLibrary.simpleMessage("Объявления"),
+    "v2boardPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "Пароль должен быть не менее 8 символов",
+    ),
+    "v2boardRefreshData": MessageLookupByLibrary.simpleMessage(
+      "Обновить данные",
+    ),
+    "v2boardRegister": MessageLookupByLibrary.simpleMessage("Регистрация"),
+    "v2boardSendCode": MessageLookupByLibrary.simpleMessage("Отправить"),
+    "v2boardServer": MessageLookupByLibrary.simpleMessage("Адрес сервера"),
+    "v2boardServerTip": MessageLookupByLibrary.simpleMessage(
+      "Введите корректный URL начинающийся с http",
+    ),
+    "v2boardSubscription": MessageLookupByLibrary.simpleMessage("Подписка"),
+    "v2boardSync": MessageLookupByLibrary.simpleMessage("Синхр."),
+    "v2boardSyncSubscription": MessageLookupByLibrary.simpleMessage(
+      "Синхронизировать подписку",
+    ),
+    "v2boardSyncSubscriptionDesc": MessageLookupByLibrary.simpleMessage(
+      "Импорт подписки в профили",
+    ),
+    "v2boardSyncSuccess": MessageLookupByLibrary.simpleMessage(
+      "Подписка синхронизирована",
     ),
     "value": MessageLookupByLibrary.simpleMessage("Значение"),
     "vibrantScheme": MessageLookupByLibrary.simpleMessage("Яркие"),

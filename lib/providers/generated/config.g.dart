@@ -591,6 +591,59 @@ abstract class _$PatchClashConfig extends $Notifier<ClashConfig> {
   }
 }
 
+@ProviderFor(V2boardSetting)
+const v2boardSettingProvider = V2boardSettingProvider._();
+
+final class V2boardSettingProvider
+    extends $NotifierProvider<V2boardSetting, V2BoardProps?> {
+  const V2boardSettingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'v2boardSettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$v2boardSettingHash();
+
+  @$internal
+  @override
+  V2boardSetting create() => V2boardSetting();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(V2BoardProps? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<V2BoardProps?>(value),
+    );
+  }
+}
+
+String _$v2boardSettingHash() => r'c0ebde9a0937b4e6741e4498e62fdc159c1999b0';
+
+abstract class _$V2boardSetting extends $Notifier<V2BoardProps?> {
+  V2BoardProps? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<V2BoardProps?, V2BoardProps?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<V2BoardProps?, V2BoardProps?>,
+              V2BoardProps?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
 @ProviderFor(_config)
 const configProvider = _ConfigProvider._();
 
@@ -629,4 +682,4 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'17dad8563f5727690a7fd484815e7344e6a46ffa';
+String _$_configHash() => r'174726e3854a81a0d633664cdcc6b9f494ec0f5b';

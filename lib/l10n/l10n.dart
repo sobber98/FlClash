@@ -3748,6 +3748,201 @@ class AppLocalizations {
   String get delayTest {
     return Intl.message('Delay Test', name: 'delayTest', desc: '', args: []);
   }
+
+  /// `V2Board`
+  String get v2board {
+    return Intl.message('V2Board', name: 'v2board', desc: '', args: []);
+  }
+
+  /// `Login`
+  String get v2boardLogin {
+    return Intl.message('Login', name: 'v2boardLogin', desc: '', args: []);
+  }
+
+  /// `Login to V2Board panel to manage subscription`
+  String get v2boardLoginDesc {
+    return Intl.message(
+      'Login to V2Board panel to manage subscription',
+      name: 'v2boardLoginDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Register`
+  String get v2boardRegister {
+    return Intl.message(
+      'Register',
+      name: 'v2boardRegister',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get v2boardLogout {
+    return Intl.message('Logout', name: 'v2boardLogout', desc: '', args: []);
+  }
+
+  /// `Server Address`
+  String get v2boardServer {
+    return Intl.message(
+      'Server Address',
+      name: 'v2boardServer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid URL starting with http`
+  String get v2boardServerTip {
+    return Intl.message(
+      'Please enter a valid URL starting with http',
+      name: 'v2boardServerTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password must be at least 8 characters`
+  String get v2boardPasswordTip {
+    return Intl.message(
+      'Password must be at least 8 characters',
+      name: 'v2boardPasswordTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invite Code`
+  String get v2boardInviteCode {
+    return Intl.message(
+      'Invite Code',
+      name: 'v2boardInviteCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email Code`
+  String get v2boardEmailCode {
+    return Intl.message(
+      'Email Code',
+      name: 'v2boardEmailCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send`
+  String get v2boardSendCode {
+    return Intl.message('Send', name: 'v2boardSendCode', desc: '', args: []);
+  }
+
+  /// `Verification code sent`
+  String get v2boardEmailSent {
+    return Intl.message(
+      'Verification code sent',
+      name: 'v2boardEmailSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expires`
+  String get v2boardExpire {
+    return Intl.message('Expires', name: 'v2boardExpire', desc: '', args: []);
+  }
+
+  /// `No expiration`
+  String get v2boardNoExpire {
+    return Intl.message(
+      'No expiration',
+      name: 'v2boardNoExpire',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance`
+  String get v2boardBalance {
+    return Intl.message('Balance', name: 'v2boardBalance', desc: '', args: []);
+  }
+
+  /// `No plan`
+  String get v2boardNoPlan {
+    return Intl.message('No plan', name: 'v2boardNoPlan', desc: '', args: []);
+  }
+
+  /// `Subscription`
+  String get v2boardSubscription {
+    return Intl.message(
+      'Subscription',
+      name: 'v2boardSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sync`
+  String get v2boardSync {
+    return Intl.message('Sync', name: 'v2boardSync', desc: '', args: []);
+  }
+
+  /// `Subscription synced`
+  String get v2boardSyncSuccess {
+    return Intl.message(
+      'Subscription synced',
+      name: 'v2boardSyncSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sync Subscription`
+  String get v2boardSyncSubscription {
+    return Intl.message(
+      'Sync Subscription',
+      name: 'v2boardSyncSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import subscription to profiles`
+  String get v2boardSyncSubscriptionDesc {
+    return Intl.message(
+      'Import subscription to profiles',
+      name: 'v2boardSyncSubscriptionDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh Data`
+  String get v2boardRefreshData {
+    return Intl.message(
+      'Refresh Data',
+      name: 'v2boardRefreshData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notices`
+  String get v2boardNotices {
+    return Intl.message('Notices', name: 'v2boardNotices', desc: '', args: []);
+  }
+
+  /// `Actions`
+  String get v2boardActions {
+    return Intl.message('Actions', name: 'v2boardActions', desc: '', args: []);
+  }
+
+  /// `Email`
+  String get email {
+    return Intl.message('Email', name: 'email', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

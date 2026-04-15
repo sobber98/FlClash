@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -240,6 +241,7 @@ abstract class Config with _$Config {
     @Default(defaultProxiesStyleProps) ProxiesStyleProps proxiesStyleProps,
     @Default(defaultWindowProps) WindowProps windowProps,
     @Default(defaultClashConfig) ClashConfig patchClashConfig,
+    V2BoardProps? v2boardProps,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) => _$ConfigFromJson(json);

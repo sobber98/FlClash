@@ -5,6 +5,7 @@ import 'package:fl_clash/core/core.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/dialog.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,7 @@ extension InitControllerExt on AppController {
     updateTray();
     autoUpdateProfiles();
     autoCheckUpdate();
+    initV2BoardOnStart();
     autoLaunch?.updateStatus(_ref.read(appSettingProvider).autoLaunch);
     if (!_ref.read(appSettingProvider).silentLaunch) {
       window?.show();
@@ -392,6 +394,68 @@ extension ProfilesControllerExt on AppController {
       await profileFile.safeDelete(recursive: true);
     }
     await coreController.deleteFile(providersDirPath);
+  }
+
+  Future<void> syncV2BoardSubscription() async {
+    final props = _ref.read(v2boardSettingProvider);
+    if (props == null || !props.isLoggedIn) return;
+
+    try {
+      final api = _ref.read(v2boardApiClientProvider);
+      if (api == null) {
+        _ref.read(v2boardApiClientProvider.notifier).init(
+              props.serverUrl,
+              authData: props.authData,
+            );
+      }
+      final apiClient = _ref.read(v2boardApiClientProvider);
+      if (apiClient == null) return;
+
+      final sub = await apiClient.getSubscribe();
+      final subscribeToken = sub.token.isNotEmpty ? sub.token : props.subscribeToken;
+      if (subscribeToken.isEmpty) return;
+
+      // Update stored token
+      _ref.read(v2boardSettingProvider.notifier).value = props.copyWith(
+        subscribeToken: subscribeToken,
+      );
+
+      final subscribeUrl = sub.subscribeUrl ??
+          '${props.serverUrl}/client/subscribe?token=$subscribeToken';
+
+      // Find existing profile with this V2Board URL
+      final profiles = _ref.read(profilesProvider);
+      final existing = profiles.where(
+        (p) => p.url.isNotEmpty && p.url.contains(subscribeToken),
+      ).firstOrNull;
+
+      if (existing != null) {
+        await updateProfile(existing, showLoading: true);
+      } else {
+        await addProfileFormURL(subscribeUrl);
+      }
+
+      // Update subscription state
+      _ref.read(v2boardSubscriptionProvider.notifier).fetch();
+      _ref.read(v2boardUserProvider.notifier).fetch();
+    } catch (e) {
+      commonPrint.log(
+        'syncV2BoardSubscription error: $e',
+        logLevel: LogLevel.warning,
+      );
+    }
+  }
+
+  void initV2BoardOnStart() {
+    final props = _ref.read(v2boardSettingProvider);
+    if (props == null || !props.isLoggedIn) return;
+    _ref.read(v2boardApiClientProvider.notifier).init(
+          props.serverUrl,
+          authData: props.authData,
+        );
+    if (props.autoSync) {
+      syncV2BoardSubscription();
+    }
   }
 }
 

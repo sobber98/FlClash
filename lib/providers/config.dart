@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/config.g.dart';
@@ -97,6 +98,14 @@ class PatchClashConfig extends _$PatchClashConfig
   }
 }
 
+@riverpod
+class V2boardSetting extends _$V2boardSetting with AutoDisposeNotifierMixin {
+  @override
+  V2BoardProps? build() {
+    return null;
+  }
+}
+
 @Riverpod(name: 'configProvider')
 Config _config(Ref ref) {
   final appSettingProps = ref.watch(appSettingProvider);
@@ -110,6 +119,7 @@ Config _config(Ref ref) {
   final hotKeyActions = ref.watch(hotKeyActionsProvider);
   final proxiesStyleProps = ref.watch(proxiesStyleSettingProvider);
   final patchClashConfig = ref.watch(patchClashConfigProvider);
+  final v2boardProps = ref.watch(v2boardSettingProvider);
   return Config(
     appSettingProps: appSettingProps,
     windowProps: windowProps,
@@ -122,6 +132,7 @@ Config _config(Ref ref) {
     hotKeyActions: hotKeyActions,
     proxiesStyleProps: proxiesStyleProps,
     patchClashConfig: patchClashConfig,
+    v2boardProps: v2boardProps,
   );
 }
 
@@ -143,6 +154,9 @@ List<Override> buildConfigOverrides(Config config) {
     ),
     patchClashConfigProvider.overrideWithBuild(
       (_, _) => config.patchClashConfig,
+    ),
+    v2boardSettingProvider.overrideWithBuild(
+      (_, _) => config.v2boardProps,
     ),
   ];
 }
