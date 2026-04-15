@@ -95,7 +95,9 @@ Map<String, dynamic> _$V2BoardPlanToJson(_V2BoardPlan instance) =>
 
 _V2BoardSubscription _$V2BoardSubscriptionFromJson(Map<String, dynamic> json) =>
     _V2BoardSubscription(
-      planId: json['plan_id'] as String? ?? '',
+      planId: json['plan_id'] == null
+          ? ''
+          : v2boardStringFromJson(json['plan_id']),
       token: json['token'] as String? ?? '',
       expiredAt: (json['expired_at'] as num?)?.toInt(),
       upload: (json['u'] as num?)?.toInt() ?? 0,
@@ -108,7 +110,7 @@ _V2BoardSubscription _$V2BoardSubscriptionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$V2BoardSubscriptionToJson(
   _V2BoardSubscription instance,
 ) => <String, dynamic>{
-  'plan_id': instance.planId,
+  'plan_id': v2boardStringToJson(instance.planId),
   'token': instance.token,
   'expired_at': instance.expiredAt,
   'u': instance.upload,

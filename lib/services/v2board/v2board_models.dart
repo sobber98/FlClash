@@ -19,6 +19,14 @@ bool v2boardBoolFromJson(Object? value) {
 
 Object? v2boardBoolToJson(bool value) => value;
 
+String v2boardStringFromJson(Object? value) {
+  if (value == null) return '';
+  if (value is String) return value;
+  return value.toString();
+}
+
+Object? v2boardStringToJson(String value) => value;
+
 /// Login/Register response
 @freezed
 abstract class V2BoardAuth with _$V2BoardAuth {
@@ -101,7 +109,13 @@ abstract class V2BoardPlan with _$V2BoardPlan {
 @freezed
 abstract class V2BoardSubscription with _$V2BoardSubscription {
   const factory V2BoardSubscription({
-    @Default('') @JsonKey(name: 'plan_id') String planId,
+    @Default('')
+    @JsonKey(
+      name: 'plan_id',
+      fromJson: v2boardStringFromJson,
+      toJson: v2boardStringToJson,
+    )
+    String planId,
     @Default('') String token,
     @JsonKey(name: 'expired_at') int? expiredAt,
     @Default(0) @JsonKey(name: 'u') int upload,
