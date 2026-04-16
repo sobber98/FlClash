@@ -181,61 +181,93 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        NotificationListener<ScrollMetricsNotification>(
-          onNotification: (scrollNotification) {
-            _hasMoreButtonNotifier.value =
-                scrollNotification.metrics.maxScrollExtent > 0;
-            return false;
-          },
-          child: ValueListenableBuilder(
-            valueListenable: _hasMoreButtonNotifier,
-            builder: (_, value, child) {
-              return Stack(
-                alignment: AlignmentDirectional.centerStart,
-                children: [
-                  TabBar(
-                    controller: _tabController,
-                    padding: EdgeInsets.only(
-                      left: 16,
-                      right: 16 + (value ? 16 : 0),
-                    ),
-                    dividerColor: Colors.transparent,
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    overlayColor: const WidgetStatePropertyAll(
-                      Colors.transparent,
-                    ),
-                    tabs: [
-                      for (final group in groups)
-                        Tab(
-                          child: Builder(
-                            builder: (context) {
-                              return EmojiText(
-                                group.name,
-                                style: DefaultTextStyle.of(context).style,
-                              );
-                            },
-                          ),
-                        ),
-                    ],
-                  ),
-                  if (value) Positioned(right: 0, child: child!),
-                ],
-              );
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+          child: NotificationListener<ScrollMetricsNotification>(
+            onNotification: (scrollNotification) {
+              _hasMoreButtonNotifier.value =
+                  scrollNotification.metrics.maxScrollExtent > 0;
+              return false;
             },
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    context.colorScheme.surface.opacity10,
-                    context.colorScheme.surface,
+            child: ValueListenableBuilder(
+              valueListenable: _hasMoreButtonNotifier,
+              builder: (_, value, child) {
+                return Stack(
+                  alignment: AlignmentDirectional.centerStart,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F6FA),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: TabBar(
+                        controller: _tabController,
+                        padding: EdgeInsets.fromLTRB(
+                          8,
+                          8,
+                          value ? 64 : 8,
+                          8,
+                        ),
+                        dividerColor: Colors.transparent,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        indicator: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x12000000),
+                              blurRadius: 10,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        labelColor: Colors.black,
+                        unselectedLabelColor: const Color(0xFF8B95A7),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        labelStyle: context.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                        unselectedLabelStyle:
+                            context.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        overlayColor: const WidgetStatePropertyAll(
+                          Colors.transparent,
+                        ),
+                        tabs: [
+                          for (final group in groups)
+                            Tab(
+                              height: 46,
+                              child: Builder(
+                                builder: (context) {
+                                  return EmojiText(
+                                    group.name,
+                                    style: DefaultTextStyle.of(context).style,
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (value) Positioned(right: 8, child: child!),
                   ],
-                  stops: const [0.0, 0.1],
+                );
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: IconTheme(
+                  data: const IconThemeData(color: Colors.white),
+                  child: _buildMoreButton(),
                 ),
               ),
-              child: _buildMoreButton(),
             ),
           ),
         ),
@@ -335,15 +367,15 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
         key: _getPageStorageKey(),
         controller: _controller,
         padding: const EdgeInsets.only(
-          top: 16,
-          left: 16,
-          right: 16,
-          bottom: 96,
+          top: 20,
+          left: 20,
+          right: 20,
+          bottom: 108,
         ),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: widget.columns,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
           mainAxisExtent: getItemHeight(widget.cardType),
         ),
         itemCount: currentProxies.length,

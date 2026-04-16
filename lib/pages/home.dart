@@ -139,9 +139,16 @@ class _MobileShell extends ConsumerWidget {
             child: Container(
               decoration: const BoxDecoration(
                 color: Color(0xFFE8EEF7),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x14000000),
+                    blurRadius: 18,
+                    offset: Offset(0, -2),
+                  ),
+                ],
               ),
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+              padding: const EdgeInsets.fromLTRB(12, 14, 12, 16),
               child: Row(
                 children: [
                   for (var index = 0; index < navigationItems.length; index++)
@@ -327,33 +334,40 @@ class _MobileNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeColor = const Color(0xFF123E63);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFFDDE8F7) : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconTheme(
-              data: IconThemeData(
-                color: selected ? activeColor : const Color(0xFF4B5563),
-                size: 24,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          constraints: const BoxConstraints(minHeight: 64),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFFDDE8F7) : Colors.transparent,
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconTheme(
+                data: IconThemeData(
+                  color: selected ? activeColor : const Color(0xFF4B5563),
+                  size: 26,
+                ),
+                child: item.icon,
               ),
-              child: item.icon,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: context.textTheme.labelMedium?.copyWith(
-                color: selected ? activeColor : const Color(0xFF4B5563),
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: context.textTheme.labelLarge?.copyWith(
+                  color: selected ? activeColor : const Color(0xFF4B5563),
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

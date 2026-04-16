@@ -31,7 +31,7 @@ class ProxyCard extends StatelessWidget {
     proxyDelayTest(proxy, testUrl);
   }
 
-  Widget _buildDelayText() {
+  Widget _buildDelayText({required bool isSelected}) {
     return SizedBox(
       height: measure.labelSmallHeight,
       child: Consumer(
@@ -55,7 +55,9 @@ class ProxyCard extends StatelessWidget {
                   Text(
                     updatedText,
                     style: context.textTheme.labelSmall?.copyWith(
-                      color: context.colorScheme.onSurfaceVariant,
+                      color: isSelected
+                          ? Colors.white70
+                          : context.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -65,9 +67,17 @@ class ProxyCard extends StatelessWidget {
                         height: measure.labelSmallHeight,
                         width: measure.labelSmallHeight,
                         child: delay == 0
-                            ? const CircularProgressIndicator(strokeWidth: 2)
+                            ? CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: isSelected ? Colors.white : null,
+                              )
                             : IconButton(
-                                icon: const Icon(Icons.bolt),
+                                icon: Icon(
+                                  Icons.bolt_rounded,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : const Color(0xFF111827),
+                                ),
                                 iconSize: globalState.measure.labelSmallHeight,
                                 padding: EdgeInsets.zero,
                                 onPressed: _handleTestCurrentDelay,
@@ -79,7 +89,9 @@ class ProxyCard extends StatelessWidget {
                           delay > 0 ? '$delay ms' : 'Timeout',
                           style: context.textTheme.labelSmall?.copyWith(
                             overflow: TextOverflow.ellipsis,
-                            color: utils.getDelayColor(delay),
+                            color: isSelected
+                                ? Colors.white
+                                : utils.getDelayColor(delay),
                           ),
                         ),
                       ),
@@ -91,7 +103,7 @@ class ProxyCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProxyNameText(BuildContext context) {
+  Widget _buildProxyNameText(BuildContext context, {required bool isSelected}) {
     if (type == ProxyCardType.min) {
       return SizedBox(
         height: measure.bodyMediumHeight * 1,
@@ -99,7 +111,10 @@ class ProxyCard extends StatelessWidget {
           proxy.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: context.textTheme.bodyMedium,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: isSelected ? Colors.white : const Color(0xFF111827),
+            fontWeight: FontWeight.w700,
+          ),
         ),
       );
     } else {
@@ -109,7 +124,10 @@ class ProxyCard extends StatelessWidget {
           proxy.name,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: context.textTheme.bodyMedium,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: isSelected ? Colors.white : const Color(0xFF111827),
+            fontWeight: FontWeight.w700,
+          ),
         ),
       );
     }
@@ -134,8 +152,6 @@ class ProxyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final measure = globalState.measure;
-    final delayText = _buildDelayText();
-    final proxyNameText = _buildProxyNameText(context);
     return Stack(
       children: [
         Consumer(
@@ -143,61 +159,90 @@ class ProxyCard extends StatelessWidget {
             final selectedProxyName = ref.watch(
               getSelectedProxyNameProvider(groupName),
             );
-            return CommonCard(
-              key: key,
-              onPressed: () {
-                _changeProxy(ref);
-              },
-              isSelected: selectedProxyName == proxy.name,
-              child: child!,
+            final isSelected = selectedProxyName == proxy.name;
+            final delayText = _buildDelayText(isSelected: isSelected);
+            final proxyNameText = _buildProxyNameText(
+              context,
+              isSelected: isSelected,
             );
-          },
-          child: Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                proxyNameText,
-                const SizedBox(height: 8),
-                if (type == ProxyCardType.expand) ...[
-                  SizedBox(
-                    height: measure.bodySmallHeight,
-                    child: _ProxyDesc(proxy: proxy),
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
+                key: key,
+                borderRadius: BorderRadius.circular(24),
+                onTap: () {
+                  _changeProxy(ref);
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
                   ),
-                  const SizedBox(height: 6),
-                  delayText,
-                ] else
-                  SizedBox(
-                    height: measure.bodySmallHeight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: TooltipText(
-                            text: Text(
-                              proxy.type,
-                              style: context.textTheme.bodySmall?.copyWith(
-                                overflow: TextOverflow.ellipsis,
-                                color: context
-                                    .textTheme
-                                    .bodySmall
-                                    ?.color
-                                    ?.opacity80,
-                              ),
-                            ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.black : Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.black
+                          : const Color(0xFFE8ECF2),
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x10000000),
+                        blurRadius: 16,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      proxyNameText,
+                      const SizedBox(height: 8),
+                      if (type == ProxyCardType.expand) ...[
+                        SizedBox(
+                          height: measure.bodySmallHeight,
+                          child: _ProxyDesc(
+                            proxy: proxy,
+                            isSelected: isSelected,
                           ),
                         ),
+                        const SizedBox(height: 6),
                         delayText,
-                      ],
-                    ),
+                      ] else
+                        SizedBox(
+                          height: measure.bodySmallHeight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                flex: 1,
+                                child: TooltipText(
+                                  text: Text(
+                                    proxy.type,
+                                    style: context.textTheme.bodySmall?.copyWith(
+                                      overflow: TextOverflow.ellipsis,
+                                      color: isSelected
+                                          ? Colors.white70
+                                          : const Color(0xFF7B8492),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              delayText,
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
-              ],
-            ),
-          ),
+                ),
+              ),
+            );
+          },
         ),
         if (groupType.isComputedSelected)
           Positioned(
@@ -212,8 +257,9 @@ class ProxyCard extends StatelessWidget {
 
 class _ProxyDesc extends ConsumerWidget {
   final Proxy proxy;
+  final bool isSelected;
 
-  const _ProxyDesc({required this.proxy});
+  const _ProxyDesc({required this.proxy, required this.isSelected});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -222,7 +268,7 @@ class _ProxyDesc extends ConsumerWidget {
       desc,
       overflow: TextOverflow.ellipsis,
       style: context.textTheme.bodySmall?.copyWith(
-        color: context.textTheme.bodySmall?.color?.opacity80,
+        color: isSelected ? Colors.white70 : const Color(0xFF7B8492),
       ),
     );
   }

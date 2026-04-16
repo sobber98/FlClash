@@ -12,6 +12,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'setting.dart';
 import 'tab.dart';
 
+const _proxiesBackground = Color(0xFFF5F6F8);
+
 class ProxiesView extends ConsumerStatefulWidget {
   const ProxiesView({super.key});
 
@@ -149,11 +151,18 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ref.watch(isMobileViewProvider);
     final proxiesType = ref.watch(
       proxiesStyleSettingProvider.select((state) => state.type),
     );
     final isLoading = ref.watch(loadingProvider(LoadingTag.proxies));
     final autoTestState = ref.watch(autoTestStateProvider);
+    final currentGroupName = ref.watch(
+      currentProfileProvider.select((state) => state?.currentGroupName),
+    );
+    final selectedProxyName = currentGroupName == null
+        ? null
+        : ref.watch(getSelectedProxyNameProvider(currentGroupName));
     final lastTestText = autoTestState.lastUpdatedAt == null
         ? '未测速'
         : '最近测速 ${autoTestState.lastUpdatedAt!.hour.toString().padLeft(2, '0')}:${autoTestState.lastUpdatedAt!.minute.toString().padLeft(2, '0')}';
@@ -165,56 +174,209 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       actions: _buildActions(),
       title: appLocalizations.proxies,
       searchState: AppBarSearchState(onSearch: _onSearch),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: CommonCard(
-              type: CommonCardType.filled,
+      body: Container(
+        color: _proxiesBackground,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                isMobile ? 16 : 24,
+                12,
+                isMobile ? 16 : 24,
+                0,
+              ),
+              child: _ProxyOverviewCard(
+                currentGroupName: currentGroupName,
+                selectedProxyName: selectedProxyName,
+                lastTestText: lastTestText,
+                viewModeText: proxiesType == ProxiesType.tab ? '标签视图' : '列表视图',
+                isTesting: autoTestState.isTesting,
+                onRunAutoTest: autoTestState.isTesting ? null : _runAutoTest,
+              ),
+            ),
+            Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '节点状态与延迟',
-                            style: context.textTheme.titleMedium?.toSoftBold,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            lastTestText,
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: context.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
+                padding: EdgeInsets.fromLTRB(
+                  isMobile ? 16 : 24,
+                  16,
+                  isMobile ? 16 : 24,
+                  0,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(30),
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x10000000),
+                        blurRadius: 18,
+                        offset: Offset(0, 4),
                       ),
-                    ),
-                    FilledButton.icon(
-                      onPressed: autoTestState.isTesting ? null : _runAutoTest,
-                      icon: autoTestState.isTesting
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.bolt),
-                      label: Text(autoTestState.isTesting ? '测速中' : '测试全部'),
-                    ),
-                  ],
+                    ],
+                  ),
+                  child: switch (proxiesType) {
+                    ProxiesType.tab => ProxiesTabView(key: _proxiesTabKey),
+                    ProxiesType.list => const ProxiesListView(),
+                  },
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProxyOverviewCard extends StatelessWidget {
+  final String? currentGroupName;
+  final String? selectedProxyName;
+  final String lastTestText;
+  final String viewModeText;
+  final bool isTesting;
+  final VoidCallback? onRunAutoTest;
+
+  const _ProxyOverviewCard({
+    required this.currentGroupName,
+    required this.selectedProxyName,
+    required this.lastTestText,
+    required this.viewModeText,
+    required this.isTesting,
+    required this.onRunAutoTest,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10000000),
+            blurRadius: 18,
+            offset: Offset(0, 4),
           ),
-          Expanded(
-            child: switch (proxiesType) {
-              ProxiesType.tab => ProxiesTabView(key: _proxiesTabKey),
-              ProxiesType.list => const ProxiesListView(),
-            },
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '代理中心',
+            style: context.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.6,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '快速切换分组、查看节点状态并执行延迟测试',
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF9CA3AF),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: _ProxyMetric(
+                  label: '当前分组',
+                  value: currentGroupName?.isNotEmpty == true
+                      ? currentGroupName!
+                      : '自动分组',
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ProxyMetric(
+                  label: '当前节点',
+                  value: selectedProxyName?.isNotEmpty == true
+                      ? selectedProxyName!
+                      : '自动选择',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _ProxyMetric(label: '显示模式', value: viewModeText),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ProxyMetric(label: '测速状态', value: lastTestText),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: onRunAutoTest,
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                minimumSize: const Size.fromHeight(56),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+              icon: isTesting
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.bolt_rounded),
+              label: Text(isTesting ? '测速中' : '重新测试全部节点'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProxyMetric extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _ProxyMetric({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F7FB),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: const Color(0xFF9CA3AF),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ],
       ),
