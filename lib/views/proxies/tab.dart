@@ -318,6 +318,7 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
 
   List<Proxy> currentProxies = [];
   String? testUrl;
+  int _currentColumns = 1;
 
   @override
   void initState() {
@@ -351,6 +352,7 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
             getScrollToSelectedOffset(
               groupName: widget.group.name,
               proxies: currentProxies,
+              columns: _currentColumns,
             ),
         _controller.position.maxScrollExtent,
       ),
@@ -363,34 +365,49 @@ class _ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
   Widget build(BuildContext context) {
     final group = widget.group;
     final proxies = group.all;
+    final proxiesLayout = ref.watch(
+      proxiesStyleSettingProvider.select((state) => state.layout),
+    );
     testUrl = group.testUrl;
     currentProxies = proxies;
     return CommonScrollBar(
       controller: _controller,
-      child: GridView.builder(
-        key: _getPageStorageKey(),
-        controller: _controller,
-        padding: const EdgeInsets.only(
-          top: 20,
-          left: 20,
-          right: 20,
-          bottom: 108,
-        ),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: widget.columns,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          mainAxisExtent: getItemHeight(widget.cardType),
-        ),
-        itemCount: currentProxies.length,
-        itemBuilder: (_, index) {
-          final proxy = currentProxies[index];
-          return ProxyCard(
-            testUrl: group.testUrl,
-            groupType: group.type,
-            type: widget.cardType,
-            proxy: proxy,
-            groupName: group.name,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final availableWidth = max(constraints.maxWidth - 40, 220.0);
+          final computedColumns = utils.getProxiesColumns(
+            availableWidth,
+            proxiesLayout,
+          );
+          final maxColumns = currentProxies.isEmpty ? 1 : currentProxies.length;
+          final localColumns = min(maxColumns, max(1, computedColumns));
+          _currentColumns = localColumns;
+          return GridView.builder(
+            key: _getPageStorageKey(),
+            controller: _controller,
+            padding: const EdgeInsets.only(
+              top: 20,
+              left: 20,
+              right: 20,
+              bottom: 108,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: localColumns,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              mainAxisExtent: getItemHeight(widget.cardType),
+            ),
+            itemCount: currentProxies.length,
+            itemBuilder: (_, index) {
+              final proxy = currentProxies[index];
+              return ProxyCard(
+                testUrl: group.testUrl,
+                groupType: group.type,
+                type: widget.cardType,
+                proxy: proxy,
+                groupName: group.name,
+              );
+            },
           );
         },
       ),

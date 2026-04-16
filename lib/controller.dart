@@ -1177,7 +1177,12 @@ extension CommonControllerExt on AppController {
   }
 
   void updateStart() {
-    updateStatus(!_ref.read(isStartProvider));
+    final coreStatus = _ref.read(coreStatusProvider);
+    if (coreStatus == CoreStatus.connecting) {
+      return;
+    }
+    final shouldStart = coreStatus != CoreStatus.connected;
+    updateStatus(shouldStart);
   }
 
   void updateSpeedStatistics() {

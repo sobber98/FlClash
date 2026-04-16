@@ -75,14 +75,16 @@ Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
 double getScrollToSelectedOffset({
   required String groupName,
   required List<Proxy> proxies,
+  int? columns,
 }) {
-  final columns = appController.getProxiesColumns();
+  final currentColumns = columns ?? appController.getProxiesColumns();
   final proxyCardType = appController.config.proxiesStyleProps.cardType;
   final selectedProxyName = appController.getSelectedProxyName(groupName);
   final findSelectedIndex = proxies.indexWhere(
     (proxy) => proxy.name == selectedProxyName,
   );
   final selectedIndex = findSelectedIndex != -1 ? findSelectedIndex : 0;
-  final rows = (selectedIndex / columns).floor();
-  return rows * getItemHeight(proxyCardType) + (rows - 1) * 8;
+  final rows = (selectedIndex / currentColumns).floor();
+  final gapCount = rows > 0 ? rows - 1 : 0;
+  return rows * getItemHeight(proxyCardType) + gapCount * 8;
 }

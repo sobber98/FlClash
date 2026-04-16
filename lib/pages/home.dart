@@ -68,11 +68,18 @@ class _AuthenticatedHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final navigationState = ref.watch(navigationStateProvider);
     final navigationItems = ref.watch(currentNavigationItemsStateProvider).value;
+    final currentPageLabel = ref.watch(currentPageLabelProvider);
     final currentIndex = navigationState.currentIndex;
     final isMobile = navigationState.viewMode == ViewMode.mobile;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(sideWidthProvider.notifier).value =
           isMobile ? 0 : desktopSidebarWidth;
+      final containsCurrentPage = navigationItems.any(
+        (item) => item.label == currentPageLabel,
+      );
+      if (!containsCurrentPage) {
+        appController.toPage(PageLabel.dashboard);
+      }
     });
     final pageView = _HomePageView(
       key: ValueKey('home-${navigationState.viewMode.name}-${navigationItems.length}'),
@@ -241,6 +248,7 @@ class _DesktopShell extends ConsumerWidget {
                     separatorBuilder: (_, _) => const SizedBox(height: 8),
                     itemBuilder: (_, index) {
                       return _DesktopNavItem(
+                        key: ValueKey(navigationItems[index].label),
                         item: navigationItems[index],
                         selected: index == currentIndex,
                         onTap: () {
@@ -383,6 +391,7 @@ class _DesktopNavItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const _DesktopNavItem({
+    super.key,
     required this.item,
     required this.selected,
     required this.onTap,
@@ -416,11 +425,15 @@ class _DesktopNavItem extends StatelessWidget {
               child: item.icon,
             ),
             const SizedBox(width: 12),
-            Text(
-              label,
-              style: context.textTheme.titleSmall?.copyWith(
-                color: selected ? Colors.white : const Color(0xFF4B5563),
-                fontWeight: FontWeight.w700,
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.titleSmall?.copyWith(
+                  color: selected ? Colors.white : const Color(0xFF4B5563),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],

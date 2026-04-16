@@ -21,11 +21,13 @@ class ConnectButton extends ConsumerWidget {
     final isRunning = ref.watch(isStartProvider);
     final runTime = ref.watch(runTimeProvider);
     final scheme = Theme.of(context).colorScheme;
-    final effectiveStatus = status == CoreStatus.connecting
-        ? CoreStatus.connecting
-        : isRunning
-        ? CoreStatus.connected
-        : CoreStatus.disconnected;
+    final effectiveStatus = switch (status) {
+      CoreStatus.connecting => CoreStatus.connecting,
+      CoreStatus.connected => isRunning
+          ? CoreStatus.connected
+          : CoreStatus.disconnected,
+      CoreStatus.disconnected => CoreStatus.disconnected,
+    };
     final isConnected = effectiveStatus == CoreStatus.connected;
     final backgroundColor = switch (effectiveStatus) {
       CoreStatus.connected => const Color(0xFF16A34A),
