@@ -197,17 +197,19 @@ class _HeroStatusSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final status = ref.watch(coreStatusProvider);
+    final connectionState = ref.watch(connectionVisualStateProvider);
     final buttonSize = compact ? 128.0 : 160.0;
-    final title = switch (status) {
-      CoreStatus.connected => '已连接',
-      CoreStatus.connecting => '连接中',
-      CoreStatus.disconnected => '未连接',
+    final title = switch (connectionState) {
+      ConnectionVisualState.connected => '已连接',
+      ConnectionVisualState.connecting => '连接中',
+      ConnectionVisualState.disconnecting => '断开中',
+      ConnectionVisualState.disconnected => '未连接',
     };
-    final subtitle = switch (status) {
-      CoreStatus.connected => '安全连接已建立，当前可直接开始使用',
-      CoreStatus.connecting => '核心正在建立连接，请稍候',
-      CoreStatus.disconnected => '点击按钮开启安全连接',
+    final subtitle = switch (connectionState) {
+      ConnectionVisualState.connected => '安全连接已建立，当前可直接开始使用',
+      ConnectionVisualState.connecting => '正在建立安全连接，请稍候',
+      ConnectionVisualState.disconnecting => '正在断开当前连接，请稍候',
+      ConnectionVisualState.disconnected => '点击按钮开启安全连接',
     };
     return Column(
       children: [

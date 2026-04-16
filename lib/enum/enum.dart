@@ -88,6 +88,8 @@ enum Mode { rule, global, direct }
 
 enum ViewMode { mobile, laptop, desktop }
 
+enum ConnectionVisualState { disconnected, connecting, disconnecting, connected }
+
 enum LogLevel { debug, info, warning, error, silent }
 
 extension LogLevelExt on LogLevel {
@@ -422,7 +424,7 @@ enum ScrollPositionCacheKey { tools, profiles, proxiesList, proxiesTabList }
 
 enum QueryTag { proxies, access }
 
-enum LoadingTag { profiles, backup_restore, access, proxies }
+enum LoadingTag { profiles, backup_restore, access, proxies, connect }
 
 enum CoreStatus { connecting, connected, disconnected }
 

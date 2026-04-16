@@ -627,34 +627,45 @@ extension SetupControllerExt on AppController {
   }
 
   Future<void> updateStatus(bool isStart, {bool isInit = false}) async {
-    if (isStart) {
-      if (!isInit) {
-        final res = await tryStartCore(true);
-        if (res) {
-          return;
+    if (_ref.read(loadingProvider(LoadingTag.connect))) {
+      return;
+    }
+    _ref.read(loadingProvider(LoadingTag.connect).notifier).start();
+    try {
+      _ref.read(coreStatusProvider.notifier).value = CoreStatus.connecting;
+      if (isStart) {
+        if (!isInit) {
+          final res = await tryStartCore(true);
+          if (res) {
+            return;
+          }
+          if (!_ref.read(initProvider)) {
+            return;
+          }
+          await globalState.handleStart([updateRunTime, updateTraffic]);
+          _ref.read(coreStatusProvider.notifier).value = CoreStatus.connected;
+          applyProfileDebounce(force: true, silence: true);
+        } else {
+          globalState.needInitStatus = false;
+          await applyProfile(
+            force: true,
+            preloadInvoke: () async {
+              await globalState.handleStart([updateRunTime, updateTraffic]);
+            },
+          );
+          _ref.read(coreStatusProvider.notifier).value = CoreStatus.connected;
         }
-        if (!_ref.read(initProvider)) {
-          return;
-        }
-        await globalState.handleStart([updateRunTime, updateTraffic]);
-        applyProfileDebounce(force: true, silence: true);
       } else {
-        globalState.needInitStatus = false;
-        await applyProfile(
-          force: true,
-          preloadInvoke: () async {
-            await globalState.handleStart([updateRunTime, updateTraffic]);
-          },
-        );
+        await globalState.handleStop();
+        coreController.resetTraffic();
+        _ref.read(trafficsProvider.notifier).clear();
+        _ref.read(totalTrafficProvider.notifier).value = Traffic();
+        _ref.read(runTimeProvider.notifier).value = null;
+        _ref.read(coreStatusProvider.notifier).value = CoreStatus.disconnected;
+        addCheckIp();
       }
-    } else {
-      _ref.read(coreStatusProvider.notifier).value = CoreStatus.disconnected;
-      await globalState.handleStop();
-      coreController.resetTraffic();
-      _ref.read(trafficsProvider.notifier).clear();
-      _ref.read(totalTrafficProvider.notifier).value = Traffic();
-      _ref.read(runTimeProvider.notifier).value = null;
-      addCheckIp();
+    } finally {
+      _ref.read(loadingProvider(LoadingTag.connect).notifier).stop();
     }
   }
 
@@ -1177,11 +1188,12 @@ extension CommonControllerExt on AppController {
   }
 
   void updateStart() {
-    final coreStatus = _ref.read(coreStatusProvider);
-    if (coreStatus == CoreStatus.connecting) {
+    if (_ref.read(loadingProvider(LoadingTag.connect))) {
       return;
     }
-    final shouldStart = coreStatus != CoreStatus.connected;
+    final shouldStart =
+        _ref.read(connectionVisualStateProvider) !=
+        ConnectionVisualState.connected;
     updateStatus(shouldStart);
   }
 

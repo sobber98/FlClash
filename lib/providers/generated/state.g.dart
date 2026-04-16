@@ -771,6 +771,54 @@ final class IsStartProvider extends $FunctionalProvider<bool, bool, bool>
 
 String _$isStartHash() => r'f8bcefa8515c44fbe14876a5fc6676110508e9b2';
 
+@ProviderFor(connectionVisualState)
+const connectionVisualStateProvider = ConnectionVisualStateProvider._();
+
+final class ConnectionVisualStateProvider
+    extends
+        $FunctionalProvider<
+          ConnectionVisualState,
+          ConnectionVisualState,
+          ConnectionVisualState
+        >
+    with $Provider<ConnectionVisualState> {
+  const ConnectionVisualStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectionVisualStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$connectionVisualStateHash();
+
+  @$internal
+  @override
+  $ProviderElement<ConnectionVisualState> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ConnectionVisualState create(Ref ref) {
+    return connectionVisualState(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ConnectionVisualState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ConnectionVisualState>(value),
+    );
+  }
+}
+
+String _$connectionVisualStateHash() =>
+    r'd413eb91af9642dde0f29967a5216545785fcc0f';
+
 @ProviderFor(proxiesTabControllerState)
 const proxiesTabControllerStateProvider = ProxiesTabControllerStateProvider._();
 

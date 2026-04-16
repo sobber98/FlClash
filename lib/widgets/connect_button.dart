@@ -17,47 +17,45 @@ class ConnectButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final status = ref.watch(coreStatusProvider);
-    final isRunning = ref.watch(isStartProvider);
+    final connectionState = ref.watch(connectionVisualStateProvider);
     final runTime = ref.watch(runTimeProvider);
     final scheme = Theme.of(context).colorScheme;
-    final effectiveStatus = switch (status) {
-      CoreStatus.connecting => CoreStatus.connecting,
-      CoreStatus.connected => isRunning
-          ? CoreStatus.connected
-          : CoreStatus.disconnected,
-      CoreStatus.disconnected => CoreStatus.disconnected,
+    final isConnected = connectionState == ConnectionVisualState.connected;
+    final backgroundColor = switch (connectionState) {
+      ConnectionVisualState.connected => const Color(0xFF16A34A),
+      ConnectionVisualState.connecting => const Color(0xFF1F2937),
+      ConnectionVisualState.disconnecting => const Color(0xFF7C2D12),
+      ConnectionVisualState.disconnected => Colors.white,
     };
-    final isConnected = effectiveStatus == CoreStatus.connected;
-    final backgroundColor = switch (effectiveStatus) {
-      CoreStatus.connected => const Color(0xFF16A34A),
-      CoreStatus.connecting => const Color(0xFF1F2937),
-      CoreStatus.disconnected => Colors.white,
+    final iconColor = switch (connectionState) {
+      ConnectionVisualState.connected => Colors.white,
+      ConnectionVisualState.connecting => Colors.white,
+      ConnectionVisualState.disconnecting => Colors.white,
+      ConnectionVisualState.disconnected => const Color(0xFF6B7280),
     };
-    final iconColor = switch (effectiveStatus) {
-      CoreStatus.connected => Colors.white,
-      CoreStatus.connecting => Colors.white,
-      CoreStatus.disconnected => const Color(0xFF6B7280),
+    final label = switch (connectionState) {
+      ConnectionVisualState.connected => appLocalizations.connected,
+      ConnectionVisualState.connecting => appLocalizations.connecting,
+      ConnectionVisualState.disconnecting => '断开中',
+      ConnectionVisualState.disconnected => appLocalizations.disconnected,
     };
-    final label = switch (effectiveStatus) {
-      CoreStatus.connected => appLocalizations.connected,
-      CoreStatus.connecting => appLocalizations.connecting,
-      CoreStatus.disconnected => appLocalizations.disconnected,
+    final detail = switch (connectionState) {
+      ConnectionVisualState.connected => utils.getTimeText(runTime),
+      ConnectionVisualState.connecting => '正在建立连接',
+      ConnectionVisualState.disconnecting => '正在断开连接',
+      ConnectionVisualState.disconnected => '点击连接',
     };
-    final detail = switch (effectiveStatus) {
-      CoreStatus.connected => utils.getTimeText(runTime),
-      CoreStatus.connecting => '正在建立连接',
-      CoreStatus.disconnected => '点击连接',
+    final labelColor = switch (connectionState) {
+      ConnectionVisualState.connected => const Color(0xFF16A34A),
+      ConnectionVisualState.connecting => scheme.onSurface,
+      ConnectionVisualState.disconnecting => const Color(0xFF9A3412),
+      ConnectionVisualState.disconnected => scheme.onSurface,
     };
-    final labelColor = switch (effectiveStatus) {
-      CoreStatus.connected => const Color(0xFF16A34A),
-      CoreStatus.connecting => scheme.onSurface,
-      CoreStatus.disconnected => scheme.onSurface,
-    };
-    final borderColor = switch (effectiveStatus) {
-      CoreStatus.connected => const Color(0xFF86EFAC),
-      CoreStatus.connecting => const Color(0xFF374151),
-      CoreStatus.disconnected => const Color(0xFFE5E7EB),
+    final borderColor = switch (connectionState) {
+      ConnectionVisualState.connected => const Color(0xFF86EFAC),
+      ConnectionVisualState.connecting => const Color(0xFF374151),
+      ConnectionVisualState.disconnecting => const Color(0xFFF97316),
+      ConnectionVisualState.disconnected => const Color(0xFFE5E7EB),
     };
 
     return Column(
@@ -88,13 +86,15 @@ class ConnectButton extends ConsumerWidget {
             color: Colors.transparent,
             child: InkWell(
               customBorder: const CircleBorder(),
-              onTap: effectiveStatus == CoreStatus.connecting
+              onTap: connectionState == ConnectionVisualState.connecting ||
+                      connectionState == ConnectionVisualState.disconnecting
                   ? null
                   : () {
                       appController.updateStart();
                     },
               child: Center(
-                child: effectiveStatus == CoreStatus.connecting
+                child: connectionState == ConnectionVisualState.connecting ||
+                        connectionState == ConnectionVisualState.disconnecting
                     ? SizedBox(
                         width: 36,
                         height: 36,
@@ -124,9 +124,11 @@ class ConnectButton extends ConsumerWidget {
           Text(
             detail,
             style: context.textTheme.bodySmall?.copyWith(
-              color: isConnected
-                  ? const Color(0xFF15803D)
-                  : scheme.onSurfaceVariant,
+              color: switch (connectionState) {
+                ConnectionVisualState.connected => const Color(0xFF15803D),
+                ConnectionVisualState.disconnecting => const Color(0xFF9A3412),
+                _ => scheme.onSurfaceVariant,
+              },
             ),
           ),
         ],

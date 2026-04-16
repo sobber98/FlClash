@@ -302,6 +302,22 @@ bool isStart(Ref ref) {
 }
 
 @riverpod
+ConnectionVisualState connectionVisualState(Ref ref) {
+  final coreStatus = ref.watch(coreStatusProvider);
+  final isRunning = ref.watch(isStartProvider);
+  final isBusy = ref.watch(loadingProvider(LoadingTag.connect));
+  if (isBusy) {
+    return isRunning
+        ? ConnectionVisualState.disconnecting
+        : ConnectionVisualState.connecting;
+  }
+  if (coreStatus == CoreStatus.disconnected || !isRunning) {
+    return ConnectionVisualState.disconnected;
+  }
+  return ConnectionVisualState.connected;
+}
+
+@riverpod
 VM2<List<String>, String?> proxiesTabControllerState(Ref ref) {
   return ref.watch(
     proxiesTabStateProvider.select(
