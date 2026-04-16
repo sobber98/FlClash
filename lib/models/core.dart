@@ -7,9 +7,10 @@ part 'generated/core.g.dart';
 
 @freezed
 abstract class SetupParams with _$SetupParams {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory SetupParams({
-    @JsonKey(name: 'selected-map') required Map<String, String> selectedMap,
-    @JsonKey(name: 'test-url') required String testUrl,
+    required Map<String, String> selectedMap,
+    required String testUrl,
   }) = _SetupParams;
 
   factory SetupParams.fromJson(Map<String, dynamic> json) =>
@@ -18,19 +19,18 @@ abstract class SetupParams with _$SetupParams {
 
 @freezed
 abstract class UpdateParams with _$UpdateParams {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory UpdateParams({
     required Tun tun,
-    @JsonKey(name: 'mixed-port') required int mixedPort,
-    @JsonKey(name: 'allow-lan') required bool allowLan,
-    @JsonKey(name: 'find-process-mode')
+    required int mixedPort,
+    required bool allowLan,
     required FindProcessMode findProcessMode,
     required Mode mode,
-    @JsonKey(name: 'log-level') required LogLevel logLevel,
+    required LogLevel logLevel,
     required bool ipv6,
-    @JsonKey(name: 'tcp-concurrent') required bool tcpConcurrent,
-    @JsonKey(name: 'external-controller')
+    required bool tcpConcurrent,
     required ExternalControllerStatus externalController,
-    @JsonKey(name: 'unified-delay') required bool unifiedDelay,
+    required bool unifiedDelay,
   }) = _UpdateParams;
 
   factory UpdateParams.fromJson(Map<String, dynamic> json) =>
@@ -58,8 +58,9 @@ abstract class VpnOptions with _$VpnOptions {
 
 @freezed
 abstract class InitParams with _$InitParams {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory InitParams({
-    @JsonKey(name: 'home-dir') required String homeDir,
+    required String homeDir,
     required int version,
   }) = _InitParams;
 
@@ -69,9 +70,10 @@ abstract class InitParams with _$InitParams {
 
 @freezed
 abstract class ChangeProxyParams with _$ChangeProxyParams {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory ChangeProxyParams({
-    @JsonKey(name: 'group-name') required String groupName,
-    @JsonKey(name: 'proxy-name') required String proxyName,
+    required String groupName,
+    required String proxyName,
   }) = _ChangeProxyParams;
 
   factory ChangeProxyParams.fromJson(Map<String, Object?> json) =>
@@ -80,9 +82,10 @@ abstract class ChangeProxyParams with _$ChangeProxyParams {
 
 @freezed
 abstract class UpdateGeoDataParams with _$UpdateGeoDataParams {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory UpdateGeoDataParams({
-    @JsonKey(name: 'geo-type') required String geoType,
-    @JsonKey(name: 'geo-name') required String geoName,
+    required String geoType,
+    required String geoName,
   }) = _UpdateGeoDataParams;
 
   factory UpdateGeoDataParams.fromJson(Map<String, Object?> json) =>
@@ -124,11 +127,12 @@ abstract class Now with _$Now {
 
 @freezed
 abstract class ProviderSubscriptionInfo with _$ProviderSubscriptionInfo {
+  @JsonSerializable(fieldRename: FieldRename.screamingSnake)
   const factory ProviderSubscriptionInfo({
-    @JsonKey(name: 'UPLOAD') @Default(0) int upload,
-    @JsonKey(name: 'DOWNLOAD') @Default(0) int download,
-    @JsonKey(name: 'TOTAL') @Default(0) int total,
-    @JsonKey(name: 'EXPIRE') @Default(0) int expire,
+    @Default(0) int upload,
+    @Default(0) int download,
+    @Default(0) int total,
+    @Default(0) int expire,
   }) = _ProviderSubscriptionInfo;
 
   factory ProviderSubscriptionInfo.fromJson(Map<String, Object?> json) =>
@@ -147,15 +151,16 @@ SubscriptionInfo? subscriptionInfoFormCore(Map<String, Object?>? json) {
 
 @freezed
 abstract class ExternalProvider with _$ExternalProvider {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory ExternalProvider({
     required String name,
     required String type,
     String? path,
     required int count,
-    @JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore)
+    @JsonKey(fromJson: subscriptionInfoFormCore)
     SubscriptionInfo? subscriptionInfo,
-    @JsonKey(name: 'vehicle-type') required String vehicleType,
-    @JsonKey(name: 'update-at') required DateTime updateAt,
+    required String vehicleType,
+    required DateTime updateAt,
   }) = _ExternalProvider;
 
   factory ExternalProvider.fromJson(Map<String, Object?> json) =>

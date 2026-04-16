@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SetupParams {
 
-@JsonKey(name: 'selected-map') Map<String, String> get selectedMap;@JsonKey(name: 'test-url') String get testUrl;
+ Map<String, String> get selectedMap; String get testUrl;
 /// Create a copy of SetupParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $SetupParamsCopyWith<$Res>  {
   factory $SetupParamsCopyWith(SetupParams value, $Res Function(SetupParams) _then) = _$SetupParamsCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'selected-map') Map<String, String> selectedMap,@JsonKey(name: 'test-url') String testUrl
+ Map<String, String> selectedMap, String testUrl
 });
 
 
@@ -154,7 +154,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<String, String> selectedMap,  String testUrl)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SetupParams() when $default != null:
 return $default(_that.selectedMap,_that.testUrl);case _:
@@ -175,7 +175,7 @@ return $default(_that.selectedMap,_that.testUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<String, String> selectedMap,  String testUrl)  $default,) {final _that = this;
 switch (_that) {
 case _SetupParams():
 return $default(_that.selectedMap,_that.testUrl);case _:
@@ -195,7 +195,7 @@ return $default(_that.selectedMap,_that.testUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<String, String> selectedMap,  String testUrl)?  $default,) {final _that = this;
 switch (_that) {
 case _SetupParams() when $default != null:
 return $default(_that.selectedMap,_that.testUrl);case _:
@@ -207,20 +207,20 @@ return $default(_that.selectedMap,_that.testUrl);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _SetupParams implements SetupParams {
-  const _SetupParams({@JsonKey(name: 'selected-map') required final  Map<String, String> selectedMap, @JsonKey(name: 'test-url') required this.testUrl}): _selectedMap = selectedMap;
+  const _SetupParams({required final  Map<String, String> selectedMap, required this.testUrl}): _selectedMap = selectedMap;
   factory _SetupParams.fromJson(Map<String, dynamic> json) => _$SetupParamsFromJson(json);
 
  final  Map<String, String> _selectedMap;
-@override@JsonKey(name: 'selected-map') Map<String, String> get selectedMap {
+@override Map<String, String> get selectedMap {
   if (_selectedMap is EqualUnmodifiableMapView) return _selectedMap;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_selectedMap);
 }
 
-@override@JsonKey(name: 'test-url') final  String testUrl;
+@override final  String testUrl;
 
 /// Create a copy of SetupParams
 /// with the given fields replaced by the non-null parameter values.
@@ -255,7 +255,7 @@ abstract mixin class _$SetupParamsCopyWith<$Res> implements $SetupParamsCopyWith
   factory _$SetupParamsCopyWith(_SetupParams value, $Res Function(_SetupParams) _then) = __$SetupParamsCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'selected-map') Map<String, String> selectedMap,@JsonKey(name: 'test-url') String testUrl
+ Map<String, String> selectedMap, String testUrl
 });
 
 
@@ -287,7 +287,7 @@ as String,
 /// @nodoc
 mixin _$UpdateParams {
 
- Tun get tun;@JsonKey(name: 'mixed-port') int get mixedPort;@JsonKey(name: 'allow-lan') bool get allowLan;@JsonKey(name: 'find-process-mode') FindProcessMode get findProcessMode; Mode get mode;@JsonKey(name: 'log-level') LogLevel get logLevel; bool get ipv6;@JsonKey(name: 'tcp-concurrent') bool get tcpConcurrent;@JsonKey(name: 'external-controller') ExternalControllerStatus get externalController;@JsonKey(name: 'unified-delay') bool get unifiedDelay;
+ Tun get tun; int get mixedPort; bool get allowLan; FindProcessMode get findProcessMode; Mode get mode; LogLevel get logLevel; bool get ipv6; bool get tcpConcurrent; ExternalControllerStatus get externalController; bool get unifiedDelay;
 /// Create a copy of UpdateParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -320,7 +320,7 @@ abstract mixin class $UpdateParamsCopyWith<$Res>  {
   factory $UpdateParamsCopyWith(UpdateParams value, $Res Function(UpdateParams) _then) = _$UpdateParamsCopyWithImpl;
 @useResult
 $Res call({
- Tun tun,@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'find-process-mode') FindProcessMode findProcessMode, Mode mode,@JsonKey(name: 'log-level') LogLevel logLevel, bool ipv6,@JsonKey(name: 'tcp-concurrent') bool tcpConcurrent,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController,@JsonKey(name: 'unified-delay') bool unifiedDelay
+ Tun tun, int mixedPort, bool allowLan, FindProcessMode findProcessMode, Mode mode, LogLevel logLevel, bool ipv6, bool tcpConcurrent, ExternalControllerStatus externalController, bool unifiedDelay
 });
 
 
@@ -443,7 +443,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode')  FindProcessMode findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool ipv6, @JsonKey(name: 'tcp-concurrent')  bool tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController, @JsonKey(name: 'unified-delay')  bool unifiedDelay)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Tun tun,  int mixedPort,  bool allowLan,  FindProcessMode findProcessMode,  Mode mode,  LogLevel logLevel,  bool ipv6,  bool tcpConcurrent,  ExternalControllerStatus externalController,  bool unifiedDelay)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UpdateParams() when $default != null:
 return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_that.mode,_that.logLevel,_that.ipv6,_that.tcpConcurrent,_that.externalController,_that.unifiedDelay);case _:
@@ -464,7 +464,7 @@ return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode')  FindProcessMode findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool ipv6, @JsonKey(name: 'tcp-concurrent')  bool tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController, @JsonKey(name: 'unified-delay')  bool unifiedDelay)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Tun tun,  int mixedPort,  bool allowLan,  FindProcessMode findProcessMode,  Mode mode,  LogLevel logLevel,  bool ipv6,  bool tcpConcurrent,  ExternalControllerStatus externalController,  bool unifiedDelay)  $default,) {final _that = this;
 switch (_that) {
 case _UpdateParams():
 return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_that.mode,_that.logLevel,_that.ipv6,_that.tcpConcurrent,_that.externalController,_that.unifiedDelay);case _:
@@ -484,7 +484,7 @@ return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Tun tun, @JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'find-process-mode')  FindProcessMode findProcessMode,  Mode mode, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool ipv6, @JsonKey(name: 'tcp-concurrent')  bool tcpConcurrent, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController, @JsonKey(name: 'unified-delay')  bool unifiedDelay)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Tun tun,  int mixedPort,  bool allowLan,  FindProcessMode findProcessMode,  Mode mode,  LogLevel logLevel,  bool ipv6,  bool tcpConcurrent,  ExternalControllerStatus externalController,  bool unifiedDelay)?  $default,) {final _that = this;
 switch (_that) {
 case _UpdateParams() when $default != null:
 return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_that.mode,_that.logLevel,_that.ipv6,_that.tcpConcurrent,_that.externalController,_that.unifiedDelay);case _:
@@ -496,22 +496,22 @@ return $default(_that.tun,_that.mixedPort,_that.allowLan,_that.findProcessMode,_
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _UpdateParams implements UpdateParams {
-  const _UpdateParams({required this.tun, @JsonKey(name: 'mixed-port') required this.mixedPort, @JsonKey(name: 'allow-lan') required this.allowLan, @JsonKey(name: 'find-process-mode') required this.findProcessMode, required this.mode, @JsonKey(name: 'log-level') required this.logLevel, required this.ipv6, @JsonKey(name: 'tcp-concurrent') required this.tcpConcurrent, @JsonKey(name: 'external-controller') required this.externalController, @JsonKey(name: 'unified-delay') required this.unifiedDelay});
+  const _UpdateParams({required this.tun, required this.mixedPort, required this.allowLan, required this.findProcessMode, required this.mode, required this.logLevel, required this.ipv6, required this.tcpConcurrent, required this.externalController, required this.unifiedDelay});
   factory _UpdateParams.fromJson(Map<String, dynamic> json) => _$UpdateParamsFromJson(json);
 
 @override final  Tun tun;
-@override@JsonKey(name: 'mixed-port') final  int mixedPort;
-@override@JsonKey(name: 'allow-lan') final  bool allowLan;
-@override@JsonKey(name: 'find-process-mode') final  FindProcessMode findProcessMode;
+@override final  int mixedPort;
+@override final  bool allowLan;
+@override final  FindProcessMode findProcessMode;
 @override final  Mode mode;
-@override@JsonKey(name: 'log-level') final  LogLevel logLevel;
+@override final  LogLevel logLevel;
 @override final  bool ipv6;
-@override@JsonKey(name: 'tcp-concurrent') final  bool tcpConcurrent;
-@override@JsonKey(name: 'external-controller') final  ExternalControllerStatus externalController;
-@override@JsonKey(name: 'unified-delay') final  bool unifiedDelay;
+@override final  bool tcpConcurrent;
+@override final  ExternalControllerStatus externalController;
+@override final  bool unifiedDelay;
 
 /// Create a copy of UpdateParams
 /// with the given fields replaced by the non-null parameter values.
@@ -546,7 +546,7 @@ abstract mixin class _$UpdateParamsCopyWith<$Res> implements $UpdateParamsCopyWi
   factory _$UpdateParamsCopyWith(_UpdateParams value, $Res Function(_UpdateParams) _then) = __$UpdateParamsCopyWithImpl;
 @override @useResult
 $Res call({
- Tun tun,@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'find-process-mode') FindProcessMode findProcessMode, Mode mode,@JsonKey(name: 'log-level') LogLevel logLevel, bool ipv6,@JsonKey(name: 'tcp-concurrent') bool tcpConcurrent,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController,@JsonKey(name: 'unified-delay') bool unifiedDelay
+ Tun tun, int mixedPort, bool allowLan, FindProcessMode findProcessMode, Mode mode, LogLevel logLevel, bool ipv6, bool tcpConcurrent, ExternalControllerStatus externalController, bool unifiedDelay
 });
 
 
@@ -915,7 +915,7 @@ $AccessControlPropsCopyWith<$Res> get accessControlProps {
 /// @nodoc
 mixin _$InitParams {
 
-@JsonKey(name: 'home-dir') String get homeDir; int get version;
+ String get homeDir; int get version;
 /// Create a copy of InitParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -948,7 +948,7 @@ abstract mixin class $InitParamsCopyWith<$Res>  {
   factory $InitParamsCopyWith(InitParams value, $Res Function(InitParams) _then) = _$InitParamsCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'home-dir') String homeDir, int version
+ String homeDir, int version
 });
 
 
@@ -1054,7 +1054,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'home-dir')  String homeDir,  int version)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String homeDir,  int version)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InitParams() when $default != null:
 return $default(_that.homeDir,_that.version);case _:
@@ -1075,7 +1075,7 @@ return $default(_that.homeDir,_that.version);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'home-dir')  String homeDir,  int version)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String homeDir,  int version)  $default,) {final _that = this;
 switch (_that) {
 case _InitParams():
 return $default(_that.homeDir,_that.version);case _:
@@ -1095,7 +1095,7 @@ return $default(_that.homeDir,_that.version);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'home-dir')  String homeDir,  int version)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String homeDir,  int version)?  $default,) {final _that = this;
 switch (_that) {
 case _InitParams() when $default != null:
 return $default(_that.homeDir,_that.version);case _:
@@ -1107,13 +1107,13 @@ return $default(_that.homeDir,_that.version);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _InitParams implements InitParams {
-  const _InitParams({@JsonKey(name: 'home-dir') required this.homeDir, required this.version});
+  const _InitParams({required this.homeDir, required this.version});
   factory _InitParams.fromJson(Map<String, dynamic> json) => _$InitParamsFromJson(json);
 
-@override@JsonKey(name: 'home-dir') final  String homeDir;
+@override final  String homeDir;
 @override final  int version;
 
 /// Create a copy of InitParams
@@ -1149,7 +1149,7 @@ abstract mixin class _$InitParamsCopyWith<$Res> implements $InitParamsCopyWith<$
   factory _$InitParamsCopyWith(_InitParams value, $Res Function(_InitParams) _then) = __$InitParamsCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'home-dir') String homeDir, int version
+ String homeDir, int version
 });
 
 
@@ -1181,7 +1181,7 @@ as int,
 /// @nodoc
 mixin _$ChangeProxyParams {
 
-@JsonKey(name: 'group-name') String get groupName;@JsonKey(name: 'proxy-name') String get proxyName;
+ String get groupName; String get proxyName;
 /// Create a copy of ChangeProxyParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1214,7 +1214,7 @@ abstract mixin class $ChangeProxyParamsCopyWith<$Res>  {
   factory $ChangeProxyParamsCopyWith(ChangeProxyParams value, $Res Function(ChangeProxyParams) _then) = _$ChangeProxyParamsCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'group-name') String groupName,@JsonKey(name: 'proxy-name') String proxyName
+ String groupName, String proxyName
 });
 
 
@@ -1320,7 +1320,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'group-name')  String groupName, @JsonKey(name: 'proxy-name')  String proxyName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String groupName,  String proxyName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChangeProxyParams() when $default != null:
 return $default(_that.groupName,_that.proxyName);case _:
@@ -1341,7 +1341,7 @@ return $default(_that.groupName,_that.proxyName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'group-name')  String groupName, @JsonKey(name: 'proxy-name')  String proxyName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String groupName,  String proxyName)  $default,) {final _that = this;
 switch (_that) {
 case _ChangeProxyParams():
 return $default(_that.groupName,_that.proxyName);case _:
@@ -1361,7 +1361,7 @@ return $default(_that.groupName,_that.proxyName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'group-name')  String groupName, @JsonKey(name: 'proxy-name')  String proxyName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String groupName,  String proxyName)?  $default,) {final _that = this;
 switch (_that) {
 case _ChangeProxyParams() when $default != null:
 return $default(_that.groupName,_that.proxyName);case _:
@@ -1373,14 +1373,14 @@ return $default(_that.groupName,_that.proxyName);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _ChangeProxyParams implements ChangeProxyParams {
-  const _ChangeProxyParams({@JsonKey(name: 'group-name') required this.groupName, @JsonKey(name: 'proxy-name') required this.proxyName});
+  const _ChangeProxyParams({required this.groupName, required this.proxyName});
   factory _ChangeProxyParams.fromJson(Map<String, dynamic> json) => _$ChangeProxyParamsFromJson(json);
 
-@override@JsonKey(name: 'group-name') final  String groupName;
-@override@JsonKey(name: 'proxy-name') final  String proxyName;
+@override final  String groupName;
+@override final  String proxyName;
 
 /// Create a copy of ChangeProxyParams
 /// with the given fields replaced by the non-null parameter values.
@@ -1415,7 +1415,7 @@ abstract mixin class _$ChangeProxyParamsCopyWith<$Res> implements $ChangeProxyPa
   factory _$ChangeProxyParamsCopyWith(_ChangeProxyParams value, $Res Function(_ChangeProxyParams) _then) = __$ChangeProxyParamsCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'group-name') String groupName,@JsonKey(name: 'proxy-name') String proxyName
+ String groupName, String proxyName
 });
 
 
@@ -1447,7 +1447,7 @@ as String,
 /// @nodoc
 mixin _$UpdateGeoDataParams {
 
-@JsonKey(name: 'geo-type') String get geoType;@JsonKey(name: 'geo-name') String get geoName;
+ String get geoType; String get geoName;
 /// Create a copy of UpdateGeoDataParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1480,7 +1480,7 @@ abstract mixin class $UpdateGeoDataParamsCopyWith<$Res>  {
   factory $UpdateGeoDataParamsCopyWith(UpdateGeoDataParams value, $Res Function(UpdateGeoDataParams) _then) = _$UpdateGeoDataParamsCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'geo-type') String geoType,@JsonKey(name: 'geo-name') String geoName
+ String geoType, String geoName
 });
 
 
@@ -1586,7 +1586,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'geo-type')  String geoType, @JsonKey(name: 'geo-name')  String geoName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String geoType,  String geoName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UpdateGeoDataParams() when $default != null:
 return $default(_that.geoType,_that.geoName);case _:
@@ -1607,7 +1607,7 @@ return $default(_that.geoType,_that.geoName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'geo-type')  String geoType, @JsonKey(name: 'geo-name')  String geoName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String geoType,  String geoName)  $default,) {final _that = this;
 switch (_that) {
 case _UpdateGeoDataParams():
 return $default(_that.geoType,_that.geoName);case _:
@@ -1627,7 +1627,7 @@ return $default(_that.geoType,_that.geoName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'geo-type')  String geoType, @JsonKey(name: 'geo-name')  String geoName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String geoType,  String geoName)?  $default,) {final _that = this;
 switch (_that) {
 case _UpdateGeoDataParams() when $default != null:
 return $default(_that.geoType,_that.geoName);case _:
@@ -1639,14 +1639,14 @@ return $default(_that.geoType,_that.geoName);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _UpdateGeoDataParams implements UpdateGeoDataParams {
-  const _UpdateGeoDataParams({@JsonKey(name: 'geo-type') required this.geoType, @JsonKey(name: 'geo-name') required this.geoName});
+  const _UpdateGeoDataParams({required this.geoType, required this.geoName});
   factory _UpdateGeoDataParams.fromJson(Map<String, dynamic> json) => _$UpdateGeoDataParamsFromJson(json);
 
-@override@JsonKey(name: 'geo-type') final  String geoType;
-@override@JsonKey(name: 'geo-name') final  String geoName;
+@override final  String geoType;
+@override final  String geoName;
 
 /// Create a copy of UpdateGeoDataParams
 /// with the given fields replaced by the non-null parameter values.
@@ -1681,7 +1681,7 @@ abstract mixin class _$UpdateGeoDataParamsCopyWith<$Res> implements $UpdateGeoDa
   factory _$UpdateGeoDataParamsCopyWith(_UpdateGeoDataParams value, $Res Function(_UpdateGeoDataParams) _then) = __$UpdateGeoDataParamsCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'geo-type') String geoType,@JsonKey(name: 'geo-name') String geoName
+ String geoType, String geoName
 });
 
 
@@ -2780,7 +2780,7 @@ as String,
 /// @nodoc
 mixin _$ProviderSubscriptionInfo {
 
-@JsonKey(name: 'UPLOAD') int get upload;@JsonKey(name: 'DOWNLOAD') int get download;@JsonKey(name: 'TOTAL') int get total;@JsonKey(name: 'EXPIRE') int get expire;
+ int get upload; int get download; int get total; int get expire;
 /// Create a copy of ProviderSubscriptionInfo
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2813,7 +2813,7 @@ abstract mixin class $ProviderSubscriptionInfoCopyWith<$Res>  {
   factory $ProviderSubscriptionInfoCopyWith(ProviderSubscriptionInfo value, $Res Function(ProviderSubscriptionInfo) _then) = _$ProviderSubscriptionInfoCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'UPLOAD') int upload,@JsonKey(name: 'DOWNLOAD') int download,@JsonKey(name: 'TOTAL') int total,@JsonKey(name: 'EXPIRE') int expire
+ int upload, int download, int total, int expire
 });
 
 
@@ -2921,7 +2921,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'UPLOAD')  int upload, @JsonKey(name: 'DOWNLOAD')  int download, @JsonKey(name: 'TOTAL')  int total, @JsonKey(name: 'EXPIRE')  int expire)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int upload,  int download,  int total,  int expire)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProviderSubscriptionInfo() when $default != null:
 return $default(_that.upload,_that.download,_that.total,_that.expire);case _:
@@ -2942,7 +2942,7 @@ return $default(_that.upload,_that.download,_that.total,_that.expire);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'UPLOAD')  int upload, @JsonKey(name: 'DOWNLOAD')  int download, @JsonKey(name: 'TOTAL')  int total, @JsonKey(name: 'EXPIRE')  int expire)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int upload,  int download,  int total,  int expire)  $default,) {final _that = this;
 switch (_that) {
 case _ProviderSubscriptionInfo():
 return $default(_that.upload,_that.download,_that.total,_that.expire);case _:
@@ -2962,7 +2962,7 @@ return $default(_that.upload,_that.download,_that.total,_that.expire);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'UPLOAD')  int upload, @JsonKey(name: 'DOWNLOAD')  int download, @JsonKey(name: 'TOTAL')  int total, @JsonKey(name: 'EXPIRE')  int expire)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int upload,  int download,  int total,  int expire)?  $default,) {final _that = this;
 switch (_that) {
 case _ProviderSubscriptionInfo() when $default != null:
 return $default(_that.upload,_that.download,_that.total,_that.expire);case _:
@@ -2974,16 +2974,16 @@ return $default(_that.upload,_that.download,_that.total,_that.expire);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.screamingSnake)
 class _ProviderSubscriptionInfo implements ProviderSubscriptionInfo {
-  const _ProviderSubscriptionInfo({@JsonKey(name: 'UPLOAD') this.upload = 0, @JsonKey(name: 'DOWNLOAD') this.download = 0, @JsonKey(name: 'TOTAL') this.total = 0, @JsonKey(name: 'EXPIRE') this.expire = 0});
+  const _ProviderSubscriptionInfo({this.upload = 0, this.download = 0, this.total = 0, this.expire = 0});
   factory _ProviderSubscriptionInfo.fromJson(Map<String, dynamic> json) => _$ProviderSubscriptionInfoFromJson(json);
 
-@override@JsonKey(name: 'UPLOAD') final  int upload;
-@override@JsonKey(name: 'DOWNLOAD') final  int download;
-@override@JsonKey(name: 'TOTAL') final  int total;
-@override@JsonKey(name: 'EXPIRE') final  int expire;
+@override@JsonKey() final  int upload;
+@override@JsonKey() final  int download;
+@override@JsonKey() final  int total;
+@override@JsonKey() final  int expire;
 
 /// Create a copy of ProviderSubscriptionInfo
 /// with the given fields replaced by the non-null parameter values.
@@ -3018,7 +3018,7 @@ abstract mixin class _$ProviderSubscriptionInfoCopyWith<$Res> implements $Provid
   factory _$ProviderSubscriptionInfoCopyWith(_ProviderSubscriptionInfo value, $Res Function(_ProviderSubscriptionInfo) _then) = __$ProviderSubscriptionInfoCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'UPLOAD') int upload,@JsonKey(name: 'DOWNLOAD') int download,@JsonKey(name: 'TOTAL') int total,@JsonKey(name: 'EXPIRE') int expire
+ int upload, int download, int total, int expire
 });
 
 
@@ -3052,7 +3052,7 @@ as int,
 /// @nodoc
 mixin _$ExternalProvider {
 
- String get name; String get type; String? get path; int get count;@JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore) SubscriptionInfo? get subscriptionInfo;@JsonKey(name: 'vehicle-type') String get vehicleType;@JsonKey(name: 'update-at') DateTime get updateAt;
+ String get name; String get type; String? get path; int get count;@JsonKey(fromJson: subscriptionInfoFormCore) SubscriptionInfo? get subscriptionInfo; String get vehicleType; DateTime get updateAt;
 /// Create a copy of ExternalProvider
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3085,7 +3085,7 @@ abstract mixin class $ExternalProviderCopyWith<$Res>  {
   factory $ExternalProviderCopyWith(ExternalProvider value, $Res Function(ExternalProvider) _then) = _$ExternalProviderCopyWithImpl;
 @useResult
 $Res call({
- String name, String type, String? path, int count,@JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore) SubscriptionInfo? subscriptionInfo,@JsonKey(name: 'vehicle-type') String vehicleType,@JsonKey(name: 'update-at') DateTime updateAt
+ String name, String type, String? path, int count,@JsonKey(fromJson: subscriptionInfoFormCore) SubscriptionInfo? subscriptionInfo, String vehicleType, DateTime updateAt
 });
 
 
@@ -3208,7 +3208,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String type,  String? path,  int count, @JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore)  SubscriptionInfo? subscriptionInfo, @JsonKey(name: 'vehicle-type')  String vehicleType, @JsonKey(name: 'update-at')  DateTime updateAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String type,  String? path,  int count, @JsonKey(fromJson: subscriptionInfoFormCore)  SubscriptionInfo? subscriptionInfo,  String vehicleType,  DateTime updateAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ExternalProvider() when $default != null:
 return $default(_that.name,_that.type,_that.path,_that.count,_that.subscriptionInfo,_that.vehicleType,_that.updateAt);case _:
@@ -3229,7 +3229,7 @@ return $default(_that.name,_that.type,_that.path,_that.count,_that.subscriptionI
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String type,  String? path,  int count, @JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore)  SubscriptionInfo? subscriptionInfo, @JsonKey(name: 'vehicle-type')  String vehicleType, @JsonKey(name: 'update-at')  DateTime updateAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String type,  String? path,  int count, @JsonKey(fromJson: subscriptionInfoFormCore)  SubscriptionInfo? subscriptionInfo,  String vehicleType,  DateTime updateAt)  $default,) {final _that = this;
 switch (_that) {
 case _ExternalProvider():
 return $default(_that.name,_that.type,_that.path,_that.count,_that.subscriptionInfo,_that.vehicleType,_that.updateAt);case _:
@@ -3249,7 +3249,7 @@ return $default(_that.name,_that.type,_that.path,_that.count,_that.subscriptionI
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String type,  String? path,  int count, @JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore)  SubscriptionInfo? subscriptionInfo, @JsonKey(name: 'vehicle-type')  String vehicleType, @JsonKey(name: 'update-at')  DateTime updateAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String type,  String? path,  int count, @JsonKey(fromJson: subscriptionInfoFormCore)  SubscriptionInfo? subscriptionInfo,  String vehicleType,  DateTime updateAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ExternalProvider() when $default != null:
 return $default(_that.name,_that.type,_that.path,_that.count,_that.subscriptionInfo,_that.vehicleType,_that.updateAt);case _:
@@ -3261,19 +3261,19 @@ return $default(_that.name,_that.type,_that.path,_that.count,_that.subscriptionI
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _ExternalProvider implements ExternalProvider {
-  const _ExternalProvider({required this.name, required this.type, this.path, required this.count, @JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore) this.subscriptionInfo, @JsonKey(name: 'vehicle-type') required this.vehicleType, @JsonKey(name: 'update-at') required this.updateAt});
+  const _ExternalProvider({required this.name, required this.type, this.path, required this.count, @JsonKey(fromJson: subscriptionInfoFormCore) this.subscriptionInfo, required this.vehicleType, required this.updateAt});
   factory _ExternalProvider.fromJson(Map<String, dynamic> json) => _$ExternalProviderFromJson(json);
 
 @override final  String name;
 @override final  String type;
 @override final  String? path;
 @override final  int count;
-@override@JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore) final  SubscriptionInfo? subscriptionInfo;
-@override@JsonKey(name: 'vehicle-type') final  String vehicleType;
-@override@JsonKey(name: 'update-at') final  DateTime updateAt;
+@override@JsonKey(fromJson: subscriptionInfoFormCore) final  SubscriptionInfo? subscriptionInfo;
+@override final  String vehicleType;
+@override final  DateTime updateAt;
 
 /// Create a copy of ExternalProvider
 /// with the given fields replaced by the non-null parameter values.
@@ -3308,7 +3308,7 @@ abstract mixin class _$ExternalProviderCopyWith<$Res> implements $ExternalProvid
   factory _$ExternalProviderCopyWith(_ExternalProvider value, $Res Function(_ExternalProvider) _then) = __$ExternalProviderCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String type, String? path, int count,@JsonKey(name: 'subscription-info', fromJson: subscriptionInfoFormCore) SubscriptionInfo? subscriptionInfo,@JsonKey(name: 'vehicle-type') String vehicleType,@JsonKey(name: 'update-at') DateTime updateAt
+ String name, String type, String? path, int count,@JsonKey(fromJson: subscriptionInfoFormCore) SubscriptionInfo? subscriptionInfo, String vehicleType, DateTime updateAt
 });
 
 

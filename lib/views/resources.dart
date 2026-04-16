@@ -81,9 +81,9 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
           throw 'Invalid url';
         }
         ref.read(patchClashConfigProvider.notifier).update((state) {
-          final map = state.geoXUrl.toJson();
+          final map = state.geoxUrl.toJson();
           map[geoItem.key] = newUrl;
-          return state.copyWith(geoXUrl: GeoXUrl.fromJson(map));
+          return state.copyWith(geoxUrl: GeoXUrl.fromJson(map));
         });
       } catch (e) {
         globalState.showMessage(
@@ -107,7 +107,7 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
       builder: (_, ref, _) {
         final url = ref.watch(
           patchClashConfigProvider.select(
-            (state) => state.geoXUrl.toJson()[geoItem.key],
+            (state) => state.geoxUrl.toJson()[geoItem.key],
           ),
         );
         if (url == null) {

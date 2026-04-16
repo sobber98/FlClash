@@ -19,7 +19,7 @@ _ProxyGroup _$ProxyGroupFromJson(Map<String, dynamic> json) => _ProxyGroup(
   timeout: (json['timeout'] as num?)?.toInt(),
   maxFailedTimes: (json['max-failed-times'] as num?)?.toInt(),
   filter: json['filter'] as String?,
-  excludeFilter: json['expected-filter'] as String?,
+  expectedFilter: json['expected-filter'] as String?,
   excludeType: json['exclude-type'] as String?,
   expectedStatus: json['expected-status'],
   hidden: json['hidden'] as bool?,
@@ -38,7 +38,7 @@ Map<String, dynamic> _$ProxyGroupToJson(_ProxyGroup instance) =>
       'timeout': instance.timeout,
       'max-failed-times': instance.maxFailedTimes,
       'filter': instance.filter,
-      'expected-filter': instance.excludeFilter,
+      'expected-filter': instance.expectedFilter,
       'exclude-type': instance.excludeType,
       'expected-status': instance.expectedStatus,
       'hidden': instance.hidden,
@@ -61,7 +61,7 @@ Map<String, dynamic> _$RuleProviderToJson(_RuleProvider instance) =>
 
 _Sniffer _$SnifferFromJson(Map<String, dynamic> json) => _Sniffer(
   enable: json['enable'] as bool? ?? false,
-  overrideDest: json['override-destination'] as bool? ?? true,
+  overrideDestination: json['override-destination'] as bool? ?? true,
   sniffing:
       (json['sniffing'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
@@ -85,7 +85,7 @@ _Sniffer _$SnifferFromJson(Map<String, dynamic> json) => _Sniffer(
           ?.map((e) => e as String)
           .toList() ??
       const [],
-  port:
+  portWhitelist:
       (json['port-whitelist'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList() ??
@@ -102,13 +102,13 @@ _Sniffer _$SnifferFromJson(Map<String, dynamic> json) => _Sniffer(
 
 Map<String, dynamic> _$SnifferToJson(_Sniffer instance) => <String, dynamic>{
   'enable': instance.enable,
-  'override-destination': instance.overrideDest,
+  'override-destination': instance.overrideDestination,
   'sniffing': instance.sniffing,
   'force-domain': instance.forceDomain,
   'skip-src-address': instance.skipSrcAddress,
   'skip-dst-address': instance.skipDstAddress,
   'skip-domain': instance.skipDomain,
-  'port-whitelist': instance.port,
+  'port-whitelist': instance.portWhitelist,
   'force-dns-mapping': instance.forceDnsMapping,
   'parse-pure-ip': instance.parsePureIp,
   'sniff': instance.sniff,
@@ -119,13 +119,13 @@ _SnifferConfig _$SnifferConfigFromJson(Map<String, dynamic> json) =>
       ports: json['ports'] == null
           ? const []
           : _formJsonPorts(json['ports'] as List?),
-      overrideDest: json['override-destination'] as bool?,
+      overrideDestination: json['override-destination'] as bool?,
     );
 
 Map<String, dynamic> _$SnifferConfigToJson(_SnifferConfig instance) =>
     <String, dynamic>{
       'ports': instance.ports,
-      'override-destination': instance.overrideDest,
+      'override-destination': instance.overrideDestination,
     };
 
 _Tun _$TunFromJson(Map<String, dynamic> json) => _Tun(
@@ -311,8 +311,10 @@ _ClashConfigSnippet _$ClashConfigSnippetFromJson(Map<String, dynamic> json) =>
               ?.map((e) => ProxyGroup.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      rule: json['rules'] == null ? const [] : _genRule(json['rules'] as List?),
-      ruleProvider: json['rule-providers'] == null
+      rules: json['rules'] == null
+          ? const []
+          : _genRule(json['rules'] as List?),
+      ruleProviders: json['rule-providers'] == null
           ? const []
           : _genRuleProviders(json['rule-providers'] as Map<String, dynamic>),
       subRules: json['sub-rules'] == null
@@ -323,8 +325,8 @@ _ClashConfigSnippet _$ClashConfigSnippetFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ClashConfigSnippetToJson(_ClashConfigSnippet instance) =>
     <String, dynamic>{
       'proxy-groups': instance.proxyGroups,
-      'rules': instance.rule,
-      'rule-providers': instance.ruleProvider,
+      'rules': instance.rules,
+      'rule-providers': instance.ruleProviders,
       'sub-rules': instance.subRules,
     };
 
@@ -340,13 +342,9 @@ _ClashConfig _$ClashConfigFromJson(Map<String, dynamic> json) => _ClashConfig(
       $enumDecodeNullable(_$LogLevelEnumMap, json['log-level']) ??
       LogLevel.error,
   ipv6: json['ipv6'] as bool? ?? false,
-  findProcessMode:
-      $enumDecodeNullable(
-        _$FindProcessModeEnumMap,
-        json['find-process-mode'],
-        unknownValue: FindProcessMode.always,
-      ) ??
-      FindProcessMode.always,
+  findProcessMode: json['find-process-mode'] == null
+      ? FindProcessMode.always
+      : _findProcessModeFromJson(json['find-process-mode'] as String?),
   keepAliveInterval:
       (json['keep-alive-interval'] as num?)?.toInt() ??
       defaultKeepAliveInterval,
@@ -358,7 +356,7 @@ _ClashConfig _$ClashConfigFromJson(Map<String, dynamic> json) => _ClashConfig(
   dns: json['dns'] == null
       ? defaultDns
       : Dns.safeDnsFromJson(json['dns'] as Map<String, Object?>),
-  geoXUrl: json['geox-url'] == null
+  geoxUrl: json['geox-url'] == null
       ? defaultGeoXUrl
       : GeoXUrl.safeFormJson(json['geox-url'] as Map<String, Object?>?),
   geodataLoader:
@@ -403,7 +401,7 @@ Map<String, dynamic> _$ClashConfigToJson(_ClashConfig instance) =>
       'tcp-concurrent': instance.tcpConcurrent,
       'tun': instance.tun,
       'dns': instance.dns,
-      'geox-url': instance.geoXUrl,
+      'geox-url': instance.geoxUrl,
       'geodata-loader': _$GeodataLoaderEnumMap[instance.geodataLoader]!,
       'proxy-groups': instance.proxyGroups,
       'rule': instance.rule,
@@ -427,11 +425,6 @@ const _$LogLevelEnumMap = {
   LogLevel.silent: 'silent',
 };
 
-const _$FindProcessModeEnumMap = {
-  FindProcessMode.always: 'always',
-  FindProcessMode.off: 'off',
-};
-
 const _$GeodataLoaderEnumMap = {
   GeodataLoader.standard: 'standard',
   GeodataLoader.memconservative: 'memconservative',
@@ -440,4 +433,9 @@ const _$GeodataLoaderEnumMap = {
 const _$ExternalControllerStatusEnumMap = {
   ExternalControllerStatus.close: '',
   ExternalControllerStatus.open: '127.0.0.1:9090',
+};
+
+const _$FindProcessModeEnumMap = {
+  FindProcessMode.always: 'always',
+  FindProcessMode.off: 'off',
 };

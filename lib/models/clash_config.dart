@@ -14,6 +14,13 @@ const defaultGeoXUrl = GeoXUrl();
 const defaultMixedPort = 7890;
 const defaultKeepAliveInterval = 30;
 
+FindProcessMode _findProcessModeFromJson(String? value) {
+  return FindProcessMode.values.firstWhere(
+    (item) => item.name == value,
+    orElse: () => FindProcessMode.always,
+  );
+}
+
 const defaultBypassPrivateRouteAddress = [
   '1.0.0.0/8',
   '2.0.0.0/7',
@@ -101,6 +108,7 @@ const defaultBypassPrivateRouteAddress = [
 
 @freezed
 abstract class ProxyGroup with _$ProxyGroup {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory ProxyGroup({
     required String name,
     @JsonKey(fromJson: GroupType.parseProfileType) required GroupType type,
@@ -110,11 +118,11 @@ abstract class ProxyGroup with _$ProxyGroup {
     bool? lazy,
     String? url,
     int? timeout,
-    @JsonKey(name: 'max-failed-times') int? maxFailedTimes,
+    int? maxFailedTimes,
     String? filter,
-    @JsonKey(name: 'expected-filter') String? excludeFilter,
-    @JsonKey(name: 'exclude-type') String? excludeType,
-    @JsonKey(name: 'expected-status') dynamic expectedStatus,
+    String? expectedFilter,
+    String? excludeType,
+    dynamic expectedStatus,
     bool? hidden,
     String? icon,
   }) = _ProxyGroup;
@@ -133,17 +141,18 @@ abstract class RuleProvider with _$RuleProvider {
 
 @freezed
 abstract class Sniffer with _$Sniffer {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory Sniffer({
     @Default(false) bool enable,
-    @Default(true) @JsonKey(name: 'override-destination') bool overrideDest,
+    @Default(true) bool overrideDestination,
     @Default([]) List<String> sniffing,
-    @Default([]) @JsonKey(name: 'force-domain') List<String> forceDomain,
-    @Default([]) @JsonKey(name: 'skip-src-address') List<String> skipSrcAddress,
-    @Default([]) @JsonKey(name: 'skip-dst-address') List<String> skipDstAddress,
-    @Default([]) @JsonKey(name: 'skip-domain') List<String> skipDomain,
-    @Default([]) @JsonKey(name: 'port-whitelist') List<String> port,
-    @Default(true) @JsonKey(name: 'force-dns-mapping') bool forceDnsMapping,
-    @Default(true) @JsonKey(name: 'parse-pure-ip') bool parsePureIp,
+    @Default([]) List<String> forceDomain,
+    @Default([]) List<String> skipSrcAddress,
+    @Default([]) List<String> skipDstAddress,
+    @Default([]) List<String> skipDomain,
+    @Default([]) List<String> portWhitelist,
+    @Default(true) bool forceDnsMapping,
+    @Default(true) bool parsePureIp,
     @Default({}) Map<String, SnifferConfig> sniff,
   }) = _Sniffer;
 
@@ -157,9 +166,10 @@ List<String> _formJsonPorts(List? ports) {
 
 @freezed
 abstract class SnifferConfig with _$SnifferConfig {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory SnifferConfig({
     @Default([]) @JsonKey(fromJson: _formJsonPorts) List<String> ports,
-    @JsonKey(name: 'override-destination') bool? overrideDest,
+    bool? overrideDestination,
   }) = _SnifferConfig;
 
   factory SnifferConfig.fromJson(Map<String, Object?> json) =>
@@ -168,13 +178,14 @@ abstract class SnifferConfig with _$SnifferConfig {
 
 @freezed
 abstract class Tun with _$Tun {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory Tun({
     @Default(false) bool enable,
     @Default(appName) String device,
-    @JsonKey(name: 'auto-route') @Default(false) bool autoRoute,
+    @Default(false) bool autoRoute,
     @Default(TunStack.mixed) TunStack stack,
-    @JsonKey(name: 'dns-hijack') @Default(['any:53']) List<String> dnsHijack,
-    @JsonKey(name: 'route-address') @Default([]) List<String> routeAddress,
+    @Default(['any:53']) List<String> dnsHijack,
+    @Default([]) List<String> routeAddress,
   }) = _Tun;
 
   factory Tun.fromJson(Map<String, Object?> json) => _$TunFromJson(json);
@@ -208,9 +219,10 @@ extension TunExt on Tun {
 
 @freezed
 abstract class FallbackFilter with _$FallbackFilter {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory FallbackFilter({
     @Default(true) bool geoip,
-    @Default('CN') @JsonKey(name: 'geoip-code') String geoipCode,
+    @Default('CN') String geoipCode,
     @Default(['gfw']) List<String> geosite,
     @Default(['240.0.0.0/4']) List<String> ipcidr,
     @Default(['+.google.com', '+.facebook.com', '+.youtube.com'])
@@ -223,42 +235,30 @@ abstract class FallbackFilter with _$FallbackFilter {
 
 @freezed
 abstract class Dns with _$Dns {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory Dns({
     @Default(true) bool enable,
     @Default('0.0.0.0:1053') String listen,
-    @Default(false) @JsonKey(name: 'prefer-h3') bool preferH3,
-    @Default(true) @JsonKey(name: 'use-hosts') bool useHosts,
-    @Default(true) @JsonKey(name: 'use-system-hosts') bool useSystemHosts,
-    @Default(false) @JsonKey(name: 'respect-rules') bool respectRules,
+    @Default(false) bool preferH3,
+    @Default(true) bool useHosts,
+    @Default(true) bool useSystemHosts,
+    @Default(false) bool respectRules,
     @Default(false) bool ipv6,
-    @Default(['223.5.5.5'])
-    @JsonKey(name: 'default-nameserver')
-    List<String> defaultNameserver,
-    @Default(DnsMode.fakeIp)
-    @JsonKey(name: 'enhanced-mode')
-    DnsMode enhancedMode,
-    @Default('198.18.0.1/16')
-    @JsonKey(name: 'fake-ip-range')
-    String fakeIpRange,
-    @Default(['*.lan', 'localhost.ptlogin2.qq.com'])
-    @JsonKey(name: 'fake-ip-filter')
-    List<String> fakeIpFilter,
+    @Default(['223.5.5.5']) List<String> defaultNameserver,
+    @Default(DnsMode.fakeIp) DnsMode enhancedMode,
+    @Default('198.18.0.1/16') String fakeIpRange,
+    @Default(['*.lan', 'localhost.ptlogin2.qq.com']) List<String> fakeIpFilter,
     @Default({
       'www.baidu.com': '114.114.114.114',
       '+.internal.crop.com': '10.0.0.1',
       'geosite:cn': 'https://doh.pub/dns-query',
     })
-    @JsonKey(name: 'nameserver-policy')
     Map<String, String> nameserverPolicy,
     @Default(['https://doh.pub/dns-query', 'https://dns.alidns.com/dns-query'])
     List<String> nameserver,
     @Default(['tls://8.8.4.4', 'tls://1.1.1.1']) List<String> fallback,
-    @Default(['https://doh.pub/dns-query'])
-    @JsonKey(name: 'proxy-server-nameserver')
-    List<String> proxyServerNameserver,
-    @Default(FallbackFilter())
-    @JsonKey(name: 'fallback-filter')
-    FallbackFilter fallbackFilter,
+    @Default(['https://doh.pub/dns-query']) List<String> proxyServerNameserver,
+    @Default(FallbackFilter()) FallbackFilter fallbackFilter,
   }) = _Dns;
 
   factory Dns.fromJson(Map<String, Object?> json) => _$DnsFromJson(json);
@@ -423,15 +423,12 @@ List<SubRule> _genSubRules(Map<String, dynamic> json) {
 
 @freezed
 abstract class ClashConfigSnippet with _$ClashConfigSnippet {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory ClashConfigSnippet({
-    @Default([]) @JsonKey(name: 'proxy-groups') List<ProxyGroup> proxyGroups,
-    @JsonKey(fromJson: _genRule, name: 'rules') @Default([]) List<Rule> rule,
-    @JsonKey(name: 'rule-providers', fromJson: _genRuleProviders)
-    @Default([])
-    List<RuleProvider> ruleProvider,
-    @JsonKey(name: 'sub-rules', fromJson: _genSubRules)
-    @Default([])
-    List<SubRule> subRules,
+    @Default([]) List<ProxyGroup> proxyGroups,
+    @JsonKey(fromJson: _genRule) @Default([]) List<Rule> rules,
+    @JsonKey(fromJson: _genRuleProviders) @Default([]) List<RuleProvider> ruleProviders,
+    @JsonKey(fromJson: _genSubRules) @Default([]) List<SubRule> subRules,
   }) = _ClashConfigSnippet;
 
   factory ClashConfigSnippet.fromJson(Map<String, Object?> json) =>
@@ -440,41 +437,31 @@ abstract class ClashConfigSnippet with _$ClashConfigSnippet {
 
 @freezed
 abstract class ClashConfig with _$ClashConfig {
+  @JsonSerializable(fieldRename: FieldRename.kebab)
   const factory ClashConfig({
-    @Default(defaultMixedPort) @JsonKey(name: 'mixed-port') int mixedPort,
-    @Default(0) @JsonKey(name: 'socks-port') int socksPort,
-    @Default(0) @JsonKey(name: 'port') int port,
-    @Default(0) @JsonKey(name: 'redir-port') int redirPort,
-    @Default(0) @JsonKey(name: 'tproxy-port') int tproxyPort,
+    @Default(defaultMixedPort) int mixedPort,
+    @Default(0) int socksPort,
+    @Default(0) int port,
+    @Default(0) int redirPort,
+    @Default(0) int tproxyPort,
     @Default(Mode.rule) Mode mode,
-    @Default(false) @JsonKey(name: 'allow-lan') bool allowLan,
-    @Default(LogLevel.error) @JsonKey(name: 'log-level') LogLevel logLevel,
+    @Default(false) bool allowLan,
+    @Default(LogLevel.error) LogLevel logLevel,
     @Default(false) bool ipv6,
     @Default(FindProcessMode.always)
-    @JsonKey(
-      name: 'find-process-mode',
-      unknownEnumValue: FindProcessMode.always,
-    )
+    @JsonKey(fromJson: _findProcessModeFromJson)
     FindProcessMode findProcessMode,
-    @Default(defaultKeepAliveInterval)
-    @JsonKey(name: 'keep-alive-interval')
-    int keepAliveInterval,
-    @Default(true) @JsonKey(name: 'unified-delay') bool unifiedDelay,
-    @Default(true) @JsonKey(name: 'tcp-concurrent') bool tcpConcurrent,
+    @Default(defaultKeepAliveInterval) int keepAliveInterval,
+    @Default(true) bool unifiedDelay,
+    @Default(true) bool tcpConcurrent,
     @Default(defaultTun) @JsonKey(fromJson: Tun.safeFormJson) Tun tun,
     @Default(defaultDns) @JsonKey(fromJson: Dns.safeDnsFromJson) Dns dns,
-    @Default(defaultGeoXUrl)
-    @JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson)
-    GeoXUrl geoXUrl,
-    @Default(GeodataLoader.memconservative)
-    @JsonKey(name: 'geodata-loader')
-    GeodataLoader geodataLoader,
-    @Default([]) @JsonKey(name: 'proxy-groups') List<ProxyGroup> proxyGroups,
+    @Default(defaultGeoXUrl) @JsonKey(fromJson: GeoXUrl.safeFormJson) GeoXUrl geoxUrl,
+    @Default(GeodataLoader.memconservative) GeodataLoader geodataLoader,
+    @Default([]) List<ProxyGroup> proxyGroups,
     @Default([]) List<String> rule,
-    @JsonKey(name: 'global-ua') String? globalUa,
-    @Default(ExternalControllerStatus.close)
-    @JsonKey(name: 'external-controller')
-    ExternalControllerStatus externalController,
+    String? globalUa,
+    @Default(ExternalControllerStatus.close) ExternalControllerStatus externalController,
     @Default({}) Map<String, String> hosts,
   }) = _ClashConfig;
 

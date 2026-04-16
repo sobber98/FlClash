@@ -174,7 +174,7 @@ Future<Map<String, dynamic>> _makeRealProfileTask(
     }
   }
   rawConfig['profile']['store-selected'] = false;
-  rawConfig['geox-url'] = realPatchConfig.geoXUrl.toJson();
+  rawConfig['geox-url'] = realPatchConfig.geoxUrl.toJson();
   rawConfig['global-ua'] = realPatchConfig.globalUa ?? defaultUA;
   if (rawConfig['hosts'] == null) {
     rawConfig['hosts'] = {};

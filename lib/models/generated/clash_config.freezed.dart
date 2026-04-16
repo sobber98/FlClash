@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProxyGroup {
 
- String get name;@JsonKey(fromJson: GroupType.parseProfileType) GroupType get type; List<String>? get proxies; List<String>? get use; int? get interval; bool? get lazy; String? get url; int? get timeout;@JsonKey(name: 'max-failed-times') int? get maxFailedTimes; String? get filter;@JsonKey(name: 'expected-filter') String? get excludeFilter;@JsonKey(name: 'exclude-type') String? get excludeType;@JsonKey(name: 'expected-status') dynamic get expectedStatus; bool? get hidden; String? get icon;
+ String get name;@JsonKey(fromJson: GroupType.parseProfileType) GroupType get type; List<String>? get proxies; List<String>? get use; int? get interval; bool? get lazy; String? get url; int? get timeout; int? get maxFailedTimes; String? get filter; String? get expectedFilter; String? get excludeType; dynamic get expectedStatus; bool? get hidden; String? get icon;
 /// Create a copy of ProxyGroup
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProxyGroupCopyWith<ProxyGroup> get copyWith => _$ProxyGroupCopyWithImpl<ProxyGr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxyGroup&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.proxies, proxies)&&const DeepCollectionEquality().equals(other.use, use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.excludeFilter, excludeFilter) || other.excludeFilter == excludeFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&const DeepCollectionEquality().equals(other.expectedStatus, expectedStatus)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxyGroup&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.proxies, proxies)&&const DeepCollectionEquality().equals(other.use, use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.expectedFilter, expectedFilter) || other.expectedFilter == expectedFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&const DeepCollectionEquality().equals(other.expectedStatus, expectedStatus)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,const DeepCollectionEquality().hash(proxies),const DeepCollectionEquality().hash(use),interval,lazy,url,timeout,maxFailedTimes,filter,excludeFilter,excludeType,const DeepCollectionEquality().hash(expectedStatus),hidden,icon);
+int get hashCode => Object.hash(runtimeType,name,type,const DeepCollectionEquality().hash(proxies),const DeepCollectionEquality().hash(use),interval,lazy,url,timeout,maxFailedTimes,filter,expectedFilter,excludeType,const DeepCollectionEquality().hash(expectedStatus),hidden,icon);
 
 @override
 String toString() {
-  return 'ProxyGroup(name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, excludeFilter: $excludeFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, hidden: $hidden, icon: $icon)';
+  return 'ProxyGroup(name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, expectedFilter: $expectedFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, hidden: $hidden, icon: $icon)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProxyGroupCopyWith<$Res>  {
   factory $ProxyGroupCopyWith(ProxyGroup value, $Res Function(ProxyGroup) _then) = _$ProxyGroupCopyWithImpl;
 @useResult
 $Res call({
- String name,@JsonKey(fromJson: GroupType.parseProfileType) GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy, String? url, int? timeout,@JsonKey(name: 'max-failed-times') int? maxFailedTimes, String? filter,@JsonKey(name: 'expected-filter') String? excludeFilter,@JsonKey(name: 'exclude-type') String? excludeType,@JsonKey(name: 'expected-status') dynamic expectedStatus, bool? hidden, String? icon
+ String name,@JsonKey(fromJson: GroupType.parseProfileType) GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy, String? url, int? timeout, int? maxFailedTimes, String? filter, String? expectedFilter, String? excludeType, dynamic expectedStatus, bool? hidden, String? icon
 });
 
 
@@ -65,7 +65,7 @@ class _$ProxyGroupCopyWithImpl<$Res>
 
 /// Create a copy of ProxyGroup
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? excludeFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? hidden = freezed,Object? icon = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? expectedFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? hidden = freezed,Object? icon = freezed,}) {
   return _then(_self.copyWith(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -77,7 +77,7 @@ as bool?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_n
 as String?,timeout: freezed == timeout ? _self.timeout : timeout // ignore: cast_nullable_to_non_nullable
 as int?,maxFailedTimes: freezed == maxFailedTimes ? _self.maxFailedTimes : maxFailedTimes // ignore: cast_nullable_to_non_nullable
 as int?,filter: freezed == filter ? _self.filter : filter // ignore: cast_nullable_to_non_nullable
-as String?,excludeFilter: freezed == excludeFilter ? _self.excludeFilter : excludeFilter // ignore: cast_nullable_to_non_nullable
+as String?,expectedFilter: freezed == expectedFilter ? _self.expectedFilter : expectedFilter // ignore: cast_nullable_to_non_nullable
 as String?,excludeType: freezed == excludeType ? _self.excludeType : excludeType // ignore: cast_nullable_to_non_nullable
 as String?,expectedStatus: freezed == expectedStatus ? _self.expectedStatus : expectedStatus // ignore: cast_nullable_to_non_nullable
 as dynamic,hidden: freezed == hidden ? _self.hidden : hidden // ignore: cast_nullable_to_non_nullable
@@ -167,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name, @JsonKey(fromJson: GroupType.parseProfileType)  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'expected-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  dynamic expectedStatus,  bool? hidden,  String? icon)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name, @JsonKey(fromJson: GroupType.parseProfileType)  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy,  String? url,  int? timeout,  int? maxFailedTimes,  String? filter,  String? expectedFilter,  String? excludeType,  dynamic expectedStatus,  bool? hidden,  String? icon)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProxyGroup() when $default != null:
-return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.hidden,_that.icon);case _:
+return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.expectedFilter,_that.excludeType,_that.expectedStatus,_that.hidden,_that.icon);case _:
   return orElse();
 
 }
@@ -188,10 +188,10 @@ return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name, @JsonKey(fromJson: GroupType.parseProfileType)  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'expected-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  dynamic expectedStatus,  bool? hidden,  String? icon)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name, @JsonKey(fromJson: GroupType.parseProfileType)  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy,  String? url,  int? timeout,  int? maxFailedTimes,  String? filter,  String? expectedFilter,  String? excludeType,  dynamic expectedStatus,  bool? hidden,  String? icon)  $default,) {final _that = this;
 switch (_that) {
 case _ProxyGroup():
-return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.hidden,_that.icon);case _:
+return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.expectedFilter,_that.excludeType,_that.expectedStatus,_that.hidden,_that.icon);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +208,10 @@ return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name, @JsonKey(fromJson: GroupType.parseProfileType)  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy,  String? url,  int? timeout, @JsonKey(name: 'max-failed-times')  int? maxFailedTimes,  String? filter, @JsonKey(name: 'expected-filter')  String? excludeFilter, @JsonKey(name: 'exclude-type')  String? excludeType, @JsonKey(name: 'expected-status')  dynamic expectedStatus,  bool? hidden,  String? icon)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name, @JsonKey(fromJson: GroupType.parseProfileType)  GroupType type,  List<String>? proxies,  List<String>? use,  int? interval,  bool? lazy,  String? url,  int? timeout,  int? maxFailedTimes,  String? filter,  String? expectedFilter,  String? excludeType,  dynamic expectedStatus,  bool? hidden,  String? icon)?  $default,) {final _that = this;
 switch (_that) {
 case _ProxyGroup() when $default != null:
-return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.excludeFilter,_that.excludeType,_that.expectedStatus,_that.hidden,_that.icon);case _:
+return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_that.lazy,_that.url,_that.timeout,_that.maxFailedTimes,_that.filter,_that.expectedFilter,_that.excludeType,_that.expectedStatus,_that.hidden,_that.icon);case _:
   return null;
 
 }
@@ -220,10 +220,10 @@ return $default(_that.name,_that.type,_that.proxies,_that.use,_that.interval,_th
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _ProxyGroup implements ProxyGroup {
-  const _ProxyGroup({required this.name, @JsonKey(fromJson: GroupType.parseProfileType) required this.type, final  List<String>? proxies, final  List<String>? use, this.interval, this.lazy, this.url, this.timeout, @JsonKey(name: 'max-failed-times') this.maxFailedTimes, this.filter, @JsonKey(name: 'expected-filter') this.excludeFilter, @JsonKey(name: 'exclude-type') this.excludeType, @JsonKey(name: 'expected-status') this.expectedStatus, this.hidden, this.icon}): _proxies = proxies,_use = use;
+  const _ProxyGroup({required this.name, @JsonKey(fromJson: GroupType.parseProfileType) required this.type, final  List<String>? proxies, final  List<String>? use, this.interval, this.lazy, this.url, this.timeout, this.maxFailedTimes, this.filter, this.expectedFilter, this.excludeType, this.expectedStatus, this.hidden, this.icon}): _proxies = proxies,_use = use;
   factory _ProxyGroup.fromJson(Map<String, dynamic> json) => _$ProxyGroupFromJson(json);
 
 @override final  String name;
@@ -250,11 +250,11 @@ class _ProxyGroup implements ProxyGroup {
 @override final  bool? lazy;
 @override final  String? url;
 @override final  int? timeout;
-@override@JsonKey(name: 'max-failed-times') final  int? maxFailedTimes;
+@override final  int? maxFailedTimes;
 @override final  String? filter;
-@override@JsonKey(name: 'expected-filter') final  String? excludeFilter;
-@override@JsonKey(name: 'exclude-type') final  String? excludeType;
-@override@JsonKey(name: 'expected-status') final  dynamic expectedStatus;
+@override final  String? expectedFilter;
+@override final  String? excludeType;
+@override final  dynamic expectedStatus;
 @override final  bool? hidden;
 @override final  String? icon;
 
@@ -271,16 +271,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProxyGroup&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._proxies, _proxies)&&const DeepCollectionEquality().equals(other._use, _use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.excludeFilter, excludeFilter) || other.excludeFilter == excludeFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&const DeepCollectionEquality().equals(other.expectedStatus, expectedStatus)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProxyGroup&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._proxies, _proxies)&&const DeepCollectionEquality().equals(other._use, _use)&&(identical(other.interval, interval) || other.interval == interval)&&(identical(other.lazy, lazy) || other.lazy == lazy)&&(identical(other.url, url) || other.url == url)&&(identical(other.timeout, timeout) || other.timeout == timeout)&&(identical(other.maxFailedTimes, maxFailedTimes) || other.maxFailedTimes == maxFailedTimes)&&(identical(other.filter, filter) || other.filter == filter)&&(identical(other.expectedFilter, expectedFilter) || other.expectedFilter == expectedFilter)&&(identical(other.excludeType, excludeType) || other.excludeType == excludeType)&&const DeepCollectionEquality().equals(other.expectedStatus, expectedStatus)&&(identical(other.hidden, hidden) || other.hidden == hidden)&&(identical(other.icon, icon) || other.icon == icon));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,const DeepCollectionEquality().hash(_proxies),const DeepCollectionEquality().hash(_use),interval,lazy,url,timeout,maxFailedTimes,filter,excludeFilter,excludeType,const DeepCollectionEquality().hash(expectedStatus),hidden,icon);
+int get hashCode => Object.hash(runtimeType,name,type,const DeepCollectionEquality().hash(_proxies),const DeepCollectionEquality().hash(_use),interval,lazy,url,timeout,maxFailedTimes,filter,expectedFilter,excludeType,const DeepCollectionEquality().hash(expectedStatus),hidden,icon);
 
 @override
 String toString() {
-  return 'ProxyGroup(name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, excludeFilter: $excludeFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, hidden: $hidden, icon: $icon)';
+  return 'ProxyGroup(name: $name, type: $type, proxies: $proxies, use: $use, interval: $interval, lazy: $lazy, url: $url, timeout: $timeout, maxFailedTimes: $maxFailedTimes, filter: $filter, expectedFilter: $expectedFilter, excludeType: $excludeType, expectedStatus: $expectedStatus, hidden: $hidden, icon: $icon)';
 }
 
 
@@ -291,7 +291,7 @@ abstract mixin class _$ProxyGroupCopyWith<$Res> implements $ProxyGroupCopyWith<$
   factory _$ProxyGroupCopyWith(_ProxyGroup value, $Res Function(_ProxyGroup) _then) = __$ProxyGroupCopyWithImpl;
 @override @useResult
 $Res call({
- String name,@JsonKey(fromJson: GroupType.parseProfileType) GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy, String? url, int? timeout,@JsonKey(name: 'max-failed-times') int? maxFailedTimes, String? filter,@JsonKey(name: 'expected-filter') String? excludeFilter,@JsonKey(name: 'exclude-type') String? excludeType,@JsonKey(name: 'expected-status') dynamic expectedStatus, bool? hidden, String? icon
+ String name,@JsonKey(fromJson: GroupType.parseProfileType) GroupType type, List<String>? proxies, List<String>? use, int? interval, bool? lazy, String? url, int? timeout, int? maxFailedTimes, String? filter, String? expectedFilter, String? excludeType, dynamic expectedStatus, bool? hidden, String? icon
 });
 
 
@@ -308,7 +308,7 @@ class __$ProxyGroupCopyWithImpl<$Res>
 
 /// Create a copy of ProxyGroup
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? excludeFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? hidden = freezed,Object? icon = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? type = null,Object? proxies = freezed,Object? use = freezed,Object? interval = freezed,Object? lazy = freezed,Object? url = freezed,Object? timeout = freezed,Object? maxFailedTimes = freezed,Object? filter = freezed,Object? expectedFilter = freezed,Object? excludeType = freezed,Object? expectedStatus = freezed,Object? hidden = freezed,Object? icon = freezed,}) {
   return _then(_ProxyGroup(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -320,7 +320,7 @@ as bool?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_n
 as String?,timeout: freezed == timeout ? _self.timeout : timeout // ignore: cast_nullable_to_non_nullable
 as int?,maxFailedTimes: freezed == maxFailedTimes ? _self.maxFailedTimes : maxFailedTimes // ignore: cast_nullable_to_non_nullable
 as int?,filter: freezed == filter ? _self.filter : filter // ignore: cast_nullable_to_non_nullable
-as String?,excludeFilter: freezed == excludeFilter ? _self.excludeFilter : excludeFilter // ignore: cast_nullable_to_non_nullable
+as String?,expectedFilter: freezed == expectedFilter ? _self.expectedFilter : expectedFilter // ignore: cast_nullable_to_non_nullable
 as String?,excludeType: freezed == excludeType ? _self.excludeType : excludeType // ignore: cast_nullable_to_non_nullable
 as String?,expectedStatus: freezed == expectedStatus ? _self.expectedStatus : expectedStatus // ignore: cast_nullable_to_non_nullable
 as dynamic,hidden: freezed == hidden ? _self.hidden : hidden // ignore: cast_nullable_to_non_nullable
@@ -599,7 +599,7 @@ as String,
 /// @nodoc
 mixin _$Sniffer {
 
- bool get enable;@JsonKey(name: 'override-destination') bool get overrideDest; List<String> get sniffing;@JsonKey(name: 'force-domain') List<String> get forceDomain;@JsonKey(name: 'skip-src-address') List<String> get skipSrcAddress;@JsonKey(name: 'skip-dst-address') List<String> get skipDstAddress;@JsonKey(name: 'skip-domain') List<String> get skipDomain;@JsonKey(name: 'port-whitelist') List<String> get port;@JsonKey(name: 'force-dns-mapping') bool get forceDnsMapping;@JsonKey(name: 'parse-pure-ip') bool get parsePureIp; Map<String, SnifferConfig> get sniff;
+ bool get enable; bool get overrideDestination; List<String> get sniffing; List<String> get forceDomain; List<String> get skipSrcAddress; List<String> get skipDstAddress; List<String> get skipDomain; List<String> get portWhitelist; bool get forceDnsMapping; bool get parsePureIp; Map<String, SnifferConfig> get sniff;
 /// Create a copy of Sniffer
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -612,16 +612,16 @@ $SnifferCopyWith<Sniffer> get copyWith => _$SnifferCopyWithImpl<Sniffer>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Sniffer&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.overrideDest, overrideDest) || other.overrideDest == overrideDest)&&const DeepCollectionEquality().equals(other.sniffing, sniffing)&&const DeepCollectionEquality().equals(other.forceDomain, forceDomain)&&const DeepCollectionEquality().equals(other.skipSrcAddress, skipSrcAddress)&&const DeepCollectionEquality().equals(other.skipDstAddress, skipDstAddress)&&const DeepCollectionEquality().equals(other.skipDomain, skipDomain)&&const DeepCollectionEquality().equals(other.port, port)&&(identical(other.forceDnsMapping, forceDnsMapping) || other.forceDnsMapping == forceDnsMapping)&&(identical(other.parsePureIp, parsePureIp) || other.parsePureIp == parsePureIp)&&const DeepCollectionEquality().equals(other.sniff, sniff));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Sniffer&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.overrideDestination, overrideDestination) || other.overrideDestination == overrideDestination)&&const DeepCollectionEquality().equals(other.sniffing, sniffing)&&const DeepCollectionEquality().equals(other.forceDomain, forceDomain)&&const DeepCollectionEquality().equals(other.skipSrcAddress, skipSrcAddress)&&const DeepCollectionEquality().equals(other.skipDstAddress, skipDstAddress)&&const DeepCollectionEquality().equals(other.skipDomain, skipDomain)&&const DeepCollectionEquality().equals(other.portWhitelist, portWhitelist)&&(identical(other.forceDnsMapping, forceDnsMapping) || other.forceDnsMapping == forceDnsMapping)&&(identical(other.parsePureIp, parsePureIp) || other.parsePureIp == parsePureIp)&&const DeepCollectionEquality().equals(other.sniff, sniff));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,overrideDest,const DeepCollectionEquality().hash(sniffing),const DeepCollectionEquality().hash(forceDomain),const DeepCollectionEquality().hash(skipSrcAddress),const DeepCollectionEquality().hash(skipDstAddress),const DeepCollectionEquality().hash(skipDomain),const DeepCollectionEquality().hash(port),forceDnsMapping,parsePureIp,const DeepCollectionEquality().hash(sniff));
+int get hashCode => Object.hash(runtimeType,enable,overrideDestination,const DeepCollectionEquality().hash(sniffing),const DeepCollectionEquality().hash(forceDomain),const DeepCollectionEquality().hash(skipSrcAddress),const DeepCollectionEquality().hash(skipDstAddress),const DeepCollectionEquality().hash(skipDomain),const DeepCollectionEquality().hash(portWhitelist),forceDnsMapping,parsePureIp,const DeepCollectionEquality().hash(sniff));
 
 @override
 String toString() {
-  return 'Sniffer(enable: $enable, overrideDest: $overrideDest, sniffing: $sniffing, forceDomain: $forceDomain, skipSrcAddress: $skipSrcAddress, skipDstAddress: $skipDstAddress, skipDomain: $skipDomain, port: $port, forceDnsMapping: $forceDnsMapping, parsePureIp: $parsePureIp, sniff: $sniff)';
+  return 'Sniffer(enable: $enable, overrideDestination: $overrideDestination, sniffing: $sniffing, forceDomain: $forceDomain, skipSrcAddress: $skipSrcAddress, skipDstAddress: $skipDstAddress, skipDomain: $skipDomain, portWhitelist: $portWhitelist, forceDnsMapping: $forceDnsMapping, parsePureIp: $parsePureIp, sniff: $sniff)';
 }
 
 
@@ -632,7 +632,7 @@ abstract mixin class $SnifferCopyWith<$Res>  {
   factory $SnifferCopyWith(Sniffer value, $Res Function(Sniffer) _then) = _$SnifferCopyWithImpl;
 @useResult
 $Res call({
- bool enable,@JsonKey(name: 'override-destination') bool overrideDest, List<String> sniffing,@JsonKey(name: 'force-domain') List<String> forceDomain,@JsonKey(name: 'skip-src-address') List<String> skipSrcAddress,@JsonKey(name: 'skip-dst-address') List<String> skipDstAddress,@JsonKey(name: 'skip-domain') List<String> skipDomain,@JsonKey(name: 'port-whitelist') List<String> port,@JsonKey(name: 'force-dns-mapping') bool forceDnsMapping,@JsonKey(name: 'parse-pure-ip') bool parsePureIp, Map<String, SnifferConfig> sniff
+ bool enable, bool overrideDestination, List<String> sniffing, List<String> forceDomain, List<String> skipSrcAddress, List<String> skipDstAddress, List<String> skipDomain, List<String> portWhitelist, bool forceDnsMapping, bool parsePureIp, Map<String, SnifferConfig> sniff
 });
 
 
@@ -649,16 +649,16 @@ class _$SnifferCopyWithImpl<$Res>
 
 /// Create a copy of Sniffer
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? overrideDest = null,Object? sniffing = null,Object? forceDomain = null,Object? skipSrcAddress = null,Object? skipDstAddress = null,Object? skipDomain = null,Object? port = null,Object? forceDnsMapping = null,Object? parsePureIp = null,Object? sniff = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? overrideDestination = null,Object? sniffing = null,Object? forceDomain = null,Object? skipSrcAddress = null,Object? skipDstAddress = null,Object? skipDomain = null,Object? portWhitelist = null,Object? forceDnsMapping = null,Object? parsePureIp = null,Object? sniff = null,}) {
   return _then(_self.copyWith(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
-as bool,overrideDest: null == overrideDest ? _self.overrideDest : overrideDest // ignore: cast_nullable_to_non_nullable
+as bool,overrideDestination: null == overrideDestination ? _self.overrideDestination : overrideDestination // ignore: cast_nullable_to_non_nullable
 as bool,sniffing: null == sniffing ? _self.sniffing : sniffing // ignore: cast_nullable_to_non_nullable
 as List<String>,forceDomain: null == forceDomain ? _self.forceDomain : forceDomain // ignore: cast_nullable_to_non_nullable
 as List<String>,skipSrcAddress: null == skipSrcAddress ? _self.skipSrcAddress : skipSrcAddress // ignore: cast_nullable_to_non_nullable
 as List<String>,skipDstAddress: null == skipDstAddress ? _self.skipDstAddress : skipDstAddress // ignore: cast_nullable_to_non_nullable
 as List<String>,skipDomain: null == skipDomain ? _self.skipDomain : skipDomain // ignore: cast_nullable_to_non_nullable
-as List<String>,port: null == port ? _self.port : port // ignore: cast_nullable_to_non_nullable
+as List<String>,portWhitelist: null == portWhitelist ? _self.portWhitelist : portWhitelist // ignore: cast_nullable_to_non_nullable
 as List<String>,forceDnsMapping: null == forceDnsMapping ? _self.forceDnsMapping : forceDnsMapping // ignore: cast_nullable_to_non_nullable
 as bool,parsePureIp: null == parsePureIp ? _self.parsePureIp : parsePureIp // ignore: cast_nullable_to_non_nullable
 as bool,sniff: null == sniff ? _self.sniff : sniff // ignore: cast_nullable_to_non_nullable
@@ -747,10 +747,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable, @JsonKey(name: 'override-destination')  bool overrideDest,  List<String> sniffing, @JsonKey(name: 'force-domain')  List<String> forceDomain, @JsonKey(name: 'skip-src-address')  List<String> skipSrcAddress, @JsonKey(name: 'skip-dst-address')  List<String> skipDstAddress, @JsonKey(name: 'skip-domain')  List<String> skipDomain, @JsonKey(name: 'port-whitelist')  List<String> port, @JsonKey(name: 'force-dns-mapping')  bool forceDnsMapping, @JsonKey(name: 'parse-pure-ip')  bool parsePureIp,  Map<String, SnifferConfig> sniff)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  bool overrideDestination,  List<String> sniffing,  List<String> forceDomain,  List<String> skipSrcAddress,  List<String> skipDstAddress,  List<String> skipDomain,  List<String> portWhitelist,  bool forceDnsMapping,  bool parsePureIp,  Map<String, SnifferConfig> sniff)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Sniffer() when $default != null:
-return $default(_that.enable,_that.overrideDest,_that.sniffing,_that.forceDomain,_that.skipSrcAddress,_that.skipDstAddress,_that.skipDomain,_that.port,_that.forceDnsMapping,_that.parsePureIp,_that.sniff);case _:
+return $default(_that.enable,_that.overrideDestination,_that.sniffing,_that.forceDomain,_that.skipSrcAddress,_that.skipDstAddress,_that.skipDomain,_that.portWhitelist,_that.forceDnsMapping,_that.parsePureIp,_that.sniff);case _:
   return orElse();
 
 }
@@ -768,10 +768,10 @@ return $default(_that.enable,_that.overrideDest,_that.sniffing,_that.forceDomain
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable, @JsonKey(name: 'override-destination')  bool overrideDest,  List<String> sniffing, @JsonKey(name: 'force-domain')  List<String> forceDomain, @JsonKey(name: 'skip-src-address')  List<String> skipSrcAddress, @JsonKey(name: 'skip-dst-address')  List<String> skipDstAddress, @JsonKey(name: 'skip-domain')  List<String> skipDomain, @JsonKey(name: 'port-whitelist')  List<String> port, @JsonKey(name: 'force-dns-mapping')  bool forceDnsMapping, @JsonKey(name: 'parse-pure-ip')  bool parsePureIp,  Map<String, SnifferConfig> sniff)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  bool overrideDestination,  List<String> sniffing,  List<String> forceDomain,  List<String> skipSrcAddress,  List<String> skipDstAddress,  List<String> skipDomain,  List<String> portWhitelist,  bool forceDnsMapping,  bool parsePureIp,  Map<String, SnifferConfig> sniff)  $default,) {final _that = this;
 switch (_that) {
 case _Sniffer():
-return $default(_that.enable,_that.overrideDest,_that.sniffing,_that.forceDomain,_that.skipSrcAddress,_that.skipDstAddress,_that.skipDomain,_that.port,_that.forceDnsMapping,_that.parsePureIp,_that.sniff);case _:
+return $default(_that.enable,_that.overrideDestination,_that.sniffing,_that.forceDomain,_that.skipSrcAddress,_that.skipDstAddress,_that.skipDomain,_that.portWhitelist,_that.forceDnsMapping,_that.parsePureIp,_that.sniff);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -788,10 +788,10 @@ return $default(_that.enable,_that.overrideDest,_that.sniffing,_that.forceDomain
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable, @JsonKey(name: 'override-destination')  bool overrideDest,  List<String> sniffing, @JsonKey(name: 'force-domain')  List<String> forceDomain, @JsonKey(name: 'skip-src-address')  List<String> skipSrcAddress, @JsonKey(name: 'skip-dst-address')  List<String> skipDstAddress, @JsonKey(name: 'skip-domain')  List<String> skipDomain, @JsonKey(name: 'port-whitelist')  List<String> port, @JsonKey(name: 'force-dns-mapping')  bool forceDnsMapping, @JsonKey(name: 'parse-pure-ip')  bool parsePureIp,  Map<String, SnifferConfig> sniff)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  bool overrideDestination,  List<String> sniffing,  List<String> forceDomain,  List<String> skipSrcAddress,  List<String> skipDstAddress,  List<String> skipDomain,  List<String> portWhitelist,  bool forceDnsMapping,  bool parsePureIp,  Map<String, SnifferConfig> sniff)?  $default,) {final _that = this;
 switch (_that) {
 case _Sniffer() when $default != null:
-return $default(_that.enable,_that.overrideDest,_that.sniffing,_that.forceDomain,_that.skipSrcAddress,_that.skipDstAddress,_that.skipDomain,_that.port,_that.forceDnsMapping,_that.parsePureIp,_that.sniff);case _:
+return $default(_that.enable,_that.overrideDestination,_that.sniffing,_that.forceDomain,_that.skipSrcAddress,_that.skipDstAddress,_that.skipDomain,_that.portWhitelist,_that.forceDnsMapping,_that.parsePureIp,_that.sniff);case _:
   return null;
 
 }
@@ -800,14 +800,14 @@ return $default(_that.enable,_that.overrideDest,_that.sniffing,_that.forceDomain
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _Sniffer implements Sniffer {
-  const _Sniffer({this.enable = false, @JsonKey(name: 'override-destination') this.overrideDest = true, final  List<String> sniffing = const [], @JsonKey(name: 'force-domain') final  List<String> forceDomain = const [], @JsonKey(name: 'skip-src-address') final  List<String> skipSrcAddress = const [], @JsonKey(name: 'skip-dst-address') final  List<String> skipDstAddress = const [], @JsonKey(name: 'skip-domain') final  List<String> skipDomain = const [], @JsonKey(name: 'port-whitelist') final  List<String> port = const [], @JsonKey(name: 'force-dns-mapping') this.forceDnsMapping = true, @JsonKey(name: 'parse-pure-ip') this.parsePureIp = true, final  Map<String, SnifferConfig> sniff = const {}}): _sniffing = sniffing,_forceDomain = forceDomain,_skipSrcAddress = skipSrcAddress,_skipDstAddress = skipDstAddress,_skipDomain = skipDomain,_port = port,_sniff = sniff;
+  const _Sniffer({this.enable = false, this.overrideDestination = true, final  List<String> sniffing = const [], final  List<String> forceDomain = const [], final  List<String> skipSrcAddress = const [], final  List<String> skipDstAddress = const [], final  List<String> skipDomain = const [], final  List<String> portWhitelist = const [], this.forceDnsMapping = true, this.parsePureIp = true, final  Map<String, SnifferConfig> sniff = const {}}): _sniffing = sniffing,_forceDomain = forceDomain,_skipSrcAddress = skipSrcAddress,_skipDstAddress = skipDstAddress,_skipDomain = skipDomain,_portWhitelist = portWhitelist,_sniff = sniff;
   factory _Sniffer.fromJson(Map<String, dynamic> json) => _$SnifferFromJson(json);
 
 @override@JsonKey() final  bool enable;
-@override@JsonKey(name: 'override-destination') final  bool overrideDest;
+@override@JsonKey() final  bool overrideDestination;
  final  List<String> _sniffing;
 @override@JsonKey() List<String> get sniffing {
   if (_sniffing is EqualUnmodifiableListView) return _sniffing;
@@ -816,42 +816,42 @@ class _Sniffer implements Sniffer {
 }
 
  final  List<String> _forceDomain;
-@override@JsonKey(name: 'force-domain') List<String> get forceDomain {
+@override@JsonKey() List<String> get forceDomain {
   if (_forceDomain is EqualUnmodifiableListView) return _forceDomain;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_forceDomain);
 }
 
  final  List<String> _skipSrcAddress;
-@override@JsonKey(name: 'skip-src-address') List<String> get skipSrcAddress {
+@override@JsonKey() List<String> get skipSrcAddress {
   if (_skipSrcAddress is EqualUnmodifiableListView) return _skipSrcAddress;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_skipSrcAddress);
 }
 
  final  List<String> _skipDstAddress;
-@override@JsonKey(name: 'skip-dst-address') List<String> get skipDstAddress {
+@override@JsonKey() List<String> get skipDstAddress {
   if (_skipDstAddress is EqualUnmodifiableListView) return _skipDstAddress;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_skipDstAddress);
 }
 
  final  List<String> _skipDomain;
-@override@JsonKey(name: 'skip-domain') List<String> get skipDomain {
+@override@JsonKey() List<String> get skipDomain {
   if (_skipDomain is EqualUnmodifiableListView) return _skipDomain;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_skipDomain);
 }
 
- final  List<String> _port;
-@override@JsonKey(name: 'port-whitelist') List<String> get port {
-  if (_port is EqualUnmodifiableListView) return _port;
+ final  List<String> _portWhitelist;
+@override@JsonKey() List<String> get portWhitelist {
+  if (_portWhitelist is EqualUnmodifiableListView) return _portWhitelist;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_port);
+  return EqualUnmodifiableListView(_portWhitelist);
 }
 
-@override@JsonKey(name: 'force-dns-mapping') final  bool forceDnsMapping;
-@override@JsonKey(name: 'parse-pure-ip') final  bool parsePureIp;
+@override@JsonKey() final  bool forceDnsMapping;
+@override@JsonKey() final  bool parsePureIp;
  final  Map<String, SnifferConfig> _sniff;
 @override@JsonKey() Map<String, SnifferConfig> get sniff {
   if (_sniff is EqualUnmodifiableMapView) return _sniff;
@@ -873,16 +873,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Sniffer&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.overrideDest, overrideDest) || other.overrideDest == overrideDest)&&const DeepCollectionEquality().equals(other._sniffing, _sniffing)&&const DeepCollectionEquality().equals(other._forceDomain, _forceDomain)&&const DeepCollectionEquality().equals(other._skipSrcAddress, _skipSrcAddress)&&const DeepCollectionEquality().equals(other._skipDstAddress, _skipDstAddress)&&const DeepCollectionEquality().equals(other._skipDomain, _skipDomain)&&const DeepCollectionEquality().equals(other._port, _port)&&(identical(other.forceDnsMapping, forceDnsMapping) || other.forceDnsMapping == forceDnsMapping)&&(identical(other.parsePureIp, parsePureIp) || other.parsePureIp == parsePureIp)&&const DeepCollectionEquality().equals(other._sniff, _sniff));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Sniffer&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.overrideDestination, overrideDestination) || other.overrideDestination == overrideDestination)&&const DeepCollectionEquality().equals(other._sniffing, _sniffing)&&const DeepCollectionEquality().equals(other._forceDomain, _forceDomain)&&const DeepCollectionEquality().equals(other._skipSrcAddress, _skipSrcAddress)&&const DeepCollectionEquality().equals(other._skipDstAddress, _skipDstAddress)&&const DeepCollectionEquality().equals(other._skipDomain, _skipDomain)&&const DeepCollectionEquality().equals(other._portWhitelist, _portWhitelist)&&(identical(other.forceDnsMapping, forceDnsMapping) || other.forceDnsMapping == forceDnsMapping)&&(identical(other.parsePureIp, parsePureIp) || other.parsePureIp == parsePureIp)&&const DeepCollectionEquality().equals(other._sniff, _sniff));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,overrideDest,const DeepCollectionEquality().hash(_sniffing),const DeepCollectionEquality().hash(_forceDomain),const DeepCollectionEquality().hash(_skipSrcAddress),const DeepCollectionEquality().hash(_skipDstAddress),const DeepCollectionEquality().hash(_skipDomain),const DeepCollectionEquality().hash(_port),forceDnsMapping,parsePureIp,const DeepCollectionEquality().hash(_sniff));
+int get hashCode => Object.hash(runtimeType,enable,overrideDestination,const DeepCollectionEquality().hash(_sniffing),const DeepCollectionEquality().hash(_forceDomain),const DeepCollectionEquality().hash(_skipSrcAddress),const DeepCollectionEquality().hash(_skipDstAddress),const DeepCollectionEquality().hash(_skipDomain),const DeepCollectionEquality().hash(_portWhitelist),forceDnsMapping,parsePureIp,const DeepCollectionEquality().hash(_sniff));
 
 @override
 String toString() {
-  return 'Sniffer(enable: $enable, overrideDest: $overrideDest, sniffing: $sniffing, forceDomain: $forceDomain, skipSrcAddress: $skipSrcAddress, skipDstAddress: $skipDstAddress, skipDomain: $skipDomain, port: $port, forceDnsMapping: $forceDnsMapping, parsePureIp: $parsePureIp, sniff: $sniff)';
+  return 'Sniffer(enable: $enable, overrideDestination: $overrideDestination, sniffing: $sniffing, forceDomain: $forceDomain, skipSrcAddress: $skipSrcAddress, skipDstAddress: $skipDstAddress, skipDomain: $skipDomain, portWhitelist: $portWhitelist, forceDnsMapping: $forceDnsMapping, parsePureIp: $parsePureIp, sniff: $sniff)';
 }
 
 
@@ -893,7 +893,7 @@ abstract mixin class _$SnifferCopyWith<$Res> implements $SnifferCopyWith<$Res> {
   factory _$SnifferCopyWith(_Sniffer value, $Res Function(_Sniffer) _then) = __$SnifferCopyWithImpl;
 @override @useResult
 $Res call({
- bool enable,@JsonKey(name: 'override-destination') bool overrideDest, List<String> sniffing,@JsonKey(name: 'force-domain') List<String> forceDomain,@JsonKey(name: 'skip-src-address') List<String> skipSrcAddress,@JsonKey(name: 'skip-dst-address') List<String> skipDstAddress,@JsonKey(name: 'skip-domain') List<String> skipDomain,@JsonKey(name: 'port-whitelist') List<String> port,@JsonKey(name: 'force-dns-mapping') bool forceDnsMapping,@JsonKey(name: 'parse-pure-ip') bool parsePureIp, Map<String, SnifferConfig> sniff
+ bool enable, bool overrideDestination, List<String> sniffing, List<String> forceDomain, List<String> skipSrcAddress, List<String> skipDstAddress, List<String> skipDomain, List<String> portWhitelist, bool forceDnsMapping, bool parsePureIp, Map<String, SnifferConfig> sniff
 });
 
 
@@ -910,16 +910,16 @@ class __$SnifferCopyWithImpl<$Res>
 
 /// Create a copy of Sniffer
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? overrideDest = null,Object? sniffing = null,Object? forceDomain = null,Object? skipSrcAddress = null,Object? skipDstAddress = null,Object? skipDomain = null,Object? port = null,Object? forceDnsMapping = null,Object? parsePureIp = null,Object? sniff = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? overrideDestination = null,Object? sniffing = null,Object? forceDomain = null,Object? skipSrcAddress = null,Object? skipDstAddress = null,Object? skipDomain = null,Object? portWhitelist = null,Object? forceDnsMapping = null,Object? parsePureIp = null,Object? sniff = null,}) {
   return _then(_Sniffer(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
-as bool,overrideDest: null == overrideDest ? _self.overrideDest : overrideDest // ignore: cast_nullable_to_non_nullable
+as bool,overrideDestination: null == overrideDestination ? _self.overrideDestination : overrideDestination // ignore: cast_nullable_to_non_nullable
 as bool,sniffing: null == sniffing ? _self._sniffing : sniffing // ignore: cast_nullable_to_non_nullable
 as List<String>,forceDomain: null == forceDomain ? _self._forceDomain : forceDomain // ignore: cast_nullable_to_non_nullable
 as List<String>,skipSrcAddress: null == skipSrcAddress ? _self._skipSrcAddress : skipSrcAddress // ignore: cast_nullable_to_non_nullable
 as List<String>,skipDstAddress: null == skipDstAddress ? _self._skipDstAddress : skipDstAddress // ignore: cast_nullable_to_non_nullable
 as List<String>,skipDomain: null == skipDomain ? _self._skipDomain : skipDomain // ignore: cast_nullable_to_non_nullable
-as List<String>,port: null == port ? _self._port : port // ignore: cast_nullable_to_non_nullable
+as List<String>,portWhitelist: null == portWhitelist ? _self._portWhitelist : portWhitelist // ignore: cast_nullable_to_non_nullable
 as List<String>,forceDnsMapping: null == forceDnsMapping ? _self.forceDnsMapping : forceDnsMapping // ignore: cast_nullable_to_non_nullable
 as bool,parsePureIp: null == parsePureIp ? _self.parsePureIp : parsePureIp // ignore: cast_nullable_to_non_nullable
 as bool,sniff: null == sniff ? _self._sniff : sniff // ignore: cast_nullable_to_non_nullable
@@ -934,7 +934,7 @@ as Map<String, SnifferConfig>,
 /// @nodoc
 mixin _$SnifferConfig {
 
-@JsonKey(fromJson: _formJsonPorts) List<String> get ports;@JsonKey(name: 'override-destination') bool? get overrideDest;
+@JsonKey(fromJson: _formJsonPorts) List<String> get ports; bool? get overrideDestination;
 /// Create a copy of SnifferConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -947,16 +947,16 @@ $SnifferConfigCopyWith<SnifferConfig> get copyWith => _$SnifferConfigCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnifferConfig&&const DeepCollectionEquality().equals(other.ports, ports)&&(identical(other.overrideDest, overrideDest) || other.overrideDest == overrideDest));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnifferConfig&&const DeepCollectionEquality().equals(other.ports, ports)&&(identical(other.overrideDestination, overrideDestination) || other.overrideDestination == overrideDestination));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(ports),overrideDest);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(ports),overrideDestination);
 
 @override
 String toString() {
-  return 'SnifferConfig(ports: $ports, overrideDest: $overrideDest)';
+  return 'SnifferConfig(ports: $ports, overrideDestination: $overrideDestination)';
 }
 
 
@@ -967,7 +967,7 @@ abstract mixin class $SnifferConfigCopyWith<$Res>  {
   factory $SnifferConfigCopyWith(SnifferConfig value, $Res Function(SnifferConfig) _then) = _$SnifferConfigCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: _formJsonPorts) List<String> ports,@JsonKey(name: 'override-destination') bool? overrideDest
+@JsonKey(fromJson: _formJsonPorts) List<String> ports, bool? overrideDestination
 });
 
 
@@ -984,10 +984,10 @@ class _$SnifferConfigCopyWithImpl<$Res>
 
 /// Create a copy of SnifferConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ports = null,Object? overrideDest = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ports = null,Object? overrideDestination = freezed,}) {
   return _then(_self.copyWith(
 ports: null == ports ? _self.ports : ports // ignore: cast_nullable_to_non_nullable
-as List<String>,overrideDest: freezed == overrideDest ? _self.overrideDest : overrideDest // ignore: cast_nullable_to_non_nullable
+as List<String>,overrideDestination: freezed == overrideDestination ? _self.overrideDestination : overrideDestination // ignore: cast_nullable_to_non_nullable
 as bool?,
   ));
 }
@@ -1073,10 +1073,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _formJsonPorts)  List<String> ports, @JsonKey(name: 'override-destination')  bool? overrideDest)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _formJsonPorts)  List<String> ports,  bool? overrideDestination)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SnifferConfig() when $default != null:
-return $default(_that.ports,_that.overrideDest);case _:
+return $default(_that.ports,_that.overrideDestination);case _:
   return orElse();
 
 }
@@ -1094,10 +1094,10 @@ return $default(_that.ports,_that.overrideDest);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _formJsonPorts)  List<String> ports, @JsonKey(name: 'override-destination')  bool? overrideDest)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _formJsonPorts)  List<String> ports,  bool? overrideDestination)  $default,) {final _that = this;
 switch (_that) {
 case _SnifferConfig():
-return $default(_that.ports,_that.overrideDest);case _:
+return $default(_that.ports,_that.overrideDestination);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1114,10 +1114,10 @@ return $default(_that.ports,_that.overrideDest);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _formJsonPorts)  List<String> ports, @JsonKey(name: 'override-destination')  bool? overrideDest)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _formJsonPorts)  List<String> ports,  bool? overrideDestination)?  $default,) {final _that = this;
 switch (_that) {
 case _SnifferConfig() when $default != null:
-return $default(_that.ports,_that.overrideDest);case _:
+return $default(_that.ports,_that.overrideDestination);case _:
   return null;
 
 }
@@ -1126,10 +1126,10 @@ return $default(_that.ports,_that.overrideDest);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _SnifferConfig implements SnifferConfig {
-  const _SnifferConfig({@JsonKey(fromJson: _formJsonPorts) final  List<String> ports = const [], @JsonKey(name: 'override-destination') this.overrideDest}): _ports = ports;
+  const _SnifferConfig({@JsonKey(fromJson: _formJsonPorts) final  List<String> ports = const [], this.overrideDestination}): _ports = ports;
   factory _SnifferConfig.fromJson(Map<String, dynamic> json) => _$SnifferConfigFromJson(json);
 
  final  List<String> _ports;
@@ -1139,7 +1139,7 @@ class _SnifferConfig implements SnifferConfig {
   return EqualUnmodifiableListView(_ports);
 }
 
-@override@JsonKey(name: 'override-destination') final  bool? overrideDest;
+@override final  bool? overrideDestination;
 
 /// Create a copy of SnifferConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -1154,16 +1154,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnifferConfig&&const DeepCollectionEquality().equals(other._ports, _ports)&&(identical(other.overrideDest, overrideDest) || other.overrideDest == overrideDest));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnifferConfig&&const DeepCollectionEquality().equals(other._ports, _ports)&&(identical(other.overrideDestination, overrideDestination) || other.overrideDestination == overrideDestination));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_ports),overrideDest);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_ports),overrideDestination);
 
 @override
 String toString() {
-  return 'SnifferConfig(ports: $ports, overrideDest: $overrideDest)';
+  return 'SnifferConfig(ports: $ports, overrideDestination: $overrideDestination)';
 }
 
 
@@ -1174,7 +1174,7 @@ abstract mixin class _$SnifferConfigCopyWith<$Res> implements $SnifferConfigCopy
   factory _$SnifferConfigCopyWith(_SnifferConfig value, $Res Function(_SnifferConfig) _then) = __$SnifferConfigCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: _formJsonPorts) List<String> ports,@JsonKey(name: 'override-destination') bool? overrideDest
+@JsonKey(fromJson: _formJsonPorts) List<String> ports, bool? overrideDestination
 });
 
 
@@ -1191,10 +1191,10 @@ class __$SnifferConfigCopyWithImpl<$Res>
 
 /// Create a copy of SnifferConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ports = null,Object? overrideDest = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ports = null,Object? overrideDestination = freezed,}) {
   return _then(_SnifferConfig(
 ports: null == ports ? _self._ports : ports // ignore: cast_nullable_to_non_nullable
-as List<String>,overrideDest: freezed == overrideDest ? _self.overrideDest : overrideDest // ignore: cast_nullable_to_non_nullable
+as List<String>,overrideDestination: freezed == overrideDestination ? _self.overrideDestination : overrideDestination // ignore: cast_nullable_to_non_nullable
 as bool?,
   ));
 }
@@ -1206,7 +1206,7 @@ as bool?,
 /// @nodoc
 mixin _$Tun {
 
- bool get enable; String get device;@JsonKey(name: 'auto-route') bool get autoRoute; TunStack get stack;@JsonKey(name: 'dns-hijack') List<String> get dnsHijack;@JsonKey(name: 'route-address') List<String> get routeAddress;
+ bool get enable; String get device; bool get autoRoute; TunStack get stack; List<String> get dnsHijack; List<String> get routeAddress;
 /// Create a copy of Tun
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1239,7 +1239,7 @@ abstract mixin class $TunCopyWith<$Res>  {
   factory $TunCopyWith(Tun value, $Res Function(Tun) _then) = _$TunCopyWithImpl;
 @useResult
 $Res call({
- bool enable, String device,@JsonKey(name: 'auto-route') bool autoRoute, TunStack stack,@JsonKey(name: 'dns-hijack') List<String> dnsHijack,@JsonKey(name: 'route-address') List<String> routeAddress
+ bool enable, String device, bool autoRoute, TunStack stack, List<String> dnsHijack, List<String> routeAddress
 });
 
 
@@ -1349,7 +1349,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  String device, @JsonKey(name: 'auto-route')  bool autoRoute,  TunStack stack, @JsonKey(name: 'dns-hijack')  List<String> dnsHijack, @JsonKey(name: 'route-address')  List<String> routeAddress)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  String device,  bool autoRoute,  TunStack stack,  List<String> dnsHijack,  List<String> routeAddress)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Tun() when $default != null:
 return $default(_that.enable,_that.device,_that.autoRoute,_that.stack,_that.dnsHijack,_that.routeAddress);case _:
@@ -1370,7 +1370,7 @@ return $default(_that.enable,_that.device,_that.autoRoute,_that.stack,_that.dnsH
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  String device, @JsonKey(name: 'auto-route')  bool autoRoute,  TunStack stack, @JsonKey(name: 'dns-hijack')  List<String> dnsHijack, @JsonKey(name: 'route-address')  List<String> routeAddress)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  String device,  bool autoRoute,  TunStack stack,  List<String> dnsHijack,  List<String> routeAddress)  $default,) {final _that = this;
 switch (_that) {
 case _Tun():
 return $default(_that.enable,_that.device,_that.autoRoute,_that.stack,_that.dnsHijack,_that.routeAddress);case _:
@@ -1390,7 +1390,7 @@ return $default(_that.enable,_that.device,_that.autoRoute,_that.stack,_that.dnsH
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  String device, @JsonKey(name: 'auto-route')  bool autoRoute,  TunStack stack, @JsonKey(name: 'dns-hijack')  List<String> dnsHijack, @JsonKey(name: 'route-address')  List<String> routeAddress)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  String device,  bool autoRoute,  TunStack stack,  List<String> dnsHijack,  List<String> routeAddress)?  $default,) {final _that = this;
 switch (_that) {
 case _Tun() when $default != null:
 return $default(_that.enable,_that.device,_that.autoRoute,_that.stack,_that.dnsHijack,_that.routeAddress);case _:
@@ -1402,25 +1402,25 @@ return $default(_that.enable,_that.device,_that.autoRoute,_that.stack,_that.dnsH
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _Tun implements Tun {
-  const _Tun({this.enable = false, this.device = appName, @JsonKey(name: 'auto-route') this.autoRoute = false, this.stack = TunStack.mixed, @JsonKey(name: 'dns-hijack') final  List<String> dnsHijack = const ['any:53'], @JsonKey(name: 'route-address') final  List<String> routeAddress = const []}): _dnsHijack = dnsHijack,_routeAddress = routeAddress;
+  const _Tun({this.enable = false, this.device = appName, this.autoRoute = false, this.stack = TunStack.mixed, final  List<String> dnsHijack = const ['any:53'], final  List<String> routeAddress = const []}): _dnsHijack = dnsHijack,_routeAddress = routeAddress;
   factory _Tun.fromJson(Map<String, dynamic> json) => _$TunFromJson(json);
 
 @override@JsonKey() final  bool enable;
 @override@JsonKey() final  String device;
-@override@JsonKey(name: 'auto-route') final  bool autoRoute;
+@override@JsonKey() final  bool autoRoute;
 @override@JsonKey() final  TunStack stack;
  final  List<String> _dnsHijack;
-@override@JsonKey(name: 'dns-hijack') List<String> get dnsHijack {
+@override@JsonKey() List<String> get dnsHijack {
   if (_dnsHijack is EqualUnmodifiableListView) return _dnsHijack;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_dnsHijack);
 }
 
  final  List<String> _routeAddress;
-@override@JsonKey(name: 'route-address') List<String> get routeAddress {
+@override@JsonKey() List<String> get routeAddress {
   if (_routeAddress is EqualUnmodifiableListView) return _routeAddress;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_routeAddress);
@@ -1460,7 +1460,7 @@ abstract mixin class _$TunCopyWith<$Res> implements $TunCopyWith<$Res> {
   factory _$TunCopyWith(_Tun value, $Res Function(_Tun) _then) = __$TunCopyWithImpl;
 @override @useResult
 $Res call({
- bool enable, String device,@JsonKey(name: 'auto-route') bool autoRoute, TunStack stack,@JsonKey(name: 'dns-hijack') List<String> dnsHijack,@JsonKey(name: 'route-address') List<String> routeAddress
+ bool enable, String device, bool autoRoute, TunStack stack, List<String> dnsHijack, List<String> routeAddress
 });
 
 
@@ -1496,7 +1496,7 @@ as List<String>,
 /// @nodoc
 mixin _$FallbackFilter {
 
- bool get geoip;@JsonKey(name: 'geoip-code') String get geoipCode; List<String> get geosite; List<String> get ipcidr; List<String> get domain;
+ bool get geoip; String get geoipCode; List<String> get geosite; List<String> get ipcidr; List<String> get domain;
 /// Create a copy of FallbackFilter
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1529,7 +1529,7 @@ abstract mixin class $FallbackFilterCopyWith<$Res>  {
   factory $FallbackFilterCopyWith(FallbackFilter value, $Res Function(FallbackFilter) _then) = _$FallbackFilterCopyWithImpl;
 @useResult
 $Res call({
- bool geoip,@JsonKey(name: 'geoip-code') String geoipCode, List<String> geosite, List<String> ipcidr, List<String> domain
+ bool geoip, String geoipCode, List<String> geosite, List<String> ipcidr, List<String> domain
 });
 
 
@@ -1638,7 +1638,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool geoip, @JsonKey(name: 'geoip-code')  String geoipCode,  List<String> geosite,  List<String> ipcidr,  List<String> domain)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool geoip,  String geoipCode,  List<String> geosite,  List<String> ipcidr,  List<String> domain)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FallbackFilter() when $default != null:
 return $default(_that.geoip,_that.geoipCode,_that.geosite,_that.ipcidr,_that.domain);case _:
@@ -1659,7 +1659,7 @@ return $default(_that.geoip,_that.geoipCode,_that.geosite,_that.ipcidr,_that.dom
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool geoip, @JsonKey(name: 'geoip-code')  String geoipCode,  List<String> geosite,  List<String> ipcidr,  List<String> domain)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool geoip,  String geoipCode,  List<String> geosite,  List<String> ipcidr,  List<String> domain)  $default,) {final _that = this;
 switch (_that) {
 case _FallbackFilter():
 return $default(_that.geoip,_that.geoipCode,_that.geosite,_that.ipcidr,_that.domain);case _:
@@ -1679,7 +1679,7 @@ return $default(_that.geoip,_that.geoipCode,_that.geosite,_that.ipcidr,_that.dom
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool geoip, @JsonKey(name: 'geoip-code')  String geoipCode,  List<String> geosite,  List<String> ipcidr,  List<String> domain)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool geoip,  String geoipCode,  List<String> geosite,  List<String> ipcidr,  List<String> domain)?  $default,) {final _that = this;
 switch (_that) {
 case _FallbackFilter() when $default != null:
 return $default(_that.geoip,_that.geoipCode,_that.geosite,_that.ipcidr,_that.domain);case _:
@@ -1691,14 +1691,14 @@ return $default(_that.geoip,_that.geoipCode,_that.geosite,_that.ipcidr,_that.dom
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _FallbackFilter implements FallbackFilter {
-  const _FallbackFilter({this.geoip = true, @JsonKey(name: 'geoip-code') this.geoipCode = 'CN', final  List<String> geosite = const ['gfw'], final  List<String> ipcidr = const ['240.0.0.0/4'], final  List<String> domain = const ['+.google.com', '+.facebook.com', '+.youtube.com']}): _geosite = geosite,_ipcidr = ipcidr,_domain = domain;
+  const _FallbackFilter({this.geoip = true, this.geoipCode = 'CN', final  List<String> geosite = const ['gfw'], final  List<String> ipcidr = const ['240.0.0.0/4'], final  List<String> domain = const ['+.google.com', '+.facebook.com', '+.youtube.com']}): _geosite = geosite,_ipcidr = ipcidr,_domain = domain;
   factory _FallbackFilter.fromJson(Map<String, dynamic> json) => _$FallbackFilterFromJson(json);
 
 @override@JsonKey() final  bool geoip;
-@override@JsonKey(name: 'geoip-code') final  String geoipCode;
+@override@JsonKey() final  String geoipCode;
  final  List<String> _geosite;
 @override@JsonKey() List<String> get geosite {
   if (_geosite is EqualUnmodifiableListView) return _geosite;
@@ -1754,7 +1754,7 @@ abstract mixin class _$FallbackFilterCopyWith<$Res> implements $FallbackFilterCo
   factory _$FallbackFilterCopyWith(_FallbackFilter value, $Res Function(_FallbackFilter) _then) = __$FallbackFilterCopyWithImpl;
 @override @useResult
 $Res call({
- bool geoip,@JsonKey(name: 'geoip-code') String geoipCode, List<String> geosite, List<String> ipcidr, List<String> domain
+ bool geoip, String geoipCode, List<String> geosite, List<String> ipcidr, List<String> domain
 });
 
 
@@ -1789,7 +1789,7 @@ as List<String>,
 /// @nodoc
 mixin _$Dns {
 
- bool get enable; String get listen;@JsonKey(name: 'prefer-h3') bool get preferH3;@JsonKey(name: 'use-hosts') bool get useHosts;@JsonKey(name: 'use-system-hosts') bool get useSystemHosts;@JsonKey(name: 'respect-rules') bool get respectRules; bool get ipv6;@JsonKey(name: 'default-nameserver') List<String> get defaultNameserver;@JsonKey(name: 'enhanced-mode') DnsMode get enhancedMode;@JsonKey(name: 'fake-ip-range') String get fakeIpRange;@JsonKey(name: 'fake-ip-filter') List<String> get fakeIpFilter;@JsonKey(name: 'nameserver-policy') Map<String, String> get nameserverPolicy; List<String> get nameserver; List<String> get fallback;@JsonKey(name: 'proxy-server-nameserver') List<String> get proxyServerNameserver;@JsonKey(name: 'fallback-filter') FallbackFilter get fallbackFilter;
+ bool get enable; String get listen; bool get preferH3; bool get useHosts; bool get useSystemHosts; bool get respectRules; bool get ipv6; List<String> get defaultNameserver; DnsMode get enhancedMode; String get fakeIpRange; List<String> get fakeIpFilter; Map<String, String> get nameserverPolicy; List<String> get nameserver; List<String> get fallback; List<String> get proxyServerNameserver; FallbackFilter get fallbackFilter;
 /// Create a copy of Dns
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1822,7 +1822,7 @@ abstract mixin class $DnsCopyWith<$Res>  {
   factory $DnsCopyWith(Dns value, $Res Function(Dns) _then) = _$DnsCopyWithImpl;
 @useResult
 $Res call({
- bool enable, String listen,@JsonKey(name: 'prefer-h3') bool preferH3,@JsonKey(name: 'use-hosts') bool useHosts,@JsonKey(name: 'use-system-hosts') bool useSystemHosts,@JsonKey(name: 'respect-rules') bool respectRules, bool ipv6,@JsonKey(name: 'default-nameserver') List<String> defaultNameserver,@JsonKey(name: 'enhanced-mode') DnsMode enhancedMode,@JsonKey(name: 'fake-ip-range') String fakeIpRange,@JsonKey(name: 'fake-ip-filter') List<String> fakeIpFilter,@JsonKey(name: 'nameserver-policy') Map<String, String> nameserverPolicy, List<String> nameserver, List<String> fallback,@JsonKey(name: 'proxy-server-nameserver') List<String> proxyServerNameserver,@JsonKey(name: 'fallback-filter') FallbackFilter fallbackFilter
+ bool enable, String listen, bool preferH3, bool useHosts, bool useSystemHosts, bool respectRules, bool ipv6, List<String> defaultNameserver, DnsMode enhancedMode, String fakeIpRange, List<String> fakeIpFilter, Map<String, String> nameserverPolicy, List<String> nameserver, List<String> fallback, List<String> proxyServerNameserver, FallbackFilter fallbackFilter
 });
 
 
@@ -1951,7 +1951,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  String listen, @JsonKey(name: 'prefer-h3')  bool preferH3, @JsonKey(name: 'use-hosts')  bool useHosts, @JsonKey(name: 'use-system-hosts')  bool useSystemHosts, @JsonKey(name: 'respect-rules')  bool respectRules,  bool ipv6, @JsonKey(name: 'default-nameserver')  List<String> defaultNameserver, @JsonKey(name: 'enhanced-mode')  DnsMode enhancedMode, @JsonKey(name: 'fake-ip-range')  String fakeIpRange, @JsonKey(name: 'fake-ip-filter')  List<String> fakeIpFilter, @JsonKey(name: 'nameserver-policy')  Map<String, String> nameserverPolicy,  List<String> nameserver,  List<String> fallback, @JsonKey(name: 'proxy-server-nameserver')  List<String> proxyServerNameserver, @JsonKey(name: 'fallback-filter')  FallbackFilter fallbackFilter)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  String listen,  bool preferH3,  bool useHosts,  bool useSystemHosts,  bool respectRules,  bool ipv6,  List<String> defaultNameserver,  DnsMode enhancedMode,  String fakeIpRange,  List<String> fakeIpFilter,  Map<String, String> nameserverPolicy,  List<String> nameserver,  List<String> fallback,  List<String> proxyServerNameserver,  FallbackFilter fallbackFilter)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Dns() when $default != null:
 return $default(_that.enable,_that.listen,_that.preferH3,_that.useHosts,_that.useSystemHosts,_that.respectRules,_that.ipv6,_that.defaultNameserver,_that.enhancedMode,_that.fakeIpRange,_that.fakeIpFilter,_that.nameserverPolicy,_that.nameserver,_that.fallback,_that.proxyServerNameserver,_that.fallbackFilter);case _:
@@ -1972,7 +1972,7 @@ return $default(_that.enable,_that.listen,_that.preferH3,_that.useHosts,_that.us
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  String listen, @JsonKey(name: 'prefer-h3')  bool preferH3, @JsonKey(name: 'use-hosts')  bool useHosts, @JsonKey(name: 'use-system-hosts')  bool useSystemHosts, @JsonKey(name: 'respect-rules')  bool respectRules,  bool ipv6, @JsonKey(name: 'default-nameserver')  List<String> defaultNameserver, @JsonKey(name: 'enhanced-mode')  DnsMode enhancedMode, @JsonKey(name: 'fake-ip-range')  String fakeIpRange, @JsonKey(name: 'fake-ip-filter')  List<String> fakeIpFilter, @JsonKey(name: 'nameserver-policy')  Map<String, String> nameserverPolicy,  List<String> nameserver,  List<String> fallback, @JsonKey(name: 'proxy-server-nameserver')  List<String> proxyServerNameserver, @JsonKey(name: 'fallback-filter')  FallbackFilter fallbackFilter)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  String listen,  bool preferH3,  bool useHosts,  bool useSystemHosts,  bool respectRules,  bool ipv6,  List<String> defaultNameserver,  DnsMode enhancedMode,  String fakeIpRange,  List<String> fakeIpFilter,  Map<String, String> nameserverPolicy,  List<String> nameserver,  List<String> fallback,  List<String> proxyServerNameserver,  FallbackFilter fallbackFilter)  $default,) {final _that = this;
 switch (_that) {
 case _Dns():
 return $default(_that.enable,_that.listen,_that.preferH3,_that.useHosts,_that.useSystemHosts,_that.respectRules,_that.ipv6,_that.defaultNameserver,_that.enhancedMode,_that.fakeIpRange,_that.fakeIpFilter,_that.nameserverPolicy,_that.nameserver,_that.fallback,_that.proxyServerNameserver,_that.fallbackFilter);case _:
@@ -1992,7 +1992,7 @@ return $default(_that.enable,_that.listen,_that.preferH3,_that.useHosts,_that.us
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  String listen, @JsonKey(name: 'prefer-h3')  bool preferH3, @JsonKey(name: 'use-hosts')  bool useHosts, @JsonKey(name: 'use-system-hosts')  bool useSystemHosts, @JsonKey(name: 'respect-rules')  bool respectRules,  bool ipv6, @JsonKey(name: 'default-nameserver')  List<String> defaultNameserver, @JsonKey(name: 'enhanced-mode')  DnsMode enhancedMode, @JsonKey(name: 'fake-ip-range')  String fakeIpRange, @JsonKey(name: 'fake-ip-filter')  List<String> fakeIpFilter, @JsonKey(name: 'nameserver-policy')  Map<String, String> nameserverPolicy,  List<String> nameserver,  List<String> fallback, @JsonKey(name: 'proxy-server-nameserver')  List<String> proxyServerNameserver, @JsonKey(name: 'fallback-filter')  FallbackFilter fallbackFilter)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  String listen,  bool preferH3,  bool useHosts,  bool useSystemHosts,  bool respectRules,  bool ipv6,  List<String> defaultNameserver,  DnsMode enhancedMode,  String fakeIpRange,  List<String> fakeIpFilter,  Map<String, String> nameserverPolicy,  List<String> nameserver,  List<String> fallback,  List<String> proxyServerNameserver,  FallbackFilter fallbackFilter)?  $default,) {final _that = this;
 switch (_that) {
 case _Dns() when $default != null:
 return $default(_that.enable,_that.listen,_that.preferH3,_that.useHosts,_that.useSystemHosts,_that.respectRules,_that.ipv6,_that.defaultNameserver,_that.enhancedMode,_that.fakeIpRange,_that.fakeIpFilter,_that.nameserverPolicy,_that.nameserver,_that.fallback,_that.proxyServerNameserver,_that.fallbackFilter);case _:
@@ -2004,37 +2004,37 @@ return $default(_that.enable,_that.listen,_that.preferH3,_that.useHosts,_that.us
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _Dns implements Dns {
-  const _Dns({this.enable = true, this.listen = '0.0.0.0:1053', @JsonKey(name: 'prefer-h3') this.preferH3 = false, @JsonKey(name: 'use-hosts') this.useHosts = true, @JsonKey(name: 'use-system-hosts') this.useSystemHosts = true, @JsonKey(name: 'respect-rules') this.respectRules = false, this.ipv6 = false, @JsonKey(name: 'default-nameserver') final  List<String> defaultNameserver = const ['223.5.5.5'], @JsonKey(name: 'enhanced-mode') this.enhancedMode = DnsMode.fakeIp, @JsonKey(name: 'fake-ip-range') this.fakeIpRange = '198.18.0.1/16', @JsonKey(name: 'fake-ip-filter') final  List<String> fakeIpFilter = const ['*.lan', 'localhost.ptlogin2.qq.com'], @JsonKey(name: 'nameserver-policy') final  Map<String, String> nameserverPolicy = const {'www.baidu.com' : '114.114.114.114', '+.internal.crop.com' : '10.0.0.1', 'geosite:cn' : 'https://doh.pub/dns-query'}, final  List<String> nameserver = const ['https://doh.pub/dns-query', 'https://dns.alidns.com/dns-query'], final  List<String> fallback = const ['tls://8.8.4.4', 'tls://1.1.1.1'], @JsonKey(name: 'proxy-server-nameserver') final  List<String> proxyServerNameserver = const ['https://doh.pub/dns-query'], @JsonKey(name: 'fallback-filter') this.fallbackFilter = const FallbackFilter()}): _defaultNameserver = defaultNameserver,_fakeIpFilter = fakeIpFilter,_nameserverPolicy = nameserverPolicy,_nameserver = nameserver,_fallback = fallback,_proxyServerNameserver = proxyServerNameserver;
+  const _Dns({this.enable = true, this.listen = '0.0.0.0:1053', this.preferH3 = false, this.useHosts = true, this.useSystemHosts = true, this.respectRules = false, this.ipv6 = false, final  List<String> defaultNameserver = const ['223.5.5.5'], this.enhancedMode = DnsMode.fakeIp, this.fakeIpRange = '198.18.0.1/16', final  List<String> fakeIpFilter = const ['*.lan', 'localhost.ptlogin2.qq.com'], final  Map<String, String> nameserverPolicy = const {'www.baidu.com' : '114.114.114.114', '+.internal.crop.com' : '10.0.0.1', 'geosite:cn' : 'https://doh.pub/dns-query'}, final  List<String> nameserver = const ['https://doh.pub/dns-query', 'https://dns.alidns.com/dns-query'], final  List<String> fallback = const ['tls://8.8.4.4', 'tls://1.1.1.1'], final  List<String> proxyServerNameserver = const ['https://doh.pub/dns-query'], this.fallbackFilter = const FallbackFilter()}): _defaultNameserver = defaultNameserver,_fakeIpFilter = fakeIpFilter,_nameserverPolicy = nameserverPolicy,_nameserver = nameserver,_fallback = fallback,_proxyServerNameserver = proxyServerNameserver;
   factory _Dns.fromJson(Map<String, dynamic> json) => _$DnsFromJson(json);
 
 @override@JsonKey() final  bool enable;
 @override@JsonKey() final  String listen;
-@override@JsonKey(name: 'prefer-h3') final  bool preferH3;
-@override@JsonKey(name: 'use-hosts') final  bool useHosts;
-@override@JsonKey(name: 'use-system-hosts') final  bool useSystemHosts;
-@override@JsonKey(name: 'respect-rules') final  bool respectRules;
+@override@JsonKey() final  bool preferH3;
+@override@JsonKey() final  bool useHosts;
+@override@JsonKey() final  bool useSystemHosts;
+@override@JsonKey() final  bool respectRules;
 @override@JsonKey() final  bool ipv6;
  final  List<String> _defaultNameserver;
-@override@JsonKey(name: 'default-nameserver') List<String> get defaultNameserver {
+@override@JsonKey() List<String> get defaultNameserver {
   if (_defaultNameserver is EqualUnmodifiableListView) return _defaultNameserver;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_defaultNameserver);
 }
 
-@override@JsonKey(name: 'enhanced-mode') final  DnsMode enhancedMode;
-@override@JsonKey(name: 'fake-ip-range') final  String fakeIpRange;
+@override@JsonKey() final  DnsMode enhancedMode;
+@override@JsonKey() final  String fakeIpRange;
  final  List<String> _fakeIpFilter;
-@override@JsonKey(name: 'fake-ip-filter') List<String> get fakeIpFilter {
+@override@JsonKey() List<String> get fakeIpFilter {
   if (_fakeIpFilter is EqualUnmodifiableListView) return _fakeIpFilter;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_fakeIpFilter);
 }
 
  final  Map<String, String> _nameserverPolicy;
-@override@JsonKey(name: 'nameserver-policy') Map<String, String> get nameserverPolicy {
+@override@JsonKey() Map<String, String> get nameserverPolicy {
   if (_nameserverPolicy is EqualUnmodifiableMapView) return _nameserverPolicy;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_nameserverPolicy);
@@ -2055,13 +2055,13 @@ class _Dns implements Dns {
 }
 
  final  List<String> _proxyServerNameserver;
-@override@JsonKey(name: 'proxy-server-nameserver') List<String> get proxyServerNameserver {
+@override@JsonKey() List<String> get proxyServerNameserver {
   if (_proxyServerNameserver is EqualUnmodifiableListView) return _proxyServerNameserver;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_proxyServerNameserver);
 }
 
-@override@JsonKey(name: 'fallback-filter') final  FallbackFilter fallbackFilter;
+@override@JsonKey() final  FallbackFilter fallbackFilter;
 
 /// Create a copy of Dns
 /// with the given fields replaced by the non-null parameter values.
@@ -2096,7 +2096,7 @@ abstract mixin class _$DnsCopyWith<$Res> implements $DnsCopyWith<$Res> {
   factory _$DnsCopyWith(_Dns value, $Res Function(_Dns) _then) = __$DnsCopyWithImpl;
 @override @useResult
 $Res call({
- bool enable, String listen,@JsonKey(name: 'prefer-h3') bool preferH3,@JsonKey(name: 'use-hosts') bool useHosts,@JsonKey(name: 'use-system-hosts') bool useSystemHosts,@JsonKey(name: 'respect-rules') bool respectRules, bool ipv6,@JsonKey(name: 'default-nameserver') List<String> defaultNameserver,@JsonKey(name: 'enhanced-mode') DnsMode enhancedMode,@JsonKey(name: 'fake-ip-range') String fakeIpRange,@JsonKey(name: 'fake-ip-filter') List<String> fakeIpFilter,@JsonKey(name: 'nameserver-policy') Map<String, String> nameserverPolicy, List<String> nameserver, List<String> fallback,@JsonKey(name: 'proxy-server-nameserver') List<String> proxyServerNameserver,@JsonKey(name: 'fallback-filter') FallbackFilter fallbackFilter
+ bool enable, String listen, bool preferH3, bool useHosts, bool useSystemHosts, bool respectRules, bool ipv6, List<String> defaultNameserver, DnsMode enhancedMode, String fakeIpRange, List<String> fakeIpFilter, Map<String, String> nameserverPolicy, List<String> nameserver, List<String> fallback, List<String> proxyServerNameserver, FallbackFilter fallbackFilter
 });
 
 
@@ -3230,7 +3230,7 @@ as String,
 /// @nodoc
 mixin _$ClashConfigSnippet {
 
-@JsonKey(name: 'proxy-groups') List<ProxyGroup> get proxyGroups;@JsonKey(fromJson: _genRule, name: 'rules') List<Rule> get rule;@JsonKey(name: 'rule-providers', fromJson: _genRuleProviders) List<RuleProvider> get ruleProvider;@JsonKey(name: 'sub-rules', fromJson: _genSubRules) List<SubRule> get subRules;
+ List<ProxyGroup> get proxyGroups;@JsonKey(fromJson: _genRule) List<Rule> get rules;@JsonKey(fromJson: _genRuleProviders) List<RuleProvider> get ruleProviders;@JsonKey(fromJson: _genSubRules) List<SubRule> get subRules;
 /// Create a copy of ClashConfigSnippet
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3243,16 +3243,16 @@ $ClashConfigSnippetCopyWith<ClashConfigSnippet> get copyWith => _$ClashConfigSni
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClashConfigSnippet&&const DeepCollectionEquality().equals(other.proxyGroups, proxyGroups)&&const DeepCollectionEquality().equals(other.rule, rule)&&const DeepCollectionEquality().equals(other.ruleProvider, ruleProvider)&&const DeepCollectionEquality().equals(other.subRules, subRules));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClashConfigSnippet&&const DeepCollectionEquality().equals(other.proxyGroups, proxyGroups)&&const DeepCollectionEquality().equals(other.rules, rules)&&const DeepCollectionEquality().equals(other.ruleProviders, ruleProviders)&&const DeepCollectionEquality().equals(other.subRules, subRules));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(proxyGroups),const DeepCollectionEquality().hash(rule),const DeepCollectionEquality().hash(ruleProvider),const DeepCollectionEquality().hash(subRules));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(proxyGroups),const DeepCollectionEquality().hash(rules),const DeepCollectionEquality().hash(ruleProviders),const DeepCollectionEquality().hash(subRules));
 
 @override
 String toString() {
-  return 'ClashConfigSnippet(proxyGroups: $proxyGroups, rule: $rule, ruleProvider: $ruleProvider, subRules: $subRules)';
+  return 'ClashConfigSnippet(proxyGroups: $proxyGroups, rules: $rules, ruleProviders: $ruleProviders, subRules: $subRules)';
 }
 
 
@@ -3263,7 +3263,7 @@ abstract mixin class $ClashConfigSnippetCopyWith<$Res>  {
   factory $ClashConfigSnippetCopyWith(ClashConfigSnippet value, $Res Function(ClashConfigSnippet) _then) = _$ClashConfigSnippetCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'proxy-groups') List<ProxyGroup> proxyGroups,@JsonKey(fromJson: _genRule, name: 'rules') List<Rule> rule,@JsonKey(name: 'rule-providers', fromJson: _genRuleProviders) List<RuleProvider> ruleProvider,@JsonKey(name: 'sub-rules', fromJson: _genSubRules) List<SubRule> subRules
+ List<ProxyGroup> proxyGroups,@JsonKey(fromJson: _genRule) List<Rule> rules,@JsonKey(fromJson: _genRuleProviders) List<RuleProvider> ruleProviders,@JsonKey(fromJson: _genSubRules) List<SubRule> subRules
 });
 
 
@@ -3280,11 +3280,11 @@ class _$ClashConfigSnippetCopyWithImpl<$Res>
 
 /// Create a copy of ClashConfigSnippet
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? proxyGroups = null,Object? rule = null,Object? ruleProvider = null,Object? subRules = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? proxyGroups = null,Object? rules = null,Object? ruleProviders = null,Object? subRules = null,}) {
   return _then(_self.copyWith(
 proxyGroups: null == proxyGroups ? _self.proxyGroups : proxyGroups // ignore: cast_nullable_to_non_nullable
-as List<ProxyGroup>,rule: null == rule ? _self.rule : rule // ignore: cast_nullable_to_non_nullable
-as List<Rule>,ruleProvider: null == ruleProvider ? _self.ruleProvider : ruleProvider // ignore: cast_nullable_to_non_nullable
+as List<ProxyGroup>,rules: null == rules ? _self.rules : rules // ignore: cast_nullable_to_non_nullable
+as List<Rule>,ruleProviders: null == ruleProviders ? _self.ruleProviders : ruleProviders // ignore: cast_nullable_to_non_nullable
 as List<RuleProvider>,subRules: null == subRules ? _self.subRules : subRules // ignore: cast_nullable_to_non_nullable
 as List<SubRule>,
   ));
@@ -3371,10 +3371,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'proxy-groups')  List<ProxyGroup> proxyGroups, @JsonKey(fromJson: _genRule, name: 'rules')  List<Rule> rule, @JsonKey(name: 'rule-providers', fromJson: _genRuleProviders)  List<RuleProvider> ruleProvider, @JsonKey(name: 'sub-rules', fromJson: _genSubRules)  List<SubRule> subRules)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ProxyGroup> proxyGroups, @JsonKey(fromJson: _genRule)  List<Rule> rules, @JsonKey(fromJson: _genRuleProviders)  List<RuleProvider> ruleProviders, @JsonKey(fromJson: _genSubRules)  List<SubRule> subRules)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClashConfigSnippet() when $default != null:
-return $default(_that.proxyGroups,_that.rule,_that.ruleProvider,_that.subRules);case _:
+return $default(_that.proxyGroups,_that.rules,_that.ruleProviders,_that.subRules);case _:
   return orElse();
 
 }
@@ -3392,10 +3392,10 @@ return $default(_that.proxyGroups,_that.rule,_that.ruleProvider,_that.subRules);
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'proxy-groups')  List<ProxyGroup> proxyGroups, @JsonKey(fromJson: _genRule, name: 'rules')  List<Rule> rule, @JsonKey(name: 'rule-providers', fromJson: _genRuleProviders)  List<RuleProvider> ruleProvider, @JsonKey(name: 'sub-rules', fromJson: _genSubRules)  List<SubRule> subRules)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ProxyGroup> proxyGroups, @JsonKey(fromJson: _genRule)  List<Rule> rules, @JsonKey(fromJson: _genRuleProviders)  List<RuleProvider> ruleProviders, @JsonKey(fromJson: _genSubRules)  List<SubRule> subRules)  $default,) {final _that = this;
 switch (_that) {
 case _ClashConfigSnippet():
-return $default(_that.proxyGroups,_that.rule,_that.ruleProvider,_that.subRules);case _:
+return $default(_that.proxyGroups,_that.rules,_that.ruleProviders,_that.subRules);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -3412,10 +3412,10 @@ return $default(_that.proxyGroups,_that.rule,_that.ruleProvider,_that.subRules);
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'proxy-groups')  List<ProxyGroup> proxyGroups, @JsonKey(fromJson: _genRule, name: 'rules')  List<Rule> rule, @JsonKey(name: 'rule-providers', fromJson: _genRuleProviders)  List<RuleProvider> ruleProvider, @JsonKey(name: 'sub-rules', fromJson: _genSubRules)  List<SubRule> subRules)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ProxyGroup> proxyGroups, @JsonKey(fromJson: _genRule)  List<Rule> rules, @JsonKey(fromJson: _genRuleProviders)  List<RuleProvider> ruleProviders, @JsonKey(fromJson: _genSubRules)  List<SubRule> subRules)?  $default,) {final _that = this;
 switch (_that) {
 case _ClashConfigSnippet() when $default != null:
-return $default(_that.proxyGroups,_that.rule,_that.ruleProvider,_that.subRules);case _:
+return $default(_that.proxyGroups,_that.rules,_that.ruleProviders,_that.subRules);case _:
   return null;
 
 }
@@ -3424,35 +3424,35 @@ return $default(_that.proxyGroups,_that.rule,_that.ruleProvider,_that.subRules);
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _ClashConfigSnippet implements ClashConfigSnippet {
-  const _ClashConfigSnippet({@JsonKey(name: 'proxy-groups') final  List<ProxyGroup> proxyGroups = const [], @JsonKey(fromJson: _genRule, name: 'rules') final  List<Rule> rule = const [], @JsonKey(name: 'rule-providers', fromJson: _genRuleProviders) final  List<RuleProvider> ruleProvider = const [], @JsonKey(name: 'sub-rules', fromJson: _genSubRules) final  List<SubRule> subRules = const []}): _proxyGroups = proxyGroups,_rule = rule,_ruleProvider = ruleProvider,_subRules = subRules;
+  const _ClashConfigSnippet({final  List<ProxyGroup> proxyGroups = const [], @JsonKey(fromJson: _genRule) final  List<Rule> rules = const [], @JsonKey(fromJson: _genRuleProviders) final  List<RuleProvider> ruleProviders = const [], @JsonKey(fromJson: _genSubRules) final  List<SubRule> subRules = const []}): _proxyGroups = proxyGroups,_rules = rules,_ruleProviders = ruleProviders,_subRules = subRules;
   factory _ClashConfigSnippet.fromJson(Map<String, dynamic> json) => _$ClashConfigSnippetFromJson(json);
 
  final  List<ProxyGroup> _proxyGroups;
-@override@JsonKey(name: 'proxy-groups') List<ProxyGroup> get proxyGroups {
+@override@JsonKey() List<ProxyGroup> get proxyGroups {
   if (_proxyGroups is EqualUnmodifiableListView) return _proxyGroups;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_proxyGroups);
 }
 
- final  List<Rule> _rule;
-@override@JsonKey(fromJson: _genRule, name: 'rules') List<Rule> get rule {
-  if (_rule is EqualUnmodifiableListView) return _rule;
+ final  List<Rule> _rules;
+@override@JsonKey(fromJson: _genRule) List<Rule> get rules {
+  if (_rules is EqualUnmodifiableListView) return _rules;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_rule);
+  return EqualUnmodifiableListView(_rules);
 }
 
- final  List<RuleProvider> _ruleProvider;
-@override@JsonKey(name: 'rule-providers', fromJson: _genRuleProviders) List<RuleProvider> get ruleProvider {
-  if (_ruleProvider is EqualUnmodifiableListView) return _ruleProvider;
+ final  List<RuleProvider> _ruleProviders;
+@override@JsonKey(fromJson: _genRuleProviders) List<RuleProvider> get ruleProviders {
+  if (_ruleProviders is EqualUnmodifiableListView) return _ruleProviders;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_ruleProvider);
+  return EqualUnmodifiableListView(_ruleProviders);
 }
 
  final  List<SubRule> _subRules;
-@override@JsonKey(name: 'sub-rules', fromJson: _genSubRules) List<SubRule> get subRules {
+@override@JsonKey(fromJson: _genSubRules) List<SubRule> get subRules {
   if (_subRules is EqualUnmodifiableListView) return _subRules;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_subRules);
@@ -3472,16 +3472,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClashConfigSnippet&&const DeepCollectionEquality().equals(other._proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other._rule, _rule)&&const DeepCollectionEquality().equals(other._ruleProvider, _ruleProvider)&&const DeepCollectionEquality().equals(other._subRules, _subRules));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClashConfigSnippet&&const DeepCollectionEquality().equals(other._proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other._rules, _rules)&&const DeepCollectionEquality().equals(other._ruleProviders, _ruleProviders)&&const DeepCollectionEquality().equals(other._subRules, _subRules));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_rule),const DeepCollectionEquality().hash(_ruleProvider),const DeepCollectionEquality().hash(_subRules));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_rules),const DeepCollectionEquality().hash(_ruleProviders),const DeepCollectionEquality().hash(_subRules));
 
 @override
 String toString() {
-  return 'ClashConfigSnippet(proxyGroups: $proxyGroups, rule: $rule, ruleProvider: $ruleProvider, subRules: $subRules)';
+  return 'ClashConfigSnippet(proxyGroups: $proxyGroups, rules: $rules, ruleProviders: $ruleProviders, subRules: $subRules)';
 }
 
 
@@ -3492,7 +3492,7 @@ abstract mixin class _$ClashConfigSnippetCopyWith<$Res> implements $ClashConfigS
   factory _$ClashConfigSnippetCopyWith(_ClashConfigSnippet value, $Res Function(_ClashConfigSnippet) _then) = __$ClashConfigSnippetCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'proxy-groups') List<ProxyGroup> proxyGroups,@JsonKey(fromJson: _genRule, name: 'rules') List<Rule> rule,@JsonKey(name: 'rule-providers', fromJson: _genRuleProviders) List<RuleProvider> ruleProvider,@JsonKey(name: 'sub-rules', fromJson: _genSubRules) List<SubRule> subRules
+ List<ProxyGroup> proxyGroups,@JsonKey(fromJson: _genRule) List<Rule> rules,@JsonKey(fromJson: _genRuleProviders) List<RuleProvider> ruleProviders,@JsonKey(fromJson: _genSubRules) List<SubRule> subRules
 });
 
 
@@ -3509,11 +3509,11 @@ class __$ClashConfigSnippetCopyWithImpl<$Res>
 
 /// Create a copy of ClashConfigSnippet
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? proxyGroups = null,Object? rule = null,Object? ruleProvider = null,Object? subRules = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? proxyGroups = null,Object? rules = null,Object? ruleProviders = null,Object? subRules = null,}) {
   return _then(_ClashConfigSnippet(
 proxyGroups: null == proxyGroups ? _self._proxyGroups : proxyGroups // ignore: cast_nullable_to_non_nullable
-as List<ProxyGroup>,rule: null == rule ? _self._rule : rule // ignore: cast_nullable_to_non_nullable
-as List<Rule>,ruleProvider: null == ruleProvider ? _self._ruleProvider : ruleProvider // ignore: cast_nullable_to_non_nullable
+as List<ProxyGroup>,rules: null == rules ? _self._rules : rules // ignore: cast_nullable_to_non_nullable
+as List<Rule>,ruleProviders: null == ruleProviders ? _self._ruleProviders : ruleProviders // ignore: cast_nullable_to_non_nullable
 as List<RuleProvider>,subRules: null == subRules ? _self._subRules : subRules // ignore: cast_nullable_to_non_nullable
 as List<SubRule>,
   ));
@@ -3526,7 +3526,7 @@ as List<SubRule>,
 /// @nodoc
 mixin _$ClashConfig {
 
-@JsonKey(name: 'mixed-port') int get mixedPort;@JsonKey(name: 'socks-port') int get socksPort;@JsonKey(name: 'port') int get port;@JsonKey(name: 'redir-port') int get redirPort;@JsonKey(name: 'tproxy-port') int get tproxyPort; Mode get mode;@JsonKey(name: 'allow-lan') bool get allowLan;@JsonKey(name: 'log-level') LogLevel get logLevel; bool get ipv6;@JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always) FindProcessMode get findProcessMode;@JsonKey(name: 'keep-alive-interval') int get keepAliveInterval;@JsonKey(name: 'unified-delay') bool get unifiedDelay;@JsonKey(name: 'tcp-concurrent') bool get tcpConcurrent;@JsonKey(fromJson: Tun.safeFormJson) Tun get tun;@JsonKey(fromJson: Dns.safeDnsFromJson) Dns get dns;@JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson) GeoXUrl get geoXUrl;@JsonKey(name: 'geodata-loader') GeodataLoader get geodataLoader;@JsonKey(name: 'proxy-groups') List<ProxyGroup> get proxyGroups; List<String> get rule;@JsonKey(name: 'global-ua') String? get globalUa;@JsonKey(name: 'external-controller') ExternalControllerStatus get externalController; Map<String, String> get hosts;
+ int get mixedPort; int get socksPort; int get port; int get redirPort; int get tproxyPort; Mode get mode; bool get allowLan; LogLevel get logLevel; bool get ipv6;@JsonKey(fromJson: _findProcessModeFromJson) FindProcessMode get findProcessMode; int get keepAliveInterval; bool get unifiedDelay; bool get tcpConcurrent;@JsonKey(fromJson: Tun.safeFormJson) Tun get tun;@JsonKey(fromJson: Dns.safeDnsFromJson) Dns get dns;@JsonKey(fromJson: GeoXUrl.safeFormJson) GeoXUrl get geoxUrl; GeodataLoader get geodataLoader; List<ProxyGroup> get proxyGroups; List<String> get rule; String? get globalUa; ExternalControllerStatus get externalController; Map<String, String> get hosts;
 /// Create a copy of ClashConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3539,16 +3539,16 @@ $ClashConfigCopyWith<ClashConfig> get copyWith => _$ClashConfigCopyWithImpl<Clas
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClashConfig&&(identical(other.mixedPort, mixedPort) || other.mixedPort == mixedPort)&&(identical(other.socksPort, socksPort) || other.socksPort == socksPort)&&(identical(other.port, port) || other.port == port)&&(identical(other.redirPort, redirPort) || other.redirPort == redirPort)&&(identical(other.tproxyPort, tproxyPort) || other.tproxyPort == tproxyPort)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.allowLan, allowLan) || other.allowLan == allowLan)&&(identical(other.logLevel, logLevel) || other.logLevel == logLevel)&&(identical(other.ipv6, ipv6) || other.ipv6 == ipv6)&&(identical(other.findProcessMode, findProcessMode) || other.findProcessMode == findProcessMode)&&(identical(other.keepAliveInterval, keepAliveInterval) || other.keepAliveInterval == keepAliveInterval)&&(identical(other.unifiedDelay, unifiedDelay) || other.unifiedDelay == unifiedDelay)&&(identical(other.tcpConcurrent, tcpConcurrent) || other.tcpConcurrent == tcpConcurrent)&&(identical(other.tun, tun) || other.tun == tun)&&(identical(other.dns, dns) || other.dns == dns)&&(identical(other.geoXUrl, geoXUrl) || other.geoXUrl == geoXUrl)&&(identical(other.geodataLoader, geodataLoader) || other.geodataLoader == geodataLoader)&&const DeepCollectionEquality().equals(other.proxyGroups, proxyGroups)&&const DeepCollectionEquality().equals(other.rule, rule)&&(identical(other.globalUa, globalUa) || other.globalUa == globalUa)&&(identical(other.externalController, externalController) || other.externalController == externalController)&&const DeepCollectionEquality().equals(other.hosts, hosts));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClashConfig&&(identical(other.mixedPort, mixedPort) || other.mixedPort == mixedPort)&&(identical(other.socksPort, socksPort) || other.socksPort == socksPort)&&(identical(other.port, port) || other.port == port)&&(identical(other.redirPort, redirPort) || other.redirPort == redirPort)&&(identical(other.tproxyPort, tproxyPort) || other.tproxyPort == tproxyPort)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.allowLan, allowLan) || other.allowLan == allowLan)&&(identical(other.logLevel, logLevel) || other.logLevel == logLevel)&&(identical(other.ipv6, ipv6) || other.ipv6 == ipv6)&&(identical(other.findProcessMode, findProcessMode) || other.findProcessMode == findProcessMode)&&(identical(other.keepAliveInterval, keepAliveInterval) || other.keepAliveInterval == keepAliveInterval)&&(identical(other.unifiedDelay, unifiedDelay) || other.unifiedDelay == unifiedDelay)&&(identical(other.tcpConcurrent, tcpConcurrent) || other.tcpConcurrent == tcpConcurrent)&&(identical(other.tun, tun) || other.tun == tun)&&(identical(other.dns, dns) || other.dns == dns)&&(identical(other.geoxUrl, geoxUrl) || other.geoxUrl == geoxUrl)&&(identical(other.geodataLoader, geodataLoader) || other.geodataLoader == geodataLoader)&&const DeepCollectionEquality().equals(other.proxyGroups, proxyGroups)&&const DeepCollectionEquality().equals(other.rule, rule)&&(identical(other.globalUa, globalUa) || other.globalUa == globalUa)&&(identical(other.externalController, externalController) || other.externalController == externalController)&&const DeepCollectionEquality().equals(other.hosts, hosts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,mixedPort,socksPort,port,redirPort,tproxyPort,mode,allowLan,logLevel,ipv6,findProcessMode,keepAliveInterval,unifiedDelay,tcpConcurrent,tun,dns,geoXUrl,geodataLoader,const DeepCollectionEquality().hash(proxyGroups),const DeepCollectionEquality().hash(rule),globalUa,externalController,const DeepCollectionEquality().hash(hosts)]);
+int get hashCode => Object.hashAll([runtimeType,mixedPort,socksPort,port,redirPort,tproxyPort,mode,allowLan,logLevel,ipv6,findProcessMode,keepAliveInterval,unifiedDelay,tcpConcurrent,tun,dns,geoxUrl,geodataLoader,const DeepCollectionEquality().hash(proxyGroups),const DeepCollectionEquality().hash(rule),globalUa,externalController,const DeepCollectionEquality().hash(hosts)]);
 
 @override
 String toString() {
-  return 'ClashConfig(mixedPort: $mixedPort, socksPort: $socksPort, port: $port, redirPort: $redirPort, tproxyPort: $tproxyPort, mode: $mode, allowLan: $allowLan, logLevel: $logLevel, ipv6: $ipv6, findProcessMode: $findProcessMode, keepAliveInterval: $keepAliveInterval, unifiedDelay: $unifiedDelay, tcpConcurrent: $tcpConcurrent, tun: $tun, dns: $dns, geoXUrl: $geoXUrl, geodataLoader: $geodataLoader, proxyGroups: $proxyGroups, rule: $rule, globalUa: $globalUa, externalController: $externalController, hosts: $hosts)';
+  return 'ClashConfig(mixedPort: $mixedPort, socksPort: $socksPort, port: $port, redirPort: $redirPort, tproxyPort: $tproxyPort, mode: $mode, allowLan: $allowLan, logLevel: $logLevel, ipv6: $ipv6, findProcessMode: $findProcessMode, keepAliveInterval: $keepAliveInterval, unifiedDelay: $unifiedDelay, tcpConcurrent: $tcpConcurrent, tun: $tun, dns: $dns, geoxUrl: $geoxUrl, geodataLoader: $geodataLoader, proxyGroups: $proxyGroups, rule: $rule, globalUa: $globalUa, externalController: $externalController, hosts: $hosts)';
 }
 
 
@@ -3559,11 +3559,11 @@ abstract mixin class $ClashConfigCopyWith<$Res>  {
   factory $ClashConfigCopyWith(ClashConfig value, $Res Function(ClashConfig) _then) = _$ClashConfigCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'socks-port') int socksPort,@JsonKey(name: 'port') int port,@JsonKey(name: 'redir-port') int redirPort,@JsonKey(name: 'tproxy-port') int tproxyPort, Mode mode,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'log-level') LogLevel logLevel, bool ipv6,@JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always) FindProcessMode findProcessMode,@JsonKey(name: 'keep-alive-interval') int keepAliveInterval,@JsonKey(name: 'unified-delay') bool unifiedDelay,@JsonKey(name: 'tcp-concurrent') bool tcpConcurrent,@JsonKey(fromJson: Tun.safeFormJson) Tun tun,@JsonKey(fromJson: Dns.safeDnsFromJson) Dns dns,@JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson) GeoXUrl geoXUrl,@JsonKey(name: 'geodata-loader') GeodataLoader geodataLoader,@JsonKey(name: 'proxy-groups') List<ProxyGroup> proxyGroups, List<String> rule,@JsonKey(name: 'global-ua') String? globalUa,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController, Map<String, String> hosts
+ int mixedPort, int socksPort, int port, int redirPort, int tproxyPort, Mode mode, bool allowLan, LogLevel logLevel, bool ipv6,@JsonKey(fromJson: _findProcessModeFromJson) FindProcessMode findProcessMode, int keepAliveInterval, bool unifiedDelay, bool tcpConcurrent,@JsonKey(fromJson: Tun.safeFormJson) Tun tun,@JsonKey(fromJson: Dns.safeDnsFromJson) Dns dns,@JsonKey(fromJson: GeoXUrl.safeFormJson) GeoXUrl geoxUrl, GeodataLoader geodataLoader, List<ProxyGroup> proxyGroups, List<String> rule, String? globalUa, ExternalControllerStatus externalController, Map<String, String> hosts
 });
 
 
-$TunCopyWith<$Res> get tun;$DnsCopyWith<$Res> get dns;$GeoXUrlCopyWith<$Res> get geoXUrl;
+$TunCopyWith<$Res> get tun;$DnsCopyWith<$Res> get dns;$GeoXUrlCopyWith<$Res> get geoxUrl;
 
 }
 /// @nodoc
@@ -3576,7 +3576,7 @@ class _$ClashConfigCopyWithImpl<$Res>
 
 /// Create a copy of ClashConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? mixedPort = null,Object? socksPort = null,Object? port = null,Object? redirPort = null,Object? tproxyPort = null,Object? mode = null,Object? allowLan = null,Object? logLevel = null,Object? ipv6 = null,Object? findProcessMode = null,Object? keepAliveInterval = null,Object? unifiedDelay = null,Object? tcpConcurrent = null,Object? tun = null,Object? dns = null,Object? geoXUrl = null,Object? geodataLoader = null,Object? proxyGroups = null,Object? rule = null,Object? globalUa = freezed,Object? externalController = null,Object? hosts = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? mixedPort = null,Object? socksPort = null,Object? port = null,Object? redirPort = null,Object? tproxyPort = null,Object? mode = null,Object? allowLan = null,Object? logLevel = null,Object? ipv6 = null,Object? findProcessMode = null,Object? keepAliveInterval = null,Object? unifiedDelay = null,Object? tcpConcurrent = null,Object? tun = null,Object? dns = null,Object? geoxUrl = null,Object? geodataLoader = null,Object? proxyGroups = null,Object? rule = null,Object? globalUa = freezed,Object? externalController = null,Object? hosts = null,}) {
   return _then(_self.copyWith(
 mixedPort: null == mixedPort ? _self.mixedPort : mixedPort // ignore: cast_nullable_to_non_nullable
 as int,socksPort: null == socksPort ? _self.socksPort : socksPort // ignore: cast_nullable_to_non_nullable
@@ -3593,7 +3593,7 @@ as int,unifiedDelay: null == unifiedDelay ? _self.unifiedDelay : unifiedDelay //
 as bool,tcpConcurrent: null == tcpConcurrent ? _self.tcpConcurrent : tcpConcurrent // ignore: cast_nullable_to_non_nullable
 as bool,tun: null == tun ? _self.tun : tun // ignore: cast_nullable_to_non_nullable
 as Tun,dns: null == dns ? _self.dns : dns // ignore: cast_nullable_to_non_nullable
-as Dns,geoXUrl: null == geoXUrl ? _self.geoXUrl : geoXUrl // ignore: cast_nullable_to_non_nullable
+as Dns,geoxUrl: null == geoxUrl ? _self.geoxUrl : geoxUrl // ignore: cast_nullable_to_non_nullable
 as GeoXUrl,geodataLoader: null == geodataLoader ? _self.geodataLoader : geodataLoader // ignore: cast_nullable_to_non_nullable
 as GeodataLoader,proxyGroups: null == proxyGroups ? _self.proxyGroups : proxyGroups // ignore: cast_nullable_to_non_nullable
 as List<ProxyGroup>,rule: null == rule ? _self.rule : rule // ignore: cast_nullable_to_non_nullable
@@ -3625,10 +3625,10 @@ $DnsCopyWith<$Res> get dns {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$GeoXUrlCopyWith<$Res> get geoXUrl {
+$GeoXUrlCopyWith<$Res> get geoxUrl {
   
-  return $GeoXUrlCopyWith<$Res>(_self.geoXUrl, (value) {
-    return _then(_self.copyWith(geoXUrl: value));
+  return $GeoXUrlCopyWith<$Res>(_self.geoxUrl, (value) {
+    return _then(_self.copyWith(geoxUrl: value));
   });
 }
 }
@@ -3712,10 +3712,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'socks-port')  int socksPort, @JsonKey(name: 'port')  int port, @JsonKey(name: 'redir-port')  int redirPort, @JsonKey(name: 'tproxy-port')  int tproxyPort,  Mode mode, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool ipv6, @JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always)  FindProcessMode findProcessMode, @JsonKey(name: 'keep-alive-interval')  int keepAliveInterval, @JsonKey(name: 'unified-delay')  bool unifiedDelay, @JsonKey(name: 'tcp-concurrent')  bool tcpConcurrent, @JsonKey(fromJson: Tun.safeFormJson)  Tun tun, @JsonKey(fromJson: Dns.safeDnsFromJson)  Dns dns, @JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson)  GeoXUrl geoXUrl, @JsonKey(name: 'geodata-loader')  GeodataLoader geodataLoader, @JsonKey(name: 'proxy-groups')  List<ProxyGroup> proxyGroups,  List<String> rule, @JsonKey(name: 'global-ua')  String? globalUa, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  Map<String, String> hosts)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int mixedPort,  int socksPort,  int port,  int redirPort,  int tproxyPort,  Mode mode,  bool allowLan,  LogLevel logLevel,  bool ipv6, @JsonKey(fromJson: _findProcessModeFromJson)  FindProcessMode findProcessMode,  int keepAliveInterval,  bool unifiedDelay,  bool tcpConcurrent, @JsonKey(fromJson: Tun.safeFormJson)  Tun tun, @JsonKey(fromJson: Dns.safeDnsFromJson)  Dns dns, @JsonKey(fromJson: GeoXUrl.safeFormJson)  GeoXUrl geoxUrl,  GeodataLoader geodataLoader,  List<ProxyGroup> proxyGroups,  List<String> rule,  String? globalUa,  ExternalControllerStatus externalController,  Map<String, String> hosts)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClashConfig() when $default != null:
-return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that.tproxyPort,_that.mode,_that.allowLan,_that.logLevel,_that.ipv6,_that.findProcessMode,_that.keepAliveInterval,_that.unifiedDelay,_that.tcpConcurrent,_that.tun,_that.dns,_that.geoXUrl,_that.geodataLoader,_that.proxyGroups,_that.rule,_that.globalUa,_that.externalController,_that.hosts);case _:
+return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that.tproxyPort,_that.mode,_that.allowLan,_that.logLevel,_that.ipv6,_that.findProcessMode,_that.keepAliveInterval,_that.unifiedDelay,_that.tcpConcurrent,_that.tun,_that.dns,_that.geoxUrl,_that.geodataLoader,_that.proxyGroups,_that.rule,_that.globalUa,_that.externalController,_that.hosts);case _:
   return orElse();
 
 }
@@ -3733,10 +3733,10 @@ return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'socks-port')  int socksPort, @JsonKey(name: 'port')  int port, @JsonKey(name: 'redir-port')  int redirPort, @JsonKey(name: 'tproxy-port')  int tproxyPort,  Mode mode, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool ipv6, @JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always)  FindProcessMode findProcessMode, @JsonKey(name: 'keep-alive-interval')  int keepAliveInterval, @JsonKey(name: 'unified-delay')  bool unifiedDelay, @JsonKey(name: 'tcp-concurrent')  bool tcpConcurrent, @JsonKey(fromJson: Tun.safeFormJson)  Tun tun, @JsonKey(fromJson: Dns.safeDnsFromJson)  Dns dns, @JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson)  GeoXUrl geoXUrl, @JsonKey(name: 'geodata-loader')  GeodataLoader geodataLoader, @JsonKey(name: 'proxy-groups')  List<ProxyGroup> proxyGroups,  List<String> rule, @JsonKey(name: 'global-ua')  String? globalUa, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  Map<String, String> hosts)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int mixedPort,  int socksPort,  int port,  int redirPort,  int tproxyPort,  Mode mode,  bool allowLan,  LogLevel logLevel,  bool ipv6, @JsonKey(fromJson: _findProcessModeFromJson)  FindProcessMode findProcessMode,  int keepAliveInterval,  bool unifiedDelay,  bool tcpConcurrent, @JsonKey(fromJson: Tun.safeFormJson)  Tun tun, @JsonKey(fromJson: Dns.safeDnsFromJson)  Dns dns, @JsonKey(fromJson: GeoXUrl.safeFormJson)  GeoXUrl geoxUrl,  GeodataLoader geodataLoader,  List<ProxyGroup> proxyGroups,  List<String> rule,  String? globalUa,  ExternalControllerStatus externalController,  Map<String, String> hosts)  $default,) {final _that = this;
 switch (_that) {
 case _ClashConfig():
-return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that.tproxyPort,_that.mode,_that.allowLan,_that.logLevel,_that.ipv6,_that.findProcessMode,_that.keepAliveInterval,_that.unifiedDelay,_that.tcpConcurrent,_that.tun,_that.dns,_that.geoXUrl,_that.geodataLoader,_that.proxyGroups,_that.rule,_that.globalUa,_that.externalController,_that.hosts);case _:
+return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that.tproxyPort,_that.mode,_that.allowLan,_that.logLevel,_that.ipv6,_that.findProcessMode,_that.keepAliveInterval,_that.unifiedDelay,_that.tcpConcurrent,_that.tun,_that.dns,_that.geoxUrl,_that.geodataLoader,_that.proxyGroups,_that.rule,_that.globalUa,_that.externalController,_that.hosts);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -3753,10 +3753,10 @@ return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'mixed-port')  int mixedPort, @JsonKey(name: 'socks-port')  int socksPort, @JsonKey(name: 'port')  int port, @JsonKey(name: 'redir-port')  int redirPort, @JsonKey(name: 'tproxy-port')  int tproxyPort,  Mode mode, @JsonKey(name: 'allow-lan')  bool allowLan, @JsonKey(name: 'log-level')  LogLevel logLevel,  bool ipv6, @JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always)  FindProcessMode findProcessMode, @JsonKey(name: 'keep-alive-interval')  int keepAliveInterval, @JsonKey(name: 'unified-delay')  bool unifiedDelay, @JsonKey(name: 'tcp-concurrent')  bool tcpConcurrent, @JsonKey(fromJson: Tun.safeFormJson)  Tun tun, @JsonKey(fromJson: Dns.safeDnsFromJson)  Dns dns, @JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson)  GeoXUrl geoXUrl, @JsonKey(name: 'geodata-loader')  GeodataLoader geodataLoader, @JsonKey(name: 'proxy-groups')  List<ProxyGroup> proxyGroups,  List<String> rule, @JsonKey(name: 'global-ua')  String? globalUa, @JsonKey(name: 'external-controller')  ExternalControllerStatus externalController,  Map<String, String> hosts)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int mixedPort,  int socksPort,  int port,  int redirPort,  int tproxyPort,  Mode mode,  bool allowLan,  LogLevel logLevel,  bool ipv6, @JsonKey(fromJson: _findProcessModeFromJson)  FindProcessMode findProcessMode,  int keepAliveInterval,  bool unifiedDelay,  bool tcpConcurrent, @JsonKey(fromJson: Tun.safeFormJson)  Tun tun, @JsonKey(fromJson: Dns.safeDnsFromJson)  Dns dns, @JsonKey(fromJson: GeoXUrl.safeFormJson)  GeoXUrl geoxUrl,  GeodataLoader geodataLoader,  List<ProxyGroup> proxyGroups,  List<String> rule,  String? globalUa,  ExternalControllerStatus externalController,  Map<String, String> hosts)?  $default,) {final _that = this;
 switch (_that) {
 case _ClashConfig() when $default != null:
-return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that.tproxyPort,_that.mode,_that.allowLan,_that.logLevel,_that.ipv6,_that.findProcessMode,_that.keepAliveInterval,_that.unifiedDelay,_that.tcpConcurrent,_that.tun,_that.dns,_that.geoXUrl,_that.geodataLoader,_that.proxyGroups,_that.rule,_that.globalUa,_that.externalController,_that.hosts);case _:
+return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that.tproxyPort,_that.mode,_that.allowLan,_that.logLevel,_that.ipv6,_that.findProcessMode,_that.keepAliveInterval,_that.unifiedDelay,_that.tcpConcurrent,_that.tun,_that.dns,_that.geoxUrl,_that.geodataLoader,_that.proxyGroups,_that.rule,_that.globalUa,_that.externalController,_that.hosts);case _:
   return null;
 
 }
@@ -3765,31 +3765,31 @@ return $default(_that.mixedPort,_that.socksPort,_that.port,_that.redirPort,_that
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class _ClashConfig implements ClashConfig {
-  const _ClashConfig({@JsonKey(name: 'mixed-port') this.mixedPort = defaultMixedPort, @JsonKey(name: 'socks-port') this.socksPort = 0, @JsonKey(name: 'port') this.port = 0, @JsonKey(name: 'redir-port') this.redirPort = 0, @JsonKey(name: 'tproxy-port') this.tproxyPort = 0, this.mode = Mode.rule, @JsonKey(name: 'allow-lan') this.allowLan = false, @JsonKey(name: 'log-level') this.logLevel = LogLevel.error, this.ipv6 = false, @JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always) this.findProcessMode = FindProcessMode.always, @JsonKey(name: 'keep-alive-interval') this.keepAliveInterval = defaultKeepAliveInterval, @JsonKey(name: 'unified-delay') this.unifiedDelay = true, @JsonKey(name: 'tcp-concurrent') this.tcpConcurrent = true, @JsonKey(fromJson: Tun.safeFormJson) this.tun = defaultTun, @JsonKey(fromJson: Dns.safeDnsFromJson) this.dns = defaultDns, @JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson) this.geoXUrl = defaultGeoXUrl, @JsonKey(name: 'geodata-loader') this.geodataLoader = GeodataLoader.memconservative, @JsonKey(name: 'proxy-groups') final  List<ProxyGroup> proxyGroups = const [], final  List<String> rule = const [], @JsonKey(name: 'global-ua') this.globalUa, @JsonKey(name: 'external-controller') this.externalController = ExternalControllerStatus.close, final  Map<String, String> hosts = const {}}): _proxyGroups = proxyGroups,_rule = rule,_hosts = hosts;
+  const _ClashConfig({this.mixedPort = defaultMixedPort, this.socksPort = 0, this.port = 0, this.redirPort = 0, this.tproxyPort = 0, this.mode = Mode.rule, this.allowLan = false, this.logLevel = LogLevel.error, this.ipv6 = false, @JsonKey(fromJson: _findProcessModeFromJson) this.findProcessMode = FindProcessMode.always, this.keepAliveInterval = defaultKeepAliveInterval, this.unifiedDelay = true, this.tcpConcurrent = true, @JsonKey(fromJson: Tun.safeFormJson) this.tun = defaultTun, @JsonKey(fromJson: Dns.safeDnsFromJson) this.dns = defaultDns, @JsonKey(fromJson: GeoXUrl.safeFormJson) this.geoxUrl = defaultGeoXUrl, this.geodataLoader = GeodataLoader.memconservative, final  List<ProxyGroup> proxyGroups = const [], final  List<String> rule = const [], this.globalUa, this.externalController = ExternalControllerStatus.close, final  Map<String, String> hosts = const {}}): _proxyGroups = proxyGroups,_rule = rule,_hosts = hosts;
   factory _ClashConfig.fromJson(Map<String, dynamic> json) => _$ClashConfigFromJson(json);
 
-@override@JsonKey(name: 'mixed-port') final  int mixedPort;
-@override@JsonKey(name: 'socks-port') final  int socksPort;
-@override@JsonKey(name: 'port') final  int port;
-@override@JsonKey(name: 'redir-port') final  int redirPort;
-@override@JsonKey(name: 'tproxy-port') final  int tproxyPort;
+@override@JsonKey() final  int mixedPort;
+@override@JsonKey() final  int socksPort;
+@override@JsonKey() final  int port;
+@override@JsonKey() final  int redirPort;
+@override@JsonKey() final  int tproxyPort;
 @override@JsonKey() final  Mode mode;
-@override@JsonKey(name: 'allow-lan') final  bool allowLan;
-@override@JsonKey(name: 'log-level') final  LogLevel logLevel;
+@override@JsonKey() final  bool allowLan;
+@override@JsonKey() final  LogLevel logLevel;
 @override@JsonKey() final  bool ipv6;
-@override@JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always) final  FindProcessMode findProcessMode;
-@override@JsonKey(name: 'keep-alive-interval') final  int keepAliveInterval;
-@override@JsonKey(name: 'unified-delay') final  bool unifiedDelay;
-@override@JsonKey(name: 'tcp-concurrent') final  bool tcpConcurrent;
+@override@JsonKey(fromJson: _findProcessModeFromJson) final  FindProcessMode findProcessMode;
+@override@JsonKey() final  int keepAliveInterval;
+@override@JsonKey() final  bool unifiedDelay;
+@override@JsonKey() final  bool tcpConcurrent;
 @override@JsonKey(fromJson: Tun.safeFormJson) final  Tun tun;
 @override@JsonKey(fromJson: Dns.safeDnsFromJson) final  Dns dns;
-@override@JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson) final  GeoXUrl geoXUrl;
-@override@JsonKey(name: 'geodata-loader') final  GeodataLoader geodataLoader;
+@override@JsonKey(fromJson: GeoXUrl.safeFormJson) final  GeoXUrl geoxUrl;
+@override@JsonKey() final  GeodataLoader geodataLoader;
  final  List<ProxyGroup> _proxyGroups;
-@override@JsonKey(name: 'proxy-groups') List<ProxyGroup> get proxyGroups {
+@override@JsonKey() List<ProxyGroup> get proxyGroups {
   if (_proxyGroups is EqualUnmodifiableListView) return _proxyGroups;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_proxyGroups);
@@ -3802,8 +3802,8 @@ class _ClashConfig implements ClashConfig {
   return EqualUnmodifiableListView(_rule);
 }
 
-@override@JsonKey(name: 'global-ua') final  String? globalUa;
-@override@JsonKey(name: 'external-controller') final  ExternalControllerStatus externalController;
+@override final  String? globalUa;
+@override@JsonKey() final  ExternalControllerStatus externalController;
  final  Map<String, String> _hosts;
 @override@JsonKey() Map<String, String> get hosts {
   if (_hosts is EqualUnmodifiableMapView) return _hosts;
@@ -3825,16 +3825,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClashConfig&&(identical(other.mixedPort, mixedPort) || other.mixedPort == mixedPort)&&(identical(other.socksPort, socksPort) || other.socksPort == socksPort)&&(identical(other.port, port) || other.port == port)&&(identical(other.redirPort, redirPort) || other.redirPort == redirPort)&&(identical(other.tproxyPort, tproxyPort) || other.tproxyPort == tproxyPort)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.allowLan, allowLan) || other.allowLan == allowLan)&&(identical(other.logLevel, logLevel) || other.logLevel == logLevel)&&(identical(other.ipv6, ipv6) || other.ipv6 == ipv6)&&(identical(other.findProcessMode, findProcessMode) || other.findProcessMode == findProcessMode)&&(identical(other.keepAliveInterval, keepAliveInterval) || other.keepAliveInterval == keepAliveInterval)&&(identical(other.unifiedDelay, unifiedDelay) || other.unifiedDelay == unifiedDelay)&&(identical(other.tcpConcurrent, tcpConcurrent) || other.tcpConcurrent == tcpConcurrent)&&(identical(other.tun, tun) || other.tun == tun)&&(identical(other.dns, dns) || other.dns == dns)&&(identical(other.geoXUrl, geoXUrl) || other.geoXUrl == geoXUrl)&&(identical(other.geodataLoader, geodataLoader) || other.geodataLoader == geodataLoader)&&const DeepCollectionEquality().equals(other._proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other._rule, _rule)&&(identical(other.globalUa, globalUa) || other.globalUa == globalUa)&&(identical(other.externalController, externalController) || other.externalController == externalController)&&const DeepCollectionEquality().equals(other._hosts, _hosts));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClashConfig&&(identical(other.mixedPort, mixedPort) || other.mixedPort == mixedPort)&&(identical(other.socksPort, socksPort) || other.socksPort == socksPort)&&(identical(other.port, port) || other.port == port)&&(identical(other.redirPort, redirPort) || other.redirPort == redirPort)&&(identical(other.tproxyPort, tproxyPort) || other.tproxyPort == tproxyPort)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.allowLan, allowLan) || other.allowLan == allowLan)&&(identical(other.logLevel, logLevel) || other.logLevel == logLevel)&&(identical(other.ipv6, ipv6) || other.ipv6 == ipv6)&&(identical(other.findProcessMode, findProcessMode) || other.findProcessMode == findProcessMode)&&(identical(other.keepAliveInterval, keepAliveInterval) || other.keepAliveInterval == keepAliveInterval)&&(identical(other.unifiedDelay, unifiedDelay) || other.unifiedDelay == unifiedDelay)&&(identical(other.tcpConcurrent, tcpConcurrent) || other.tcpConcurrent == tcpConcurrent)&&(identical(other.tun, tun) || other.tun == tun)&&(identical(other.dns, dns) || other.dns == dns)&&(identical(other.geoxUrl, geoxUrl) || other.geoxUrl == geoxUrl)&&(identical(other.geodataLoader, geodataLoader) || other.geodataLoader == geodataLoader)&&const DeepCollectionEquality().equals(other._proxyGroups, _proxyGroups)&&const DeepCollectionEquality().equals(other._rule, _rule)&&(identical(other.globalUa, globalUa) || other.globalUa == globalUa)&&(identical(other.externalController, externalController) || other.externalController == externalController)&&const DeepCollectionEquality().equals(other._hosts, _hosts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,mixedPort,socksPort,port,redirPort,tproxyPort,mode,allowLan,logLevel,ipv6,findProcessMode,keepAliveInterval,unifiedDelay,tcpConcurrent,tun,dns,geoXUrl,geodataLoader,const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_rule),globalUa,externalController,const DeepCollectionEquality().hash(_hosts)]);
+int get hashCode => Object.hashAll([runtimeType,mixedPort,socksPort,port,redirPort,tproxyPort,mode,allowLan,logLevel,ipv6,findProcessMode,keepAliveInterval,unifiedDelay,tcpConcurrent,tun,dns,geoxUrl,geodataLoader,const DeepCollectionEquality().hash(_proxyGroups),const DeepCollectionEquality().hash(_rule),globalUa,externalController,const DeepCollectionEquality().hash(_hosts)]);
 
 @override
 String toString() {
-  return 'ClashConfig(mixedPort: $mixedPort, socksPort: $socksPort, port: $port, redirPort: $redirPort, tproxyPort: $tproxyPort, mode: $mode, allowLan: $allowLan, logLevel: $logLevel, ipv6: $ipv6, findProcessMode: $findProcessMode, keepAliveInterval: $keepAliveInterval, unifiedDelay: $unifiedDelay, tcpConcurrent: $tcpConcurrent, tun: $tun, dns: $dns, geoXUrl: $geoXUrl, geodataLoader: $geodataLoader, proxyGroups: $proxyGroups, rule: $rule, globalUa: $globalUa, externalController: $externalController, hosts: $hosts)';
+  return 'ClashConfig(mixedPort: $mixedPort, socksPort: $socksPort, port: $port, redirPort: $redirPort, tproxyPort: $tproxyPort, mode: $mode, allowLan: $allowLan, logLevel: $logLevel, ipv6: $ipv6, findProcessMode: $findProcessMode, keepAliveInterval: $keepAliveInterval, unifiedDelay: $unifiedDelay, tcpConcurrent: $tcpConcurrent, tun: $tun, dns: $dns, geoxUrl: $geoxUrl, geodataLoader: $geodataLoader, proxyGroups: $proxyGroups, rule: $rule, globalUa: $globalUa, externalController: $externalController, hosts: $hosts)';
 }
 
 
@@ -3845,11 +3845,11 @@ abstract mixin class _$ClashConfigCopyWith<$Res> implements $ClashConfigCopyWith
   factory _$ClashConfigCopyWith(_ClashConfig value, $Res Function(_ClashConfig) _then) = __$ClashConfigCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'mixed-port') int mixedPort,@JsonKey(name: 'socks-port') int socksPort,@JsonKey(name: 'port') int port,@JsonKey(name: 'redir-port') int redirPort,@JsonKey(name: 'tproxy-port') int tproxyPort, Mode mode,@JsonKey(name: 'allow-lan') bool allowLan,@JsonKey(name: 'log-level') LogLevel logLevel, bool ipv6,@JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.always) FindProcessMode findProcessMode,@JsonKey(name: 'keep-alive-interval') int keepAliveInterval,@JsonKey(name: 'unified-delay') bool unifiedDelay,@JsonKey(name: 'tcp-concurrent') bool tcpConcurrent,@JsonKey(fromJson: Tun.safeFormJson) Tun tun,@JsonKey(fromJson: Dns.safeDnsFromJson) Dns dns,@JsonKey(name: 'geox-url', fromJson: GeoXUrl.safeFormJson) GeoXUrl geoXUrl,@JsonKey(name: 'geodata-loader') GeodataLoader geodataLoader,@JsonKey(name: 'proxy-groups') List<ProxyGroup> proxyGroups, List<String> rule,@JsonKey(name: 'global-ua') String? globalUa,@JsonKey(name: 'external-controller') ExternalControllerStatus externalController, Map<String, String> hosts
+ int mixedPort, int socksPort, int port, int redirPort, int tproxyPort, Mode mode, bool allowLan, LogLevel logLevel, bool ipv6,@JsonKey(fromJson: _findProcessModeFromJson) FindProcessMode findProcessMode, int keepAliveInterval, bool unifiedDelay, bool tcpConcurrent,@JsonKey(fromJson: Tun.safeFormJson) Tun tun,@JsonKey(fromJson: Dns.safeDnsFromJson) Dns dns,@JsonKey(fromJson: GeoXUrl.safeFormJson) GeoXUrl geoxUrl, GeodataLoader geodataLoader, List<ProxyGroup> proxyGroups, List<String> rule, String? globalUa, ExternalControllerStatus externalController, Map<String, String> hosts
 });
 
 
-@override $TunCopyWith<$Res> get tun;@override $DnsCopyWith<$Res> get dns;@override $GeoXUrlCopyWith<$Res> get geoXUrl;
+@override $TunCopyWith<$Res> get tun;@override $DnsCopyWith<$Res> get dns;@override $GeoXUrlCopyWith<$Res> get geoxUrl;
 
 }
 /// @nodoc
@@ -3862,7 +3862,7 @@ class __$ClashConfigCopyWithImpl<$Res>
 
 /// Create a copy of ClashConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? mixedPort = null,Object? socksPort = null,Object? port = null,Object? redirPort = null,Object? tproxyPort = null,Object? mode = null,Object? allowLan = null,Object? logLevel = null,Object? ipv6 = null,Object? findProcessMode = null,Object? keepAliveInterval = null,Object? unifiedDelay = null,Object? tcpConcurrent = null,Object? tun = null,Object? dns = null,Object? geoXUrl = null,Object? geodataLoader = null,Object? proxyGroups = null,Object? rule = null,Object? globalUa = freezed,Object? externalController = null,Object? hosts = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? mixedPort = null,Object? socksPort = null,Object? port = null,Object? redirPort = null,Object? tproxyPort = null,Object? mode = null,Object? allowLan = null,Object? logLevel = null,Object? ipv6 = null,Object? findProcessMode = null,Object? keepAliveInterval = null,Object? unifiedDelay = null,Object? tcpConcurrent = null,Object? tun = null,Object? dns = null,Object? geoxUrl = null,Object? geodataLoader = null,Object? proxyGroups = null,Object? rule = null,Object? globalUa = freezed,Object? externalController = null,Object? hosts = null,}) {
   return _then(_ClashConfig(
 mixedPort: null == mixedPort ? _self.mixedPort : mixedPort // ignore: cast_nullable_to_non_nullable
 as int,socksPort: null == socksPort ? _self.socksPort : socksPort // ignore: cast_nullable_to_non_nullable
@@ -3879,7 +3879,7 @@ as int,unifiedDelay: null == unifiedDelay ? _self.unifiedDelay : unifiedDelay //
 as bool,tcpConcurrent: null == tcpConcurrent ? _self.tcpConcurrent : tcpConcurrent // ignore: cast_nullable_to_non_nullable
 as bool,tun: null == tun ? _self.tun : tun // ignore: cast_nullable_to_non_nullable
 as Tun,dns: null == dns ? _self.dns : dns // ignore: cast_nullable_to_non_nullable
-as Dns,geoXUrl: null == geoXUrl ? _self.geoXUrl : geoXUrl // ignore: cast_nullable_to_non_nullable
+as Dns,geoxUrl: null == geoxUrl ? _self.geoxUrl : geoxUrl // ignore: cast_nullable_to_non_nullable
 as GeoXUrl,geodataLoader: null == geodataLoader ? _self.geodataLoader : geodataLoader // ignore: cast_nullable_to_non_nullable
 as GeodataLoader,proxyGroups: null == proxyGroups ? _self._proxyGroups : proxyGroups // ignore: cast_nullable_to_non_nullable
 as List<ProxyGroup>,rule: null == rule ? _self._rule : rule // ignore: cast_nullable_to_non_nullable
@@ -3912,10 +3912,10 @@ $DnsCopyWith<$Res> get dns {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$GeoXUrlCopyWith<$Res> get geoXUrl {
+$GeoXUrlCopyWith<$Res> get geoxUrl {
   
-  return $GeoXUrlCopyWith<$Res>(_self.geoXUrl, (value) {
-    return _then(_self.copyWith(geoXUrl: value));
+  return $GeoXUrlCopyWith<$Res>(_self.geoxUrl, (value) {
+    return _then(_self.copyWith(geoxUrl: value));
   });
 }
 }
