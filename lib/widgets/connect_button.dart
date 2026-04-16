@@ -21,22 +21,41 @@ class ConnectButton extends ConsumerWidget {
     final isRunning = ref.watch(isStartProvider);
     final runTime = ref.watch(runTimeProvider);
     final scheme = Theme.of(context).colorScheme;
-    final isConnected = status == CoreStatus.connected && isRunning;
-    final backgroundColor = switch (status) {
-      CoreStatus.connected => Colors.black,
+    final effectiveStatus = status == CoreStatus.connecting
+        ? CoreStatus.connecting
+        : isRunning
+        ? CoreStatus.connected
+        : CoreStatus.disconnected;
+    final isConnected = effectiveStatus == CoreStatus.connected;
+    final backgroundColor = switch (effectiveStatus) {
+      CoreStatus.connected => const Color(0xFF16A34A),
       CoreStatus.connecting => const Color(0xFF1F2937),
       CoreStatus.disconnected => Colors.white,
     };
-    final iconColor = switch (status) {
+    final iconColor = switch (effectiveStatus) {
       CoreStatus.connected => Colors.white,
       CoreStatus.connecting => Colors.white,
-      CoreStatus.disconnected => const Color(0xFFC6CBD4),
+      CoreStatus.disconnected => const Color(0xFF6B7280),
     };
-    final label = switch (status) {
-      CoreStatus.connected =>
-        isRunning ? appLocalizations.connected : appLocalizations.disconnected,
+    final label = switch (effectiveStatus) {
+      CoreStatus.connected => appLocalizations.connected,
       CoreStatus.connecting => appLocalizations.connecting,
       CoreStatus.disconnected => appLocalizations.disconnected,
+    };
+    final detail = switch (effectiveStatus) {
+      CoreStatus.connected => utils.getTimeText(runTime),
+      CoreStatus.connecting => '正在建立连接',
+      CoreStatus.disconnected => '点击连接',
+    };
+    final labelColor = switch (effectiveStatus) {
+      CoreStatus.connected => const Color(0xFF16A34A),
+      CoreStatus.connecting => scheme.onSurface,
+      CoreStatus.disconnected => scheme.onSurface,
+    };
+    final borderColor = switch (effectiveStatus) {
+      CoreStatus.connected => const Color(0xFF86EFAC),
+      CoreStatus.connecting => const Color(0xFF374151),
+      CoreStatus.disconnected => const Color(0xFFE5E7EB),
     };
 
     return Column(
@@ -50,16 +69,15 @@ class ConnectButton extends ConsumerWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: isConnected
-                  ? Colors.black
-                  : const Color(0xFFF0F2F6),
-            ),
+            border: Border.all(color: borderColor, width: isConnected ? 3 : 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 30,
-                spreadRadius: 2,
+                color: (isConnected
+                        ? const Color(0xFF16A34A)
+                        : Colors.black)
+                    .withValues(alpha: isConnected ? 0.22 : 0.06),
+                blurRadius: isConnected ? 36 : 30,
+                spreadRadius: isConnected ? 4 : 2,
                 offset: const Offset(0, 16),
               ),
             ],
@@ -68,13 +86,13 @@ class ConnectButton extends ConsumerWidget {
             color: Colors.transparent,
             child: InkWell(
               customBorder: const CircleBorder(),
-              onTap: status == CoreStatus.connecting
+              onTap: effectiveStatus == CoreStatus.connecting
                   ? null
                   : () {
                       appController.updateStart();
                     },
               child: Center(
-                child: status == CoreStatus.connecting
+                child: effectiveStatus == CoreStatus.connecting
                     ? SizedBox(
                         width: 36,
                         height: 36,
@@ -94,12 +112,19 @@ class ConnectButton extends ConsumerWidget {
         ),
         if (showDetails) ...[
           const SizedBox(height: 14),
-          Text(label, style: context.textTheme.titleMedium?.toSoftBold),
+          Text(
+            label,
+            style: context.textTheme.titleMedium?.toSoftBold.copyWith(
+              color: labelColor,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
-            utils.getTimeText(runTime),
+            detail,
             style: context.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant,
+              color: isConnected
+                  ? const Color(0xFF15803D)
+                  : scheme.onSurfaceVariant,
             ),
           ),
         ],

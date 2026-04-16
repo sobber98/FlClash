@@ -192,8 +192,9 @@ NavigationState navigationState(Ref ref) {
 @riverpod
 double contentWidth(Ref ref) {
   final viewWidth = ref.watch(viewWidthProvider);
-  final sideWidth = ref.watch(sideWidthProvider);
-  return viewWidth - sideWidth;
+  final isMobile = ref.watch(isMobileViewProvider);
+  final sideWidth = isMobile ? 0.0 : desktopSidebarWidth;
+  return (viewWidth - sideWidth).clamp(0.0, double.infinity);
 }
 
 @riverpod

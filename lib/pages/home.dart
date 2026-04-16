@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _shellBackground = Color(0xFFF5F6F8);
-const _sidebarWidth = 248.0;
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -65,20 +64,18 @@ class _StartupLoginPage extends ConsumerWidget {
 class _AuthenticatedHomePage extends ConsumerWidget {
   const _AuthenticatedHomePage();
 
-  void _syncSideWidth(WidgetRef ref, double width) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(sideWidthProvider.notifier).value = width;
-    });
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navigationState = ref.watch(navigationStateProvider);
     final navigationItems = ref.watch(currentNavigationItemsStateProvider).value;
     final currentIndex = navigationState.currentIndex;
     final isMobile = navigationState.viewMode == ViewMode.mobile;
-    _syncSideWidth(ref, isMobile ? 0 : _sidebarWidth);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(sideWidthProvider.notifier).value =
+          isMobile ? 0 : desktopSidebarWidth;
+    });
     final pageView = _HomePageView(
+      key: ValueKey('home-${navigationState.viewMode.name}-${navigationItems.length}'),
       navigationItems: navigationItems,
       pageBuilder: (_, index) {
         final navigationItem = navigationItems[index];
@@ -190,7 +187,7 @@ class _DesktopShell extends ConsumerWidget {
       child: Row(
         children: [
           Container(
-            width: _sidebarWidth,
+            width: desktopSidebarWidth,
             color: Colors.white,
             padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
             child: Column(
@@ -237,17 +234,23 @@ class _DesktopShell extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 28),
-                for (var index = 0; index < navigationItems.length; index++) ...[
-                  _DesktopNavItem(
-                    item: navigationItems[index],
-                    selected: index == currentIndex,
-                    onTap: () {
-                      appController.toPage(navigationItems[index].label);
+                Expanded(
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemCount: navigationItems.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      return _DesktopNavItem(
+                        item: navigationItems[index],
+                        selected: index == currentIndex,
+                        onTap: () {
+                          appController.toPage(navigationItems[index].label);
+                        },
+                      );
                     },
                   ),
-                  const SizedBox(height: 8),
-                ],
-                const Spacer(),
+                ),
+                const SizedBox(height: 16),
                 InkWell(
                   borderRadius: BorderRadius.circular(18),
                   onTap: () => appController.toPage(PageLabel.profile),
@@ -432,6 +435,7 @@ class _HomePageView extends ConsumerStatefulWidget {
   final List<NavigationItem> navigationItems;
 
   const _HomePageView({
+    super.key,
     required this.pageBuilder,
     required this.navigationItems,
   });

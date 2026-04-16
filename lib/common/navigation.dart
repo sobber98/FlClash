@@ -38,20 +38,20 @@ class Navigation {
         label: PageLabel.proxies,
         builder: (_) =>
             const ProxiesView(key: GlobalObjectKey(PageLabel.proxies)),
-        modes: const [NavigationItemMode.more],
+        modes: const [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
         icon: const Icon(Icons.construction_outlined),
         label: PageLabel.tools,
         builder: (_) => const ToolsView(key: GlobalObjectKey(PageLabel.tools)),
-        modes: const [NavigationItemMode.more],
+        modes: const [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
         icon: const Icon(Icons.folder_outlined),
         label: PageLabel.profiles,
         builder: (_) =>
             const ProfilesView(key: GlobalObjectKey(PageLabel.profiles)),
-        modes: const [NavigationItemMode.more],
+        modes: const [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
         icon: const Icon(Icons.view_timeline),
@@ -59,7 +59,7 @@ class Navigation {
         builder: (_) =>
             const RequestsView(key: GlobalObjectKey(PageLabel.requests)),
         description: 'requestsDesc',
-        modes: const [NavigationItemMode.more],
+        modes: const [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
         icon: const Icon(Icons.ballot_outlined),
@@ -67,7 +67,7 @@ class Navigation {
         builder: (_) =>
             const ConnectionsView(key: GlobalObjectKey(PageLabel.connections)),
         description: 'connectionsDesc',
-        modes: const [NavigationItemMode.more],
+        modes: const [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
         icon: const Icon(Icons.storage_outlined),
@@ -75,14 +75,16 @@ class Navigation {
         description: 'resourcesDesc',
         builder: (_) =>
             const ResourcesView(key: GlobalObjectKey(PageLabel.resources)),
-        modes: const [NavigationItemMode.more],
+        modes: const [NavigationItemMode.desktop, NavigationItemMode.more],
       ),
       NavigationItem(
         icon: const Icon(Icons.adb_outlined),
         label: PageLabel.logs,
         builder: (_) => const LogsView(key: GlobalObjectKey(PageLabel.logs)),
         description: 'logsDesc',
-        modes: openLogs ? const [NavigationItemMode.more] : const [],
+        modes: openLogs
+            ? const [NavigationItemMode.desktop, NavigationItemMode.more]
+            : const [],
       ),
     ];
   }

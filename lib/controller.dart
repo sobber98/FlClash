@@ -648,6 +648,7 @@ extension SetupControllerExt on AppController {
         );
       }
     } else {
+      _ref.read(coreStatusProvider.notifier).value = CoreStatus.disconnected;
       await globalState.handleStop();
       coreController.resetTraffic();
       _ref.read(trafficsProvider.notifier).clear();
