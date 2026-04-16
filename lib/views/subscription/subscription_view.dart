@@ -247,15 +247,7 @@ class _PlanCard extends StatelessWidget {
   }
 
   List<String> _featureRows() {
-    final lines = (plan.content ?? '')
-        .split(RegExp(r'[\n|]'))
-        .map((item) => item.replaceAll(RegExp(r'<[^>]+>'), '').trim())
-        .where((item) => item.isNotEmpty)
-        .toList(growable: false);
-    if (lines.isNotEmpty) {
-      return lines.take(4).toList(growable: false);
-    }
-    return const ['高速稳定连接', '全球节点覆盖', '多设备同时在线', '24/7 技术支持'];
+    return v2boardPlanHighlights(plan.content, limit: 4);
   }
 
   void _openDetail(BuildContext context) {

@@ -30,9 +30,9 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
   };
 
   final _couponController = TextEditingController();
-  List<dynamic> _paymentMethods = const [];
+  List<V2BoardPaymentOption> _paymentMethods = const [];
   String? _selectedPeriod;
-  String? _selectedPaymentMethod;
+  String? _selectedPaymentMethodValue;
   bool _isLoading = false;
 
   @override
@@ -74,15 +74,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
   }
 
   List<String> get _featureRows {
-    final lines = (widget.plan.content ?? '')
-        .split(RegExp(r'[\n|]'))
-        .map((item) => item.replaceAll(RegExp(r'<[^>]+>'), '').trim())
-        .where((item) => item.isNotEmpty)
-        .toList(growable: false);
-    if (lines.isNotEmpty) {
-      return lines.take(5).toList(growable: false);
-    }
-    return const ['高速稳定连接', '全球节点覆盖', '多设备同时在线', '套餐即时生效'];
+    return v2boardPlanHighlights(widget.plan.content, limit: 5);
   }
 
   String _trafficText() {
@@ -100,11 +92,13 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
   String _priceText(int price) => '¥${(price / 100).toStringAsFixed(2)}';
 
   String _selectedPaymentLabel() {
-    final text = _selectedPaymentMethod?.trim() ?? '';
-    if (text.isEmpty) {
+    final option = _paymentMethods
+        .where((item) => item.value == _selectedPaymentMethodValue)
+        .firstOrNull;
+    if (option == null || option.label.trim().isEmpty) {
       return '系统默认';
     }
-    return text;
+    return option.label;
   }
 
   Future<void> _loadPaymentMethods() async {
@@ -117,9 +111,10 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
       if (!mounted) {
         return;
       }
+      final options = v2boardPaymentOptions(methods);
       setState(() {
-        _paymentMethods = methods;
-        _selectedPaymentMethod = methods.firstOrNull?.toString();
+        _paymentMethods = options;
+        _selectedPaymentMethodValue = options.firstOrNull?.value;
       });
     } catch (_) {
       // Keep empty methods and let server default the payment path.
@@ -146,7 +141,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
       }
       final result = await api.checkoutOrder(
         tradeNo,
-        _selectedPaymentMethod ?? '',
+        _selectedPaymentMethodValue ?? '',
       );
       final url = _extractCheckoutUrl(result);
       await ref.read(subscriptionOrdersProvider.notifier).refresh();
@@ -303,12 +298,11 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                     spacing: 10,
                     runSpacing: 10,
                     children: _paymentMethods.map((method) {
-                      final value = method.toString();
-                      final selected = _selectedPaymentMethod == value;
+                      final selected = _selectedPaymentMethodValue == method.value;
                       return GestureDetector(
                         onTap: () {
                           setState(() {
-                            _selectedPaymentMethod = value;
+                            _selectedPaymentMethodValue = method.value;
                           });
                         },
                         child: AnimatedContainer(
@@ -324,7 +318,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
-                            value,
+                            method.label,
                             style: context.textTheme.titleSmall?.copyWith(
                               color: selected ? Colors.white : const Color(0xFF4B5563),
                               fontWeight: FontWeight.w700,

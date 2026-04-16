@@ -297,16 +297,22 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
       title: appLocalizations.v2boardNotices,
       items: notices.take(5).map(
             (notice) => ListItem(
-              title: Text(notice.title),
+              title: Text(v2boardNoticeHeadline(notice)),
               subtitle: Text(
-                notice.content.length > 50
-                    ? '${notice.content.substring(0, 50)}...'
-                    : notice.content,
+                () {
+                  final content = v2boardPlainText(
+                    notice.content,
+                    preserveLineBreaks: false,
+                  );
+                  return content.length > 50
+                      ? '${content.substring(0, 50)}...'
+                      : content;
+                }(),
               ),
               onTap: () {
                 globalState.showMessage(
-                  title: notice.title,
-                  message: TextSpan(text: notice.content),
+                  title: v2boardNoticeHeadline(notice),
+                  message: TextSpan(text: v2boardPlainText(notice.content)),
                 );
               },
             ),

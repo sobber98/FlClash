@@ -31,13 +31,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     ref.read(v2boardNoticesProvider.notifier).fetch();
   }
 
-  String _noticeText(List<V2BoardNotice> notices) {
-    if (notices.isEmpty) return '';
-    final notice = notices.first;
-    final plain = notice.content.replaceAll(RegExp(r'<[^>]*>'), ' ').trim();
-    return notice.title.trim().isNotEmpty ? notice.title.trim() : plain;
-  }
-
   String _formatBytes(int bytes) {
     if (bytes <= 0) return '0 B';
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -97,8 +90,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               isMobile ? 24 : 32,
             ),
             children: [
-              if (_noticeText(notices).isNotEmpty) ...[
-                _AnnouncementBar(text: _noticeText(notices)),
+              if (v2boardNoticePreview(notices).isNotEmpty) ...[
+                _AnnouncementBar(notices: notices),
                 const SizedBox(height: 26),
               ],
               _HeroStatusSection(
@@ -138,14 +131,120 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 }
 
 class _AnnouncementBar extends StatelessWidget {
-  final String text;
+  final List<V2BoardNotice> notices;
 
-  const _AnnouncementBar({required this.text});
+  const _AnnouncementBar({required this.notices});
+
+  String _formatTime(int? timestamp) {
+    if (timestamp == null || timestamp <= 0) {
+      return '';
+    }
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+    return '${date.year}-$month-$day $hour:$minute';
+  }
+
+  Future<void> _showNoticeDialog(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560, maxHeight: 620),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(22, 18, 22, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '公告详情',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '点击公告栏即可查看完整公告内容',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF9CA3AF),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: notices.length,
+                      separatorBuilder: (context, index) => const SizedBox(height: 12),
+                      itemBuilder: (_, index) {
+                        final notice = notices[index];
+                        final title = v2boardNoticeHeadline(notice);
+                        final content = v2boardPlainText(notice.content);
+                        return Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF7F8FB),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title.isNotEmpty ? title : '公告 ${index + 1}',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              if (_formatTime(notice.updatedAt ?? notice.createdAt).isNotEmpty) ...[
+                                const SizedBox(height: 6),
+                                Text(
+                                  _formatTime(notice.updatedAt ?? notice.createdAt),
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: const Color(0xFF9CA3AF),
+                                  ),
+                                ),
+                              ],
+                              if (content.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                SelectableText(
+                                  content,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    height: 1.55,
+                                    color: const Color(0xFF4B5563),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final preview = v2boardNoticePreview(notices);
     return Container(
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -157,33 +256,60 @@ class _AnnouncementBar extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.campaign_outlined,
-              color: Colors.white,
-              size: 18,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: notices.isEmpty ? null : () => _showNoticeDialog(context),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.campaign_outlined,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '最新公告',
+                        style: context.textTheme.labelLarge?.copyWith(
+                          color: const Color(0xFF9CA3AF),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      _MarqueeText(
+                        text: preview,
+                        style: context.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0xFF9CA3AF),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: context.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -268,50 +394,183 @@ class _TunModeCard extends ConsumerWidget {
     final isAndroid = system.isAndroid;
     final enabled = isAndroid
         ? ref.watch(vpnSettingProvider.select((state) => state.enable))
-        : ref.watch(
-            patchClashConfigProvider.select((state) => state.tun.enable),
-          );
+        : ref.watch(patchClashConfigProvider.select((state) => state.tun.enable));
+    final title = isAndroid ? 'VPN 模式' : 'TUN 模式';
+    final subtitle = isAndroid ? '系统级代理开关' : '透明代理开关';
+
     return _DashboardCard(
-      child: Row(
+      compact: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _FeatureIcon(icon: Icons.desktop_windows_outlined),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'TUN 模式',
-                  style: context.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+          Row(
+            children: [
+              _FeatureIcon(icon: Icons.shield_outlined, compact: false),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFFA0A6B1),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  '接管全系统流量',
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFFA0A6B1),
-                  ),
-                ),
-              ],
+              ),
+              Switch(
+                value: enabled,
+                onChanged: (value) {
+                  if (isAndroid) {
+                    ref
+                        .read(vpnSettingProvider.notifier)
+                        .update((state) => state.copyWith(enable: value));
+                    return;
+                  }
+                  ref
+                      .read(patchClashConfigProvider.notifier)
+                      .update((state) => state.copyWith.tun(enable: value));
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            enabled ? '当前已启用' : '当前未启用',
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: enabled ? const Color(0xFF047857) : const Color(0xFF6B7280),
             ),
           ),
-          Switch(
-            value: enabled,
-            onChanged: (value) {
-              if (isAndroid) {
-                ref.read(vpnSettingProvider.notifier).update(
-                      (state) => state.copyWith(enable: value),
-                    );
-              } else {
-                ref.read(patchClashConfigProvider.notifier).update(
-                      (state) => state.copyWith.tun(enable: value),
-                    );
-              }
-            },
+          const SizedBox(height: 6),
+          Text(
+            enabled ? '所有流量将按当前代理策略接管。' : '启用后可通过系统网络层统一接管流量。',
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF9CA3AF),
+            ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _MarqueeText extends StatefulWidget {
+  final String text;
+  final TextStyle? style;
+
+  const _MarqueeText({required this.text, this.style});
+
+  @override
+  State<_MarqueeText> createState() => _MarqueeTextState();
+}
+
+class _MarqueeTextState extends State<_MarqueeText>
+    with SingleTickerProviderStateMixin {
+  static const _gap = 36.0;
+  late final AnimationController _controller;
+  double _textWidth = 0;
+  double _viewportWidth = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant _MarqueeText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text != widget.text) {
+      _syncAnimation();
+    }
+  }
+
+  void _syncAnimation() {
+    final shouldAnimate = _textWidth > _viewportWidth + 8;
+    if (!shouldAnimate) {
+      _controller
+        ..stop()
+        ..value = 0;
+      return;
+    }
+    final seconds = ((_textWidth + _gap) / 42).clamp(8.0, 24.0);
+    final duration = Duration(milliseconds: (seconds * 1000).round());
+    if (_controller.duration != duration) {
+      _controller.duration = duration;
+    }
+    if (!_controller.isAnimating) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final style = widget.style ?? DefaultTextStyle.of(context).style;
+    if (widget.text.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final painter = TextPainter(
+          text: TextSpan(text: widget.text, style: style),
+          maxLines: 1,
+          textDirection: Directionality.of(context),
+        )..layout();
+        _textWidth = painter.width;
+        _viewportWidth = constraints.maxWidth;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _syncAnimation();
+          }
+        });
+        final shouldAnimate = _textWidth > _viewportWidth + 8;
+        if (!shouldAnimate) {
+          return Text(
+            widget.text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: style,
+          );
+        }
+        return ClipRect(
+          child: SizedBox(
+            height: painter.height,
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                final distance = _textWidth + _gap;
+                final dx = -distance * _controller.value;
+                return Transform.translate(
+                  offset: Offset(dx, 0),
+                  child: Row(
+                    children: [
+                      Text(widget.text, maxLines: 1, softWrap: false, style: style),
+                      const SizedBox(width: _gap),
+                      Text(widget.text, maxLines: 1, softWrap: false, style: style),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
