@@ -1,6 +1,6 @@
 # FlClash 开发文档
 
-> 最后更新：2026-04-15 · 版本：0.8.92+2026020201
+> 最后更新：2026-04-16 · 版本：0.8.92+2026020201
 
 ## 目录
 
@@ -650,6 +650,22 @@ dart setup.dart macos --arch arm64
 - 所有数据模型使用 **Freezed** 注解
 - JSON 序列化使用 `@JsonSerializable`
 - 生成产物统一放在 `generated/` 子目录
+
+#### 模型字段命名与 JSON 映射
+
+- Dart 字段名统一使用语义明确的 `camelCase`
+- JSON key 若整体遵循同一规则，优先在 Freezed 工厂上使用 `@JsonSerializable(fieldRename: ...)`，不要为每个字段重复写 `@JsonKey(name: ...)`
+- `fieldRename` 适用场景：`kebab`、`snake`、`pascal`、`screamingSnake` 等整类字段映射规则一致的模型
+- 仅在以下场景保留字段级 `@JsonKey(...)`：需要 `fromJson` / `toJson`、单个字段命名不规则、兼容历史字段、枚举兜底解析
+- 非规则型枚举解析优先使用显式 `fromJson` 方法，避免在 Freezed 与 `json_serializable` 间重复声明导致 warning
+- 重命名模型字段时，要同时更新业务引用、序列化映射和生成文件，不直接编辑 `generated/` 下产物
+
+#### 生成文件同步约定
+
+- 只要修改了 `lib/models/`、`lib/providers/`、`lib/database/` 中使用代码生成的源码，就必须立即重新生成产物
+- 生成命令：`dart run build_runner build --delete-conflicting-outputs`
+- 提交代码时必须包含对应 `generated/` 变更，避免 CI 因 hash 漂移或过期产物失败
+- 推荐在生成后执行：`flutter analyze --no-fatal-infos lib setup.dart`
 
 ### Provider 约定
 
