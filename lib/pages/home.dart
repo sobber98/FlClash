@@ -1,7 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/manager/app_manager.dart';
+import 'package:fl_clash/manager/window_manager.dart';
 import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
@@ -10,9 +10,9 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
-typedef OnSelected = void Function(int index);
+const _shellBackground = Color(0xFFF5F6F8);
+const _sidebarWidth = 248.0;
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -28,99 +28,32 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-class _AuthenticatedHomePage extends StatelessWidget {
-  const _AuthenticatedHomePage();
+class _StartupLoginPage extends ConsumerWidget {
+  const _StartupLoginPage();
 
   @override
-  Widget build(BuildContext context) {
-    return HomeBackScopeContainer(
-      child: AppSidebarContainer(
-        child: Material(
-          color: context.colorScheme.surface,
-          child: Consumer(
-            builder: (context, ref, child) {
-              final state = ref.watch(navigationStateProvider);
-              final systemUiOverlayStyle = ref.read(
-                systemUiOverlayStyleStateProvider,
-              );
-              final isMobile = state.viewMode == ViewMode.mobile;
-              final navigationItems = state.navigationItems;
-              final currentIndex = state.currentIndex;
-              final bottomNavigationBar = NavigationBarTheme(
-                data: _NavigationBarDefaultsM3(context),
-                child: NavigationBar(
-                  destinations: navigationItems
-                      .map(
-                        (e) => NavigationDestination(
-                          icon: e.icon,
-                          label: Intl.message(e.label.name),
-                        ),
-                      )
-                      .toList(),
-                  onDestinationSelected: (index) {
-                    appController.toPage(navigationItems[index].label);
-                  },
-                  selectedIndex: currentIndex,
-                ),
-              );
-              if (isMobile) {
-                return AnnotatedRegion<SystemUiOverlayStyle>(
-                  value: systemUiOverlayStyle.copyWith(
-                    systemNavigationBarColor:
-                        context.colorScheme.surfaceContainer,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appName = ref.watch(appDisplayNameProvider);
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: Column(
+                children: [
+                  Text(
+                    appName,
+                    style: context.textTheme.labelLarge?.copyWith(
+                      color: const Color(0xFF9CA3AF),
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: MediaQuery.removePadding(
-                          removeTop: false,
-                          removeBottom: true,
-                          removeLeft: true,
-                          removeRight: true,
-                          context: context,
-                          child: child!,
-                        ),
-                      ),
-                      MediaQuery.removePadding(
-                        removeTop: true,
-                        removeBottom: false,
-                        removeLeft: true,
-                        removeRight: true,
-                        context: context,
-                        child: bottomNavigationBar,
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                return child!;
-              }
-            },
-            child: Consumer(
-              builder: (_, ref, _) {
-                final navigationItems = ref
-                    .watch(currentNavigationItemsStateProvider)
-                    .value;
-                final isMobile = ref.watch(isMobileViewProvider);
-                return _HomePageView(
-                  navigationItems: navigationItems,
-                  pageBuilder: (_, index) {
-                    final navigationItem = navigationItems[index];
-                    final navigationView = navigationItem.builder(context);
-                    final view = KeepScope(
-                      keep: navigationItem.keep,
-                      child: isMobile
-                          ? navigationView
-                          : Navigator(
-                              pages: [MaterialPage(child: navigationView)],
-                              onDidRemovePage: (_) {},
-                            ),
-                    );
-                    return view;
-                  },
-                );
-              },
+                  const SizedBox(height: 8),
+                  const V2BoardLoginView(),
+                ],
+              ),
             ),
           ),
         ),
@@ -129,51 +62,351 @@ class _AuthenticatedHomePage extends StatelessWidget {
   }
 }
 
-class _StartupLoginPage extends ConsumerWidget {
-  const _StartupLoginPage();
+class _AuthenticatedHomePage extends ConsumerWidget {
+  const _AuthenticatedHomePage();
+
+  void _syncSideWidth(WidgetRef ref, double width) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(sideWidthProvider.notifier).value = width;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final navigationState = ref.watch(navigationStateProvider);
+    final navigationItems = ref.watch(currentNavigationItemsStateProvider).value;
+    final currentIndex = navigationState.currentIndex;
+    final isMobile = navigationState.viewMode == ViewMode.mobile;
+    _syncSideWidth(ref, isMobile ? 0 : _sidebarWidth);
+    final pageView = _HomePageView(
+      navigationItems: navigationItems,
+      pageBuilder: (_, index) {
+        final navigationItem = navigationItems[index];
+        final navigationView = navigationItem.builder(context);
+        return KeepScope(
+          keep: navigationItem.keep,
+          child: isMobile
+              ? navigationView
+              : Navigator(
+                  pages: [MaterialPage(child: navigationView)],
+                  onDidRemovePage: (_) {},
+                ),
+        );
+      },
+    );
+    return HomeBackScopeContainer(
+      child: Material(
+        color: _shellBackground,
+        child: isMobile
+            ? _MobileShell(
+                currentIndex: currentIndex,
+                navigationItems: navigationItems,
+                child: pageView,
+              )
+            : _DesktopShell(
+                currentIndex: currentIndex,
+                navigationItems: navigationItems,
+                child: pageView,
+              ),
+      ),
+    );
+  }
+}
+
+class _MobileShell extends ConsumerWidget {
+  final Widget child;
+  final int currentIndex;
+  final List<NavigationItem> navigationItems;
+
+  const _MobileShell({
+    required this.child,
+    required this.currentIndex,
+    required this.navigationItems,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final systemUiOverlayStyle = ref.read(systemUiOverlayStyleStateProvider);
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemUiOverlayStyle.copyWith(
+        systemNavigationBarColor: const Color(0xFFE8EEF7),
+      ),
+      child: Column(
+        children: [
+          Expanded(child: child),
+          SafeArea(
+            top: false,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFE8EEF7),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+              child: Row(
+                children: [
+                  for (var index = 0; index < navigationItems.length; index++)
+                    Expanded(
+                      child: _MobileNavItem(
+                        item: navigationItems[index],
+                        selected: index == currentIndex,
+                        onTap: () {
+                          appController.toPage(navigationItems[index].label);
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DesktopShell extends ConsumerWidget {
+  final Widget child;
+  final int currentIndex;
+  final List<NavigationItem> navigationItems;
+
+  const _DesktopShell({
+    required this.child,
+    required this.currentIndex,
+    required this.navigationItems,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appName = ref.watch(appDisplayNameProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final maxWidth = constraints.maxWidth > 520
-                ? 460.0
-                : constraints.maxWidth;
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        appName,
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.headlineMedium,
+    final email = ref.watch(v2boardSettingProvider)?.email;
+    return SafeArea(
+      child: Row(
+        children: [
+          Container(
+            width: _sidebarWidth,
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F6FA),
+                        borderRadius: BorderRadius.circular(14),
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        '请先登录后继续使用应用。',
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: context.colorScheme.onSurfaceVariant,
+                      padding: const EdgeInsets.all(8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: AppIcon(),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            appName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Enterprise Client',
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFF9CA3AF),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 28),
+                for (var index = 0; index < navigationItems.length; index++) ...[
+                  _DesktopNavItem(
+                    item: navigationItems[index],
+                    selected: index == currentIndex,
+                    onTap: () {
+                      appController.toPage(navigationItems[index].label);
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                const Spacer(),
+                InkWell(
+                  borderRadius: BorderRadius.circular(18),
+                  onTap: () => appController.toPage(PageLabel.profile),
+                  child: Ink(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F6FA),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 42,
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(
+                            Icons.person_rounded,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      CommonCard(
-                        type: CommonCardType.filled,
-                        child: const V2BoardLoginView(),
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '用户中心',
+                                style: context.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                email?.isNotEmpty == true ? email! : '管理您的账户',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: const Color(0xFF9CA3AF),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: _shellBackground,
+              child: child,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MobileNavItem extends StatelessWidget {
+  final NavigationItem item;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _MobileNavItem({
+    required this.item,
+    required this.selected,
+    required this.onTap,
+  });
+
+  String get label => switch (item.label) {
+    PageLabel.dashboard => '仪表盘',
+    PageLabel.subscription => '套餐商城',
+    PageLabel.profile => '用户中心',
+    _ => item.label.name,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final activeColor = const Color(0xFF123E63);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFDDE8F7) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconTheme(
+              data: IconThemeData(
+                color: selected ? activeColor : const Color(0xFF4B5563),
+                size: 24,
               ),
-            );
-          },
+              child: item.icon,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: context.textTheme.labelMedium?.copyWith(
+                color: selected ? activeColor : const Color(0xFF4B5563),
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DesktopNavItem extends StatelessWidget {
+  final NavigationItem item;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _DesktopNavItem({
+    required this.item,
+    required this.selected,
+    required this.onTap,
+  });
+
+  String get label => switch (item.label) {
+    PageLabel.dashboard => '仪表盘',
+    PageLabel.subscription => '套餐商城',
+    PageLabel.profile => '用户中心',
+    _ => item.label.name,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: Ink(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          color: selected ? Colors.black : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            IconTheme(
+              data: IconThemeData(
+                color: selected ? Colors.white : const Color(0xFF6B7280),
+                size: 20,
+              ),
+              child: item.icon,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: context.textTheme.titleSmall?.copyWith(
+                color: selected ? Colors.white : const Color(0xFF4B5563),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -197,7 +430,7 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
   late PageController _pageController;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     _pageController = PageController(initialPage: _pageIndex);
     ref.listenManual(currentPageLabelProvider, (prev, next) {
@@ -220,10 +453,7 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
     return widget.navigationItems.indexWhere((item) => item.label == pageLabel);
   }
 
-  Future<void> _toPage(
-    PageLabel pageLabel, [
-    bool ignoreAnimateTo = false,
-  ]) async {
+  Future<void> _toPage(PageLabel pageLabel, [bool ignoreAnimateTo = false]) async {
     if (!mounted) {
       return;
     }
@@ -273,63 +503,6 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
   }
 }
 
-class _NavigationBarDefaultsM3 extends NavigationBarThemeData {
-  _NavigationBarDefaultsM3(this.context)
-    : super(
-        height: 80.0,
-        elevation: 3.0,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-      );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  Color? get backgroundColor => _colors.surfaceContainer;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  WidgetStateProperty<IconThemeData?>? get iconTheme {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      return IconThemeData(
-        size: 24.0,
-        color: states.contains(WidgetState.disabled)
-            ? _colors.onSurfaceVariant.opacity38
-            : states.contains(WidgetState.selected)
-            ? _colors.onSecondaryContainer
-            : _colors.onSurfaceVariant,
-      );
-    });
-  }
-
-  @override
-  Color? get indicatorColor => _colors.secondaryContainer;
-
-  @override
-  ShapeBorder? get indicatorShape => const StadiumBorder();
-
-  @override
-  WidgetStateProperty<TextStyle?>? get labelTextStyle {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      final TextStyle style = _textTheme.labelMedium!;
-      return style.apply(
-        overflow: TextOverflow.ellipsis,
-        color: states.contains(WidgetState.disabled)
-            ? _colors.onSurfaceVariant.opacity38
-            : states.contains(WidgetState.selected)
-            ? _colors.onSurface
-            : _colors.onSurfaceVariant,
-      );
-    });
-  }
-}
-
 class HomeBackScopeContainer extends ConsumerWidget {
   final Widget child;
 
@@ -340,8 +513,7 @@ class HomeBackScopeContainer extends ConsumerWidget {
     return CommonPopScope(
       onPop: (context) async {
         final pageLabel = ref.read(currentPageLabelProvider);
-        final realContext =
-            GlobalObjectKey(pageLabel).currentContext ?? context;
+        final realContext = GlobalObjectKey(pageLabel).currentContext ?? context;
         final canPop = Navigator.canPop(realContext);
         if (canPop) {
           Navigator.of(realContext).pop();

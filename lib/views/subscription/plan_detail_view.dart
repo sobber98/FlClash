@@ -1,12 +1,12 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
-import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+const _detailBackground = Color(0xFFF5F6F8);
 
 class PlanDetailView extends ConsumerStatefulWidget {
   final V2BoardPlan plan;
@@ -63,6 +63,48 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
     };
     return raw.map((key, value) => MapEntry(key, value ?? 0))
       ..removeWhere((_, value) => value <= 0);
+  }
+
+  int get _selectedPrice {
+    final period = _selectedPeriod;
+    if (period == null) {
+      return 0;
+    }
+    return _availablePeriods[period] ?? 0;
+  }
+
+  List<String> get _featureRows {
+    final lines = (widget.plan.content ?? '')
+        .split(RegExp(r'[\n|]'))
+        .map((item) => item.replaceAll(RegExp(r'<[^>]+>'), '').trim())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
+    if (lines.isNotEmpty) {
+      return lines.take(5).toList(growable: false);
+    }
+    return const ['高速稳定连接', '全球节点覆盖', '多设备同时在线', '套餐即时生效'];
+  }
+
+  String _trafficText() {
+    final transfer = widget.plan.transferEnable ?? 0;
+    if (transfer <= 0) {
+      return '不限流量';
+    }
+    final gb = transfer / 1024 / 1024 / 1024;
+    final value = gb.truncateToDouble() == gb
+        ? gb.toStringAsFixed(0)
+        : gb.toStringAsFixed(1);
+    return '$value GB 流量';
+  }
+
+  String _priceText(int price) => '¥${(price / 100).toStringAsFixed(2)}';
+
+  String _selectedPaymentLabel() {
+    final text = _selectedPaymentMethod?.trim() ?? '';
+    if (text.isEmpty) {
+      return '系统默认';
+    }
+    return text;
   }
 
   Future<void> _loadPaymentMethods() async {
@@ -146,94 +188,436 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonScaffold(
-      title: widget.plan.name,
+    final isMobile = ref.watch(isMobileViewProvider);
+    return Scaffold(
+      backgroundColor: _detailBackground,
+      appBar: AppBar(
+        backgroundColor: _detailBackground,
+        elevation: 0,
+        centerTitle: false,
+        title: const Text('套餐详情'),
+      ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(
+          isMobile ? 16 : 24,
+          8,
+          isMobile ? 16 : 24,
+          32,
+        ),
         children: [
-          CommonCard(
-            type: CommonCardType.filled,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.plan.name,
-                    style: context.textTheme.headlineSmall,
-                  ),
-                  if ((widget.plan.content ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(widget.plan.content!),
-                  ],
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _availablePeriods.entries
-                        .map(
-                          (entry) => ChoiceChip(
-                            label: Text(
-                              '${_periodLabels[entry.key] ?? entry.key} ¥${(entry.value / 100).toStringAsFixed(2)}',
-                            ),
-                            selected: _selectedPeriod == entry.key,
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedPeriod = entry.key;
-                              });
-                            },
+          _DetailHeroCard(
+            planName: widget.plan.name,
+            trafficText: _trafficText(),
+            priceText: _priceText(_selectedPrice),
+            periodText: _periodLabels[_selectedPeriod] ?? '请选择周期',
+            features: _featureRows,
+          ),
+          const SizedBox(height: 18),
+          _SectionCard(
+            title: '订阅规格',
+            subtitle: '选择你想购买的计费周期',
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: _availablePeriods.entries.map((entry) {
+                final selected = _selectedPeriod == entry.key;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedPeriod = entry.key;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 160),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: selected ? Colors.black : const Color(0xFFF3F5F8),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _periodLabels[entry.key] ?? entry.key,
+                          style: context.textTheme.titleSmall?.copyWith(
+                            color: selected ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w700,
                           ),
-                        )
-                        .toList(),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _priceText(entry.value),
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: selected
+                                ? Colors.white70
+                                : const Color(0xFF6B7280),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(growable: false),
+            ),
+          ),
+          const SizedBox(height: 18),
+          _SectionCard(
+            title: '优惠与支付',
+            subtitle: '可选填写优惠码并选择支付方式',
+            child: Column(
+              children: [
+                TextField(
+                  controller: _couponController,
+                  decoration: InputDecoration(
+                    hintText: '输入优惠码可自动参与结算',
+                    filled: true,
+                    fillColor: const Color(0xFFF7F8FB),
+                    prefixIcon: const Icon(Icons.local_offer_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 18,
+                    ),
+                  ),
+                ),
+                if (_paymentMethods.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '支付方式',
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: _paymentMethods.map((method) {
+                      final value = method.toString();
+                      final selected = _selectedPaymentMethod == value;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedPaymentMethod = value;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 160),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: selected
+                                ? const Color(0xFF1F2024)
+                                : const Color(0xFFF3F5F8),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            value,
+                            style: context.textTheme.titleSmall?.copyWith(
+                              color: selected ? Colors.white : const Color(0xFF4B5563),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(growable: false),
                   ),
                 ],
-              ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _couponController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: '优惠码',
-            ),
-          ),
-          if (_paymentMethods.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              initialValue: _selectedPaymentMethod,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: '支付方式',
-              ),
-              items: _paymentMethods
-                  .map(
-                    (method) => DropdownMenuItem<String>(
-                      value: method.toString(),
-                      child: Text(method.toString()),
+          const SizedBox(height: 18),
+          _SectionCard(
+            title: '订单摘要',
+            subtitle: '确认后将创建订单并跳转到支付流程',
+            child: Column(
+              children: [
+                _SummaryRow(label: '套餐名称', value: widget.plan.name),
+                const SizedBox(height: 12),
+                _SummaryRow(
+                  label: '计费周期',
+                  value: _periodLabels[_selectedPeriod] ?? '-',
+                ),
+                const SizedBox(height: 12),
+                _SummaryRow(label: '支付方式', value: _selectedPaymentLabel()),
+                const SizedBox(height: 12),
+                _SummaryRow(
+                  label: '优惠码',
+                  value: _couponController.text.trim().isEmpty
+                      ? '未填写'
+                      : _couponController.text.trim(),
+                ),
+                const SizedBox(height: 18),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F5F8),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '应付金额',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: const Color(0xFF9CA3AF),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              _priceText(_selectedPrice),
+                              style: context.textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.8,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.shopping_bag_outlined),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _isLoading ? null : _submitOrder,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(58),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedPaymentMethod = value;
-                });
-              },
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text('立即购买并支付'),
+                  ),
+                ),
+              ],
             ),
-          ],
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: _isLoading ? null : _submitOrder,
-            child: _isLoading
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('立即购买'),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DetailHeroCard extends StatelessWidget {
+  final String planName;
+  final String trafficText;
+  final String priceText;
+  final String periodText;
+  final List<String> features;
+
+  const _DetailHeroCard({
+    required this.planName,
+    required this.trafficText,
+    required this.priceText,
+    required this.periodText,
+    required this.features,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: Colors.black, width: 2.4),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10000000),
+            blurRadius: 18,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(
+              Icons.workspace_premium_outlined,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            planName,
+            style: context.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            trafficText,
+            style: context.textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF7B8492),
+            ),
+          ),
+          const SizedBox(height: 18),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: priceText,
+                  style: context.textTheme.displaySmall?.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -1.2,
+                  ),
+                ),
+                TextSpan(
+                  text: ' / $periodText',
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF9CA3AF),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+          for (final feature in features) ...[
+            Row(
+              children: [
+                const Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 18,
+                  color: Color(0xFF111827),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    feature,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF4B5563),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final Widget child;
+
+  const _SectionCard({
+    required this.title,
+    required this.subtitle,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10000000),
+            blurRadius: 18,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: context.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.6,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF9CA3AF),
+            ),
+          ),
+          const SizedBox(height: 18),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _SummaryRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: const Color(0xFF9CA3AF),
+          ),
+        ),
+        const Spacer(),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

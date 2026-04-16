@@ -13,26 +13,13 @@ class Navigation {
     return [
       NavigationItem(
         keep: false,
-        icon: Icon(Icons.space_dashboard),
+        icon: const Icon(Icons.home_filled),
         label: PageLabel.dashboard,
         builder: (_) =>
             const DashboardView(key: GlobalObjectKey(PageLabel.dashboard)),
       ),
       NavigationItem(
-        icon: const Icon(Icons.lan_outlined),
-        label: PageLabel.proxies,
-        builder: (_) =>
-            const ProxiesView(key: GlobalObjectKey(PageLabel.proxies)),
-        modes: const [NavigationItemMode.mobile, NavigationItemMode.desktop],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.construction_outlined),
-        label: PageLabel.tools,
-        builder: (_) => const ToolsView(key: GlobalObjectKey(PageLabel.tools)),
-        modes: const [NavigationItemMode.mobile, NavigationItemMode.desktop],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.shopping_cart_outlined),
+        icon: const Icon(Icons.shopping_bag_rounded),
         label: PageLabel.subscription,
         builder: (_) => const SubscriptionView(
           key: GlobalObjectKey(PageLabel.subscription),
@@ -40,11 +27,24 @@ class Navigation {
         modes: const [NavigationItemMode.mobile, NavigationItemMode.desktop],
       ),
       NavigationItem(
-        icon: const Icon(Icons.person_outline),
+        icon: const Icon(Icons.person_rounded),
         label: PageLabel.profile,
         builder: (_) =>
             const ProfileView(key: GlobalObjectKey(PageLabel.profile)),
         modes: const [NavigationItemMode.mobile, NavigationItemMode.desktop],
+      ),
+      NavigationItem(
+        icon: const Icon(Icons.lan_outlined),
+        label: PageLabel.proxies,
+        builder: (_) =>
+            const ProxiesView(key: GlobalObjectKey(PageLabel.proxies)),
+        modes: const [NavigationItemMode.more],
+      ),
+      NavigationItem(
+        icon: const Icon(Icons.construction_outlined),
+        label: PageLabel.tools,
+        builder: (_) => const ToolsView(key: GlobalObjectKey(PageLabel.tools)),
+        modes: const [NavigationItemMode.more],
       ),
       NavigationItem(
         icon: const Icon(Icons.folder_outlined),

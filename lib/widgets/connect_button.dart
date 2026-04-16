@@ -7,8 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ConnectButton extends ConsumerWidget {
   final double size;
+  final bool showDetails;
 
-  const ConnectButton({super.key, this.size = 112});
+  const ConnectButton({
+    super.key,
+    this.size = 112,
+    this.showDetails = true,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,10 +21,16 @@ class ConnectButton extends ConsumerWidget {
     final isRunning = ref.watch(isStartProvider);
     final runTime = ref.watch(runTimeProvider);
     final scheme = Theme.of(context).colorScheme;
+    final isConnected = status == CoreStatus.connected && isRunning;
     final backgroundColor = switch (status) {
-      CoreStatus.connected => Colors.green,
-      CoreStatus.connecting => scheme.secondary,
-      CoreStatus.disconnected => scheme.error,
+      CoreStatus.connected => Colors.black,
+      CoreStatus.connecting => const Color(0xFF1F2937),
+      CoreStatus.disconnected => Colors.white,
+    };
+    final iconColor = switch (status) {
+      CoreStatus.connected => Colors.white,
+      CoreStatus.connecting => Colors.white,
+      CoreStatus.disconnected => const Color(0xFFC6CBD4),
     };
     final label = switch (status) {
       CoreStatus.connected =>
@@ -39,11 +50,17 @@ class ConnectButton extends ConsumerWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             shape: BoxShape.circle,
+            border: Border.all(
+              color: isConnected
+                  ? Colors.black
+                  : const Color(0xFFF0F2F6),
+            ),
             boxShadow: [
               BoxShadow(
-                color: backgroundColor.withValues(alpha: 0.28),
-                blurRadius: 24,
-                spreadRadius: 6,
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 30,
+                spreadRadius: 2,
+                offset: const Offset(0, 16),
               ),
             ],
           ),
@@ -63,27 +80,29 @@ class ConnectButton extends ConsumerWidget {
                         height: 36,
                         child: CircularProgressIndicator(
                           strokeWidth: 3,
-                          color: Colors.white,
+                            color: iconColor,
                         ),
                       )
                     : Icon(
-                        isRunning ? Icons.power_settings_new : Icons.play_arrow,
-                        size: 42,
-                        color: Colors.white,
+                          Icons.power_settings_new_rounded,
+                          size: size * 0.34,
+                          color: iconColor,
                       ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 14),
-        Text(label, style: context.textTheme.titleMedium?.toSoftBold),
-        const SizedBox(height: 4),
-        Text(
-          utils.getTimeText(runTime),
-          style: context.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
-          ),
-        ),
+          if (showDetails) ...[
+            const SizedBox(height: 14),
+            Text(label, style: context.textTheme.titleMedium?.toSoftBold),
+            const SizedBox(height: 4),
+            Text(
+              utils.getTimeText(runTime),
+              style: context.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ],
       ],
     );
   }
