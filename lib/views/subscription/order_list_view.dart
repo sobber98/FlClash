@@ -2,6 +2,8 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/subscription/payment_flow.dart';
+import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -102,6 +104,60 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
     }
   }
 
+  Future<V2BoardPaymentOption?> _selectPaymentMethod(
+    List<V2BoardPaymentOption> options,
+  ) async {
+    if (options.isEmpty) {
+      return null;
+    }
+    if (options.length == 1) {
+      return options.first;
+    }
+    return await globalState.showCommonDialog<V2BoardPaymentOption>(
+      child: _PaymentMethodDialog(options: options),
+    );
+  }
+
+  Future<void> _continuePayment(V2BoardOrder order, String? planName) async {
+    final api = ref.read(v2boardApiClientProvider);
+    if (api == null) {
+      return;
+    }
+    try {
+      final methods = await api.getPaymentMethods();
+      final options = v2boardPaymentOptions(methods);
+      final selected = await _selectPaymentMethod(options);
+      if (options.isNotEmpty && selected == null) {
+        return;
+      }
+      if (!mounted) {
+        return;
+      }
+      final paid = await startV2BoardPaymentFlow(
+        context: context,
+        ref: ref,
+        tradeNo: order.tradeNo,
+        planName: planName?.isNotEmpty == true ? planName! : '订阅服务订单',
+        periodLabel: _typeText(order.type),
+        amountText: _formatPrice(order.totalAmount),
+        paymentMethodValue: selected?.value ?? '',
+        paymentMethodLabel: selected?.label ?? '系统默认',
+      );
+      await ref.read(subscriptionOrdersProvider.notifier).refresh();
+      if (paid && mounted) {
+        globalState.showNotifier('支付成功，订单已完成');
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      globalState.showMessage(
+        title: appLocalizations.tip,
+        message: TextSpan(text: error.toString()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ordersState = ref.watch(subscriptionOrdersProvider);
@@ -174,6 +230,9 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
                         globalState.showNotifier('订单号已复制');
                       }
                     },
+                    onContinuePay: order.status == 0
+                        ? () => _continuePayment(order, planName)
+                        : null,
                     onCancel: order.status == 0 ? () => _cancelOrder(order) : null,
                   ),
                 );
@@ -315,6 +374,7 @@ class _OrderCard extends StatelessWidget {
   final String timeText;
   final String typeText;
   final VoidCallback onCopy;
+  final VoidCallback? onContinuePay;
   final VoidCallback? onCancel;
 
   const _OrderCard({
@@ -327,6 +387,7 @@ class _OrderCard extends StatelessWidget {
     required this.timeText,
     required this.typeText,
     required this.onCopy,
+    required this.onContinuePay,
     required this.onCancel,
   });
 
@@ -422,26 +483,107 @@ class _OrderCard extends StatelessWidget {
                   child: const Text('复制订单号'),
                 ),
               ),
-              if (onCancel != null) ...[
+              if (onContinuePay != null) ...[
                 const SizedBox(width: 12),
                 Expanded(
-                  child: FilledButton(
-                    onPressed: onCancel,
+                  child: FilledButton.tonal(
+                    onPressed: onContinuePay,
                     style: FilledButton.styleFrom(
                       minimumSize: const Size.fromHeight(52),
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
-                    child: const Text('取消订单'),
+                    child: const Text('继续支付'),
                   ),
                 ),
               ],
             ],
           ),
+          if (onCancel != null) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: onCancel,
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52),
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                child: const Text('取消订单'),
+              ),
+            ),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+class _PaymentMethodDialog extends StatefulWidget {
+  final List<V2BoardPaymentOption> options;
+
+  const _PaymentMethodDialog({required this.options});
+
+  @override
+  State<_PaymentMethodDialog> createState() => _PaymentMethodDialogState();
+}
+
+class _PaymentMethodDialogState extends State<_PaymentMethodDialog> {
+  V2BoardPaymentOption? _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.options.firstOrNull;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CommonDialog(
+      title: '选择支付方式',
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(appLocalizations.cancel),
+        ),
+        TextButton(
+          onPressed: _selected == null
+              ? null
+              : () => Navigator.of(context).pop(_selected),
+          child: Text(appLocalizations.confirm),
+        ),
+      ],
+      child: SizedBox(
+        width: 320,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: widget.options.map((option) {
+            final selected = _selected?.value == option.value;
+            return ListTile(
+              onTap: () {
+                setState(() {
+                  _selected = option;
+                });
+              },
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(
+                selected
+                    ? Icons.radio_button_checked_rounded
+                    : Icons.radio_button_off_rounded,
+                color: selected ? Theme.of(context).colorScheme.primary : null,
+              ),
+              title: Text(option.label),
+              subtitle: option.value == option.label
+                  ? null
+                  : Text(option.value),
+            );
+          }).toList(growable: false),
+        ),
       ),
     );
   }

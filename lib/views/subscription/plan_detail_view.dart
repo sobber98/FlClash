@@ -2,9 +2,9 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/subscription/payment_flow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 const _detailBackground = Color(0xFFF5F6F8);
 
@@ -139,16 +139,21 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
       if (tradeNo == null || tradeNo.isEmpty) {
         throw 'trade_no is empty';
       }
-      final result = await api.checkoutOrder(
-        tradeNo,
-        _selectedPaymentMethodValue ?? '',
+      if (!mounted) {
+        return;
+      }
+      final paid = await startV2BoardPaymentFlow(
+        context: context,
+        ref: ref,
+        tradeNo: tradeNo,
+        planName: widget.plan.name,
+        periodLabel: _periodLabels[period] ?? period,
+        amountText: _priceText(_selectedPrice),
+        paymentMethodValue: _selectedPaymentMethodValue ?? '',
+        paymentMethodLabel: _selectedPaymentLabel(),
       );
-      final url = _extractCheckoutUrl(result);
-      await ref.read(subscriptionOrdersProvider.notifier).refresh();
-      if (url != null && url.isNotEmpty) {
-        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      } else if (mounted) {
-        globalState.showNotifier('Order created: $tradeNo');
+      if (paid == true && mounted) {
+        globalState.showNotifier('支付成功，订单已完成');
       }
     } catch (error) {
       if (mounted) {
@@ -162,23 +167,6 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  String? _extractCheckoutUrl(Map<String, dynamic> result) {
-    final candidates = [
-      result['url'],
-      result['pay_url'],
-      result['payment_url'],
-      result['data'] is Map ? (result['data'] as Map)['url'] : null,
-      result['data'] is Map ? (result['data'] as Map)['payment_url'] : null,
-    ];
-    for (final value in candidates) {
-      final text = value?.toString() ?? '';
-      if (text.startsWith('http')) {
-        return text;
-      }
-    }
-    return null;
   }
 
   @override

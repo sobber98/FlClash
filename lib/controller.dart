@@ -999,32 +999,67 @@ extension SystemControllerExt on AppController {
   }
 
   void initLink() {
-    linkManager.initAppLinksListen((url) async {
-      final res = await globalState.showMessage(
-        title: '${appLocalizations.add}${appLocalizations.profile}',
-        message: TextSpan(
-          children: [
-            TextSpan(text: appLocalizations.doYouWantToPass),
-            TextSpan(
-              text: ' $url ',
-              style: TextStyle(
-                color: _context.colorScheme.primary,
-                decoration: TextDecoration.underline,
-                decorationColor: _context.colorScheme.primary,
+    linkManager.initAppLinksListen((uri) async {
+      if (uri.host == 'install-config') {
+        final url = uri.queryParameters['url'];
+        if (url == null || url.isEmpty) {
+          return;
+        }
+        final res = await globalState.showMessage(
+          title: '${appLocalizations.add}${appLocalizations.profile}',
+          message: TextSpan(
+            children: [
+              TextSpan(text: appLocalizations.doYouWantToPass),
+              TextSpan(
+                text: ' $url ',
+                style: TextStyle(
+                  color: _context.colorScheme.primary,
+                  decoration: TextDecoration.underline,
+                  decorationColor: _context.colorScheme.primary,
+                ),
               ),
-            ),
-            TextSpan(
-              text: '${appLocalizations.create}${appLocalizations.profile}',
-            ),
-          ],
-        ),
-      );
+              TextSpan(
+                text: '${appLocalizations.create}${appLocalizations.profile}',
+              ),
+            ],
+          ),
+        );
 
-      if (res != true) {
+        if (res != true) {
+          return;
+        }
+        addProfileFormURL(url);
         return;
       }
-      addProfileFormURL(url);
+
+      if (v2boardIsPaymentCallback(uri)) {
+        await _handlePaymentCallback(uri);
+      }
     });
+  }
+
+  Future<void> _handlePaymentCallback(Uri uri) async {
+    final tradeNo = v2boardExtractTradeNoFromUri(uri);
+    final api = _ref.read(v2boardApiClientProvider);
+    if (api == null) {
+      return;
+    }
+    try {
+      final isPaid = tradeNo == null
+          ? false
+          : await api.checkOrderStatus(tradeNo);
+      await _ref.read(subscriptionOrdersProvider.notifier).refresh();
+      if (isPaid) {
+        await _ref.read(v2boardUserProvider.notifier).fetch();
+        await _ref.read(v2boardSubscriptionProvider.notifier).fetch();
+        await syncV2BoardSubscription();
+        globalState.showNotifier('支付已完成，订阅已更新');
+        return;
+      }
+      globalState.showNotifier('已收到支付回调，正在等待订单确认');
+    } catch (_) {
+      globalState.showNotifier('已收到支付回调，请稍后在订单页确认状态');
+    }
   }
 
   void updateTun() {

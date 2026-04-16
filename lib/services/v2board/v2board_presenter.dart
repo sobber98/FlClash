@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:fl_clash/services/v2board/v2board_models.dart';
 
+const v2boardPaymentCallbackScheme = 'flclash';
+const v2boardPaymentCallbackHost = 'payment-callback';
+
 const _defaultPlanHighlights = [
   '高速稳定连接',
   '全球节点覆盖',
@@ -170,6 +173,48 @@ List<V2BoardPaymentOption> v2boardPaymentOptions(List<dynamic> methods) {
     }
   }
   return options;
+}
+
+bool v2boardIsPaymentCallback(Uri uri) {
+  return uri.scheme == v2boardPaymentCallbackScheme &&
+      uri.host == v2boardPaymentCallbackHost;
+}
+
+String v2boardPaymentCallbackUrl(String tradeNo) {
+  return Uri(
+    scheme: v2boardPaymentCallbackScheme,
+    host: v2boardPaymentCallbackHost,
+    queryParameters: {'trade_no': tradeNo},
+  ).toString();
+}
+
+String? v2boardExtractTradeNoFromUri(Uri uri) {
+  final tradeNo =
+      uri.queryParameters['trade_no'] ?? uri.queryParameters['tradeNo'];
+  if (tradeNo == null || tradeNo.trim().isEmpty) {
+    return null;
+  }
+  return tradeNo.trim();
+}
+
+String? v2boardCheckoutUrl(Map<String, dynamic> result) {
+  final candidates = [
+    result['url'],
+    result['pay_url'],
+    result['payment_url'],
+    result['checkout_url'],
+    result['data'] is Map ? (result['data'] as Map)['url'] : null,
+    result['data'] is Map ? (result['data'] as Map)['payment_url'] : null,
+    result['data'] is Map ? (result['data'] as Map)['pay_url'] : null,
+    result['data'] is Map ? (result['data'] as Map)['checkout_url'] : null,
+  ];
+  for (final value in candidates) {
+    final text = value?.toString() ?? '';
+    if (text.startsWith('http')) {
+      return text;
+    }
+  }
+  return null;
 }
 
 dynamic _tryDecodeJson(String raw) {

@@ -233,14 +233,23 @@ class V2BoardApi {
   Future<Map<String, dynamic>> checkoutOrder(
     String tradeNo,
     String paymentMethod,
+    {
+    String? callbackUrl,
+  }
   ) async {
+    final payload = <String, dynamic>{
+      'trade_no': tradeNo,
+      if (paymentMethod.isNotEmpty) 'method': paymentMethod,
+    };
+    if (callbackUrl != null && callbackUrl.isNotEmpty) {
+      payload['return_url'] = callbackUrl;
+      payload['redirect_url'] = callbackUrl;
+      payload['success_url'] = callbackUrl;
+    }
     final response = await _request(
       () => _dio.post(
         _endpoints.orderCheckout,
-        data: {
-          'trade_no': tradeNo,
-          if (paymentMethod.isNotEmpty) 'method': paymentMethod,
-        },
+        data: payload,
       ),
     );
     return _extractDynamicData(response);
