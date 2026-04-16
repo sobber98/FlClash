@@ -668,9 +668,9 @@ extension SetupControllerExt on AppController {
         addCheckIp();
       }
     } finally {
+      await _ref.read(loadingProvider(LoadingTag.connect).notifier).stop();
       _ref.read(connectionTransitionProvider.notifier).value =
           ConnectionTransitionState.idle;
-      _ref.read(loadingProvider(LoadingTag.connect).notifier).stop();
     }
   }
 

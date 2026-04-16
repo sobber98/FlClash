@@ -260,6 +260,7 @@ class Query extends _$Query with AutoDisposeNotifierMixin {
 class Loading extends _$Loading with AutoDisposeNotifierMixin {
   DateTime? _start;
   Timer? _timer;
+  Completer<void>? _stopCompleter;
 
   @override
   bool build(LoadingTag tag) {
@@ -269,6 +270,10 @@ class Loading extends _$Loading with AutoDisposeNotifierMixin {
   void start() {
     _timer?.cancel();
     _timer = null;
+    if (_stopCompleter != null && !_stopCompleter!.isCompleted) {
+      _stopCompleter!.complete();
+    }
+    _stopCompleter = null;
     _start = DateTime.now();
     value = true;
   }
@@ -278,19 +283,37 @@ class Loading extends _$Loading with AutoDisposeNotifierMixin {
       value = false;
       return;
     }
+    _timer?.cancel();
+    _timer = null;
     final startedAt = _start!;
     final elapsed = DateTime.now().difference(_start!).inMilliseconds;
     const minDuration = 1000;
     if (elapsed >= minDuration) {
-      value = false;
+      if (_start == startedAt) {
+        value = false;
+        _start = null;
+      }
       return;
     }
+    final completer = Completer<void>();
+    _stopCompleter = completer;
     _timer = Timer(Duration(milliseconds: minDuration - elapsed), () {
       if (_start != startedAt) {
+        if (!completer.isCompleted) {
+          completer.complete();
+        }
         return;
       }
       value = false;
+      _start = null;
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
     });
+    await completer.future;
+    if (identical(_stopCompleter, completer)) {
+      _stopCompleter = null;
+    }
   }
 }
 
