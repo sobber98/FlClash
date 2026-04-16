@@ -159,7 +159,12 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
       if (mounted) {
         globalState.showMessage(
           title: appLocalizations.tip,
-          message: TextSpan(text: error.toString()),
+          message: TextSpan(
+            text: formatPaymentFlowError(
+              error,
+              fallback: '下单或拉起支付失败，请稍后重试。',
+            ),
+          ),
         );
       }
     } finally {

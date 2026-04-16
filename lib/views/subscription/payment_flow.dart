@@ -4,6 +4,17 @@ import 'package:fl_clash/views/subscription/payment_checkout_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+String formatPaymentFlowError(
+  Object error, {
+  String fallback = '支付流程异常，请稍后重试。',
+}) {
+  final text = error.toString().trim();
+  if (text.isEmpty || text == 'null') {
+    return fallback;
+  }
+  return text;
+}
+
 Future<bool> startV2BoardPaymentFlow({
   required BuildContext context,
   required WidgetRef ref,
@@ -25,6 +36,9 @@ Future<bool> startV2BoardPaymentFlow({
     callbackUrl: v2boardPaymentCallbackUrl(tradeNo),
   );
   final url = v2boardCheckoutUrl(result);
+  if (url == null || url.isEmpty) {
+    throw StateError('未获取到有效支付链接，请检查支付通道配置后重试。');
+  }
   await ref.read(subscriptionOrdersProvider.notifier).refresh();
   if (!context.mounted) {
     return false;

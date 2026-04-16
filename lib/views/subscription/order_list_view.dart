@@ -99,7 +99,12 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
       }
       globalState.showMessage(
         title: appLocalizations.tip,
-        message: TextSpan(text: error.toString()),
+        message: TextSpan(
+          text: formatPaymentFlowError(
+            error,
+            fallback: '取消订单失败，请稍后重试。',
+          ),
+        ),
       );
     }
   }
@@ -153,7 +158,12 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
       }
       globalState.showMessage(
         title: appLocalizations.tip,
-        message: TextSpan(text: error.toString()),
+        message: TextSpan(
+          text: formatPaymentFlowError(
+            error,
+            fallback: '恢复订单支付失败，请稍后重试。',
+          ),
+        ),
       );
     }
   }
