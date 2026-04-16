@@ -197,22 +197,57 @@ String? v2boardExtractTradeNoFromUri(Uri uri) {
   return tradeNo.trim();
 }
 
-String? v2boardCheckoutUrl(Map<String, dynamic> result) {
+String? v2boardCheckoutUrl(
+  Map<String, dynamic> result, {
+  String? baseUrl,
+}) {
+  final data = result['data'];
   final candidates = [
     result['url'],
     result['pay_url'],
     result['payment_url'],
     result['checkout_url'],
-    result['data'] is Map ? (result['data'] as Map)['url'] : null,
-    result['data'] is Map ? (result['data'] as Map)['payment_url'] : null,
-    result['data'] is Map ? (result['data'] as Map)['pay_url'] : null,
-    result['data'] is Map ? (result['data'] as Map)['checkout_url'] : null,
+    if (data is String) data,
+    data is Map ? (data)['url'] : null,
+    data is Map ? (data)['payment_url'] : null,
+    data is Map ? (data)['pay_url'] : null,
+    data is Map ? (data)['checkout_url'] : null,
+    data is Map ? (data)['link'] : null,
+    data is Map ? (data)['redirect'] : null,
   ];
   for (final value in candidates) {
-    final text = value?.toString() ?? '';
-    if (text.startsWith('http')) {
-      return text;
+    final text = value?.toString().trim() ?? '';
+    final resolved = _resolveCheckoutUrl(text, baseUrl: baseUrl);
+    if (resolved != null) {
+      return resolved;
     }
+  }
+  return null;
+}
+
+String? _resolveCheckoutUrl(String raw, {String? baseUrl}) {
+  if (raw.isEmpty) {
+    return null;
+  }
+  final uri = Uri.tryParse(raw);
+  if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+    return uri.toString();
+  }
+  if (baseUrl == null || baseUrl.trim().isEmpty) {
+    return null;
+  }
+  final baseUri = Uri.tryParse(baseUrl.trim());
+  if (baseUri == null) {
+    return null;
+  }
+  if (raw.startsWith('/')) {
+    return baseUri.resolve(raw).toString();
+  }
+  if (uri != null && !uri.hasScheme) {
+    return baseUri.resolveUri(uri).toString();
+  }
+  if (!raw.contains('://') && !raw.startsWith('javascript:')) {
+    return baseUri.resolve(raw).toString();
   }
   return null;
 }

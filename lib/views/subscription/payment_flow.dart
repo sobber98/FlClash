@@ -35,7 +35,10 @@ Future<bool> startV2BoardPaymentFlow({
     paymentMethodValue,
     callbackUrl: v2boardPaymentCallbackUrl(tradeNo),
   );
-  final url = v2boardCheckoutUrl(result);
+  final url = v2boardCheckoutUrl(
+    result,
+    baseUrl: api.endpoints.baseUrl,
+  );
   if (url == null || url.isEmpty) {
     throw StateError('未获取到有效支付链接，请检查支付通道配置后重试。');
   }
