@@ -817,7 +817,7 @@ final class ConnectionVisualStateProvider
 }
 
 String _$connectionVisualStateHash() =>
-    r'd413eb91af9642dde0f29967a5216545785fcc0f';
+    r'dc21291e66f910b9d5de5af245a0bbc83fd07c03';
 
 @ProviderFor(proxiesTabControllerState)
 const proxiesTabControllerStateProvider = ProxiesTabControllerStateProvider._();

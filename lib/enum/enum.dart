@@ -90,6 +90,8 @@ enum ViewMode { mobile, laptop, desktop }
 
 enum ConnectionVisualState { disconnected, connecting, disconnecting, connected }
 
+enum ConnectionTransitionState { idle, starting, stopping }
+
 enum LogLevel { debug, info, warning, error, silent }
 
 extension LogLevelExt on LogLevel {

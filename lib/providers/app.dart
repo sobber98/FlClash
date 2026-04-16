@@ -294,6 +294,15 @@ class Loading extends _$Loading with AutoDisposeNotifierMixin {
   }
 }
 
+@Riverpod(keepAlive: true)
+class ConnectionTransition extends _$ConnectionTransition
+    with AutoDisposeNotifierMixin {
+  @override
+  ConnectionTransitionState build() {
+    return ConnectionTransitionState.idle;
+  }
+}
+
 @riverpod
 class SelectedItems extends _$SelectedItems with AutoDisposeNotifierMixin {
   @override

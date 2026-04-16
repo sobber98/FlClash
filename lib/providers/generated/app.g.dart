@@ -1511,6 +1511,62 @@ abstract class _$Loading extends $Notifier<bool> {
   }
 }
 
+@ProviderFor(ConnectionTransition)
+const connectionTransitionProvider = ConnectionTransitionProvider._();
+
+final class ConnectionTransitionProvider
+    extends $NotifierProvider<ConnectionTransition, ConnectionTransitionState> {
+  const ConnectionTransitionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectionTransitionProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$connectionTransitionHash();
+
+  @$internal
+  @override
+  ConnectionTransition create() => ConnectionTransition();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ConnectionTransitionState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ConnectionTransitionState>(value),
+    );
+  }
+}
+
+String _$connectionTransitionHash() =>
+    r'c5ce3d8a3217c2898ddfbfc467ebd3da385e981b';
+
+abstract class _$ConnectionTransition
+    extends $Notifier<ConnectionTransitionState> {
+  ConnectionTransitionState build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<ConnectionTransitionState, ConnectionTransitionState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ConnectionTransitionState, ConnectionTransitionState>,
+              ConnectionTransitionState,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
 @ProviderFor(SelectedItems)
 const selectedItemsProvider = SelectedItemsFamily._();
 

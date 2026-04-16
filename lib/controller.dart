@@ -630,6 +630,9 @@ extension SetupControllerExt on AppController {
     if (_ref.read(loadingProvider(LoadingTag.connect))) {
       return;
     }
+    _ref.read(connectionTransitionProvider.notifier).value = isStart
+        ? ConnectionTransitionState.starting
+        : ConnectionTransitionState.stopping;
     _ref.read(loadingProvider(LoadingTag.connect).notifier).start();
     try {
       _ref.read(coreStatusProvider.notifier).value = CoreStatus.connecting;
@@ -665,6 +668,8 @@ extension SetupControllerExt on AppController {
         addCheckIp();
       }
     } finally {
+      _ref.read(connectionTransitionProvider.notifier).value =
+          ConnectionTransitionState.idle;
       _ref.read(loadingProvider(LoadingTag.connect).notifier).stop();
     }
   }
