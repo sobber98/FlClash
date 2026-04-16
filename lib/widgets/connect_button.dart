@@ -75,34 +75,34 @@ class ConnectButton extends ConsumerWidget {
                     },
               child: Center(
                 child: status == CoreStatus.connecting
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 36,
                         height: 36,
                         child: CircularProgressIndicator(
                           strokeWidth: 3,
-                            color: iconColor,
+                          color: iconColor,
                         ),
                       )
                     : Icon(
-                          Icons.power_settings_new_rounded,
-                          size: size * 0.34,
-                          color: iconColor,
+                        Icons.power_settings_new_rounded,
+                        size: size * 0.34,
+                        color: iconColor,
                       ),
               ),
             ),
           ),
         ),
-          if (showDetails) ...[
-            const SizedBox(height: 14),
-            Text(label, style: context.textTheme.titleMedium?.toSoftBold),
-            const SizedBox(height: 4),
-            Text(
-              utils.getTimeText(runTime),
-              style: context.textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
+        if (showDetails) ...[
+          const SizedBox(height: 14),
+          Text(label, style: context.textTheme.titleMedium?.toSoftBold),
+          const SizedBox(height: 4),
+          Text(
+            utils.getTimeText(runTime),
+            style: context.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
             ),
-          ],
+          ),
+        ],
       ],
     );
   }
