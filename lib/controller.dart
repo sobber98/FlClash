@@ -294,17 +294,25 @@ extension ProfilesControllerExt on AppController {
     }
   }
 
-  Future<void> addProfileFormURL(String url) async {
-    if (globalState.navigatorKey.currentState?.canPop() ?? false) {
-      globalState.navigatorKey.currentState?.popUntil((route) => route.isFirst);
+  Future<Profile?> addProfileFormURL(
+    String url, {
+    bool navigateToProfiles = true,
+  }) async {
+    if (navigateToProfiles) {
+      if (globalState.navigatorKey.currentState?.canPop() ?? false) {
+        globalState.navigatorKey.currentState?.popUntil(
+          (route) => route.isFirst,
+        );
+      }
+      toProfiles();
     }
-    toProfiles();
     final profile = await loadingRun(tag: LoadingTag.profiles, () async {
       return await Profile.normal(url: url).update();
     }, title: appLocalizations.addProfile);
     if (profile != null) {
       putProfile(profile);
     }
+    return profile;
   }
 
   void setProfileAndAutoApply(Profile profile) {
@@ -410,18 +418,30 @@ extension ProfilesControllerExt on AppController {
         return profile.url.startsWith(expectedSubscribePrefix);
       }).firstOrNull;
 
+      Profile? syncedProfile;
       if (existing != null) {
         final targetProfile = existing.url == subscribeUrl
             ? existing
             : existing.copyWith(url: subscribeUrl);
         await updateProfile(targetProfile, showLoading: true);
+        syncedProfile = _ref.read(profilesProvider).getProfile(targetProfile.id);
       } else {
-        await addProfileFormURL(subscribeUrl);
+        syncedProfile = await addProfileFormURL(
+          subscribeUrl,
+          navigateToProfiles: false,
+        );
+      }
+
+      if (syncedProfile != null) {
+        _ref.read(currentProfileIdProvider.notifier).value = syncedProfile.id;
+        await applyProfile(force: true, silence: true);
       }
 
       // Update subscription state
-      _ref.read(v2boardSubscriptionProvider.notifier).fetch();
-      _ref.read(v2boardUserProvider.notifier).fetch();
+      await Future.wait([
+        _ref.read(v2boardSubscriptionProvider.notifier).fetch(),
+        _ref.read(v2boardUserProvider.notifier).fetch(),
+      ]);
       return null;
     } catch (e) {
       commonPrint.log(

@@ -62,6 +62,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final isMobile = ref.watch(isMobileViewProvider);
+    final sectionGap = isMobile ? 16.0 : 18.0;
     final noticesState = ref.watch(v2boardNoticesProvider);
     final userState = ref.watch(v2boardUserProvider);
     final subState = ref.watch(v2boardSubscriptionProvider);
@@ -100,8 +101,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 _AnnouncementBar(text: _noticeText(notices)),
                 const SizedBox(height: 26),
               ],
-              _HeroStatusSection(nodeName: selectedProxyName),
-              const SizedBox(height: 24),
+              _HeroStatusSection(
+                nodeName: selectedProxyName,
+                compact: isMobile,
+              ),
+              SizedBox(height: isMobile ? 20 : 24),
               if (!isMobile) ...[
                 Row(
                   children: const [
@@ -112,12 +116,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
                 const SizedBox(height: 18),
               ] else ...[
-                const _OutboundModeCard(),
-                const SizedBox(height: 18),
+                const _OutboundModeCard(compact: true),
+                SizedBox(height: sectionGap),
               ],
-              const _NodeCard(),
-              const SizedBox(height: 18),
+              _NodeCard(compact: isMobile),
+              SizedBox(height: sectionGap),
               _InlineSummary(
+                compact: isMobile,
                 expireText: _remainingDays(
                   subscription?.expiredAt ?? user?.expiredAt,
                 ),
@@ -186,12 +191,14 @@ class _AnnouncementBar extends StatelessWidget {
 
 class _HeroStatusSection extends ConsumerWidget {
   final String? nodeName;
+  final bool compact;
 
-  const _HeroStatusSection({this.nodeName});
+  const _HeroStatusSection({this.nodeName, this.compact = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = ref.watch(coreStatusProvider);
+    final buttonSize = compact ? 128.0 : 160.0;
     final title = switch (status) {
       CoreStatus.connected => '已连接',
       CoreStatus.connecting => '连接中',
@@ -204,28 +211,43 @@ class _HeroStatusSection extends ConsumerWidget {
     };
     return Column(
       children: [
-        const ConnectButton(size: 160, showDetails: false),
-        const SizedBox(height: 18),
+        ConnectButton(size: buttonSize, showDetails: false),
+        SizedBox(height: compact ? 14 : 18),
         Text(
           title,
-          style: context.textTheme.displaySmall?.copyWith(
+          style: (compact
+                  ? context.textTheme.headlineMedium
+                  : context.textTheme.displaySmall)
+              ?.copyWith(
             fontWeight: FontWeight.w800,
             letterSpacing: -1,
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          subtitle,
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: const Color(0xFFA0A6B1),
+        SizedBox(height: compact ? 6 : 8),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: compact ? 12 : 0),
+          child: Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: (compact
+                    ? context.textTheme.bodySmall
+                    : context.textTheme.bodyMedium)
+                ?.copyWith(
+              color: const Color(0xFFA0A6B1),
+            ),
           ),
         ),
         if (nodeName?.isNotEmpty == true) ...[
-          const SizedBox(height: 10),
+          SizedBox(height: compact ? 8 : 10),
           Text(
             '当前节点: $nodeName',
-            style: context.textTheme.bodyMedium?.copyWith(
+            textAlign: TextAlign.center,
+            maxLines: compact ? 2 : 1,
+            overflow: TextOverflow.ellipsis,
+            style: (compact
+                    ? context.textTheme.bodySmall
+                    : context.textTheme.bodyMedium)
+                ?.copyWith(
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w600,
             ),
@@ -293,7 +315,9 @@ class _TunModeCard extends ConsumerWidget {
 }
 
 class _OutboundModeCard extends ConsumerWidget {
-  const _OutboundModeCard();
+  final bool compact;
+
+  const _OutboundModeCard({this.compact = false});
 
   String _label(Mode mode) {
     return switch (mode) {
@@ -309,26 +333,33 @@ class _OutboundModeCard extends ConsumerWidget {
       patchClashConfigProvider.select((state) => state.mode),
     );
     return _DashboardCard(
+      compact: compact,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const _FeatureIcon(icon: Icons.alt_route_rounded),
-              const SizedBox(width: 16),
+              _FeatureIcon(icon: Icons.alt_route_rounded, compact: compact),
+              SizedBox(width: compact ? 12 : 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '出站规则',
-                    style: context.textTheme.titleLarge?.copyWith(
+                    style: (compact
+                            ? context.textTheme.titleMedium
+                            : context.textTheme.titleLarge)
+                        ?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '分流策略',
-                    style: context.textTheme.bodyMedium?.copyWith(
+                    style: (compact
+                            ? context.textTheme.bodySmall
+                            : context.textTheme.bodyMedium)
+                        ?.copyWith(
                       color: const Color(0xFFA0A6B1),
                     ),
                   ),
@@ -336,7 +367,7 @@ class _OutboundModeCard extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: compact ? 14 : 18),
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
@@ -351,7 +382,9 @@ class _OutboundModeCard extends ConsumerWidget {
                       onTap: () => appController.changeMode(item),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          vertical: compact ? 10 : 12,
+                        ),
                         decoration: BoxDecoration(
                           color: mode == item ? Colors.white : Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
@@ -368,7 +401,10 @@ class _OutboundModeCard extends ConsumerWidget {
                         child: Text(
                           _label(item),
                           textAlign: TextAlign.center,
-                          style: context.textTheme.titleSmall?.copyWith(
+                          style: (compact
+                                  ? context.textTheme.labelLarge
+                                  : context.textTheme.titleSmall)
+                              ?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: mode == item
                                 ? Colors.black
@@ -388,7 +424,9 @@ class _OutboundModeCard extends ConsumerWidget {
 }
 
 class _NodeCard extends ConsumerWidget {
-  const _NodeCard();
+  final bool compact;
+
+  const _NodeCard({this.compact = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -399,6 +437,7 @@ class _NodeCard extends ConsumerWidget {
         ? null
         : ref.watch(getSelectedProxyNameProvider(currentGroupName));
     return _DashboardCard(
+      compact: compact,
       onTap: () {
         showSheet(
           context: context,
@@ -414,36 +453,45 @@ class _NodeCard extends ConsumerWidget {
       },
       child: Row(
         children: [
-          const _FeatureIcon(icon: Icons.public_rounded),
-          const SizedBox(width: 16),
+          _FeatureIcon(icon: Icons.public_rounded, compact: compact),
+          SizedBox(width: compact ? 12 : 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '当前加速节点',
-                  style: context.textTheme.bodyMedium?.copyWith(
+                  style: (compact
+                          ? context.textTheme.bodySmall
+                          : context.textTheme.bodyMedium)
+                      ?.copyWith(
                     color: const Color(0xFFA0A6B1),
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   selectedProxyName?.isNotEmpty == true ? selectedProxyName! : '自动选择',
-                  style: context.textTheme.headlineSmall?.copyWith(
+                  maxLines: compact ? 2 : 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: (compact
+                          ? context.textTheme.titleLarge
+                          : context.textTheme.headlineSmall)
+                      ?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
             ),
           ),
-          Text(
-            '切换',
-            style: context.textTheme.titleSmall?.copyWith(
-              color: const Color(0xFFB1B7C2),
-              fontWeight: FontWeight.w700,
+          if (!compact)
+            Text(
+              '切换',
+              style: context.textTheme.titleSmall?.copyWith(
+                color: const Color(0xFFB1B7C2),
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
+          SizedBox(width: compact ? 4 : 8),
           const Icon(Icons.chevron_right_rounded, color: Color(0xFFB1B7C2)),
         ],
       ),
@@ -454,21 +502,31 @@ class _NodeCard extends ConsumerWidget {
 class _InlineSummary extends StatelessWidget {
   final String expireText;
   final String trafficText;
+  final bool compact;
 
   const _InlineSummary({
     required this.expireText,
     required this.trafficText,
+    this.compact = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 18,
+      spacing: compact ? 12 : 18,
       runSpacing: 8,
       children: [
-        _SummaryText(icon: Icons.access_time_rounded, text: expireText),
-        _SummaryText(icon: Icons.bolt_rounded, text: trafficText),
+        _SummaryText(
+          icon: Icons.access_time_rounded,
+          text: expireText,
+          compact: compact,
+        ),
+        _SummaryText(
+          icon: Icons.bolt_rounded,
+          text: trafficText,
+          compact: compact,
+        ),
       ],
     );
   }
@@ -477,19 +535,27 @@ class _InlineSummary extends StatelessWidget {
 class _SummaryText extends StatelessWidget {
   final IconData icon;
   final String text;
+  final bool compact;
 
-  const _SummaryText({required this.icon, required this.text});
+  const _SummaryText({
+    required this.icon,
+    required this.text,
+    this.compact = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: const Color(0xFFA0A6B1)),
+        Icon(icon, size: compact ? 14 : 16, color: const Color(0xFFA0A6B1)),
         const SizedBox(width: 6),
         Text(
           text,
-          style: context.textTheme.bodyMedium?.copyWith(
+          style: (compact
+                  ? context.textTheme.bodySmall
+                  : context.textTheme.bodyMedium)
+              ?.copyWith(
             color: const Color(0xFFA0A6B1),
             fontWeight: FontWeight.w600,
           ),
@@ -502,8 +568,13 @@ class _SummaryText extends StatelessWidget {
 class _DashboardCard extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
+  final bool compact;
 
-  const _DashboardCard({required this.child, this.onTap});
+  const _DashboardCard({
+    required this.child,
+    this.onTap,
+    this.compact = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -511,7 +582,7 @@ class _DashboardCard extends StatelessWidget {
       type: CommonCardType.filled,
       onPressed: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(compact ? 18 : 24),
         child: child,
       ),
     );
@@ -520,19 +591,20 @@ class _DashboardCard extends StatelessWidget {
 
 class _FeatureIcon extends StatelessWidget {
   final IconData icon;
+  final bool compact;
 
-  const _FeatureIcon({required this.icon});
+  const _FeatureIcon({required this.icon, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 54,
-      height: 54,
+      width: compact ? 46 : 54,
+      height: compact ? 46 : 54,
       decoration: BoxDecoration(
         color: const Color(0xFFF7F8FB),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(compact ? 16 : 18),
       ),
-      child: Icon(icon, color: Colors.black, size: 26),
+      child: Icon(icon, color: Colors.black, size: compact ? 22 : 26),
     );
   }
 }

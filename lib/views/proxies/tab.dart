@@ -136,7 +136,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
         groupIndex = currentIndex;
       }
       final currentGroups = appController.getCurrentGroups();
-      if (groupIndex == null || groupIndex > currentGroups.length) {
+      if (groupIndex == null || groupIndex >= currentGroups.length) {
         return;
       }
       final currentGroup = currentGroups[groupIndex];
@@ -170,6 +170,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     ref.watch(themeSettingProvider.select((state) => state.textScale));
     final state = ref.watch(proxiesTabStateProvider.select((state) => state));
     final groups = state.groups;
+    final currentGroupName = state.currentGroupName;
     if (groups.isEmpty || _tabController == null) {
       return NullStatus(
         illustration: ProxyEmptyIllustration(),
@@ -240,13 +241,16 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                           for (final group in groups)
                             Tab(
                               height: 46,
-                              child: Builder(
-                                builder: (context) {
-                                  return EmojiText(
-                                    group.name,
-                                    style: DefaultTextStyle.of(context).style,
-                                  );
-                                },
+                              child: EmojiText(
+                                group.name,
+                                style: context.textTheme.titleSmall?.copyWith(
+                                  color: currentGroupName == group.name
+                                      ? Colors.black
+                                      : const Color(0xFF8B95A7),
+                                  fontWeight: currentGroupName == group.name
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
+                                ),
                               ),
                             ),
                         ],
