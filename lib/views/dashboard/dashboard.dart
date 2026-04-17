@@ -150,7 +150,7 @@ class _AnnouncementBar extends StatelessWidget {
   Future<void> _showNoticeDialog(BuildContext context) async {
     await showDialog<void>(
       context: context,
-      builder: (_) {
+      builder: (dialogContext) {
         return Dialog(
           insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: ConstrainedBox(
@@ -171,7 +171,7 @@ class _AnnouncementBar extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => Navigator.of(dialogContext).pop(),
                         icon: const Icon(Icons.close_rounded),
                       ),
                     ],
