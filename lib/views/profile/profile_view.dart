@@ -5,8 +5,8 @@ import 'package:fl_clash/models/app_config.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/subscription/order_list_view.dart';
-import 'package:fl_clash/views/tools.dart';
 import 'package:fl_clash/views/v2board/login_view.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -568,7 +568,11 @@ class _SupportSection extends ConsumerWidget {
             onTap: () {
               Navigator.of(
                 context,
-              ).push(MaterialPageRoute(builder: (_) => const ToolsView()));
+              ).push(
+                MaterialPageRoute(
+                  builder: (_) => const ApplicationSettingView(),
+                ),
+              );
             },
           ),
         ],
