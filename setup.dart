@@ -156,7 +156,7 @@ class Build {
       print(utf8.decode(data));
     });
     final exitCode = await process.exitCode;
-    if (exitCode != 0 && name != null) throw '$name error';
+    if (exitCode != 0) throw '${name ?? executable.first} error';
   }
 
   static Future<String> calcSha256(String filePath) async {
@@ -379,20 +379,26 @@ class BuildCommand extends Command {
   }
 
   Future<void> _getLinuxDependencies(Arch arch) async {
-    await Build.exec(Build.getExecutable('sudo apt update -y'));
+    await Build.exec(Build.getExecutable('sudo apt-get update'));
     await Build.exec(
-      Build.getExecutable('sudo apt install -y ninja-build libgtk-3-dev'),
+      Build.getExecutable(
+        'sudo apt-get install -y cmake pkg-config ninja-build libgtk-3-dev',
+      ),
     );
     await Build.exec(
-      Build.getExecutable('sudo apt install -y libayatana-appindicator3-dev'),
+      Build.getExecutable(
+        'sudo apt-get install -y libayatana-appindicator3-dev',
+      ),
     );
     await Build.exec(
       Build.getExecutable('sudo apt-get install -y libkeybinder-3.0-dev'),
     );
-    await Build.exec(Build.getExecutable('sudo apt install -y locate'));
+    await Build.exec(Build.getExecutable('sudo apt-get install -y locate'));
     if (arch == Arch.amd64) {
-      await Build.exec(Build.getExecutable('sudo apt install -y rpm patchelf'));
-      await Build.exec(Build.getExecutable('sudo apt install -y libfuse2'));
+      await Build.exec(
+        Build.getExecutable('sudo apt-get install -y rpm patchelf'),
+      );
+      await Build.exec(Build.getExecutable('sudo apt-get install -y libfuse2'));
 
       final downloadName = arch == Arch.amd64 ? 'x86_64' : 'aarch64';
       await Build.exec(
@@ -470,7 +476,7 @@ class BuildCommand extends Command {
 
     switch (target) {
       case Target.windows:
-        _buildDistributor(
+        await _buildDistributor(
           target: target,
           targets: 'exe,zip',
           args: ' --description $archName',
@@ -486,7 +492,7 @@ class BuildCommand extends Command {
         ].join(',');
         final defaultTarget = targetMap[arch];
         await _getLinuxDependencies(arch!);
-        _buildDistributor(
+        await _buildDistributor(
           target: target,
           targets: targets,
           args:
@@ -505,7 +511,7 @@ class BuildCommand extends Command {
             .where((element) => arch == null ? true : element == arch)
             .map((e) => targetMap[e])
             .toList();
-        _buildDistributor(
+        await _buildDistributor(
           target: target,
           targets: 'apk',
           args:
@@ -515,7 +521,7 @@ class BuildCommand extends Command {
         return;
       case Target.macos:
         await _getMacosDependencies();
-        _buildDistributor(
+        await _buildDistributor(
           target: target,
           targets: 'dmg',
           args: ' --description $archName',
@@ -532,5 +538,5 @@ Future<void> main(Iterable<String> args) async {
   runner.addCommand(BuildCommand(target: Target.linux));
   runner.addCommand(BuildCommand(target: Target.windows));
   runner.addCommand(BuildCommand(target: Target.macos));
-  runner.run(args);
+  await runner.run(args);
 }
