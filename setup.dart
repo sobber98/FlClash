@@ -107,6 +107,19 @@ class Build {
 
   static String get distPath => join(current, 'dist');
 
+  static String get distributorExecutable {
+    final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
+    if (home == null || home.isEmpty) {
+      return Platform.isWindows ? 'flutter_distributor.bat' : 'flutter_distributor';
+    }
+    return join(
+      home,
+      '.pub-cache',
+      'bin',
+      Platform.isWindows ? 'flutter_distributor.bat' : 'flutter_distributor',
+    );
+  }
+
   static String _getCc(BuildItem buildItem) {
     final environment = Platform.environment;
     if (buildItem.target == Target.android) {
@@ -382,7 +395,7 @@ class BuildCommand extends Command {
     await Build.exec(Build.getExecutable('sudo apt-get update'));
     await Build.exec(
       Build.getExecutable(
-        'sudo apt-get install -y cmake pkg-config ninja-build libgtk-3-dev',
+        'sudo apt-get install -y cmake file pkg-config ninja-build libgtk-3-dev',
       ),
     );
     await Build.exec(
@@ -420,15 +433,24 @@ class BuildCommand extends Command {
   Future<void> _buildDistributor({
     required Target target,
     required String targets,
-    String args = '',
+    String flutterBuildArgs = 'verbose,dart-define-from-file=env.json',
+    List<String> extraArgs = const [],
     required String env,
   }) async {
     await Build.getDistributor();
     await Build.exec(
       name: name,
-      Build.getExecutable(
-        'flutter_distributor package --skip-clean --platform ${target.name} --targets $targets --flutter-build-args=verbose,dart-define-from-file=env.json$args',
-      ),
+      [
+        Build.distributorExecutable,
+        'package',
+        '--skip-clean',
+        '--platform',
+        target.name,
+        '--targets',
+        targets,
+        '--flutter-build-args=$flutterBuildArgs',
+        ...extraArgs,
+      ],
     );
   }
 
@@ -479,7 +501,7 @@ class BuildCommand extends Command {
         await _buildDistributor(
           target: target,
           targets: 'exe,zip',
-          args: ' --description $archName',
+          extraArgs: ['--description', '$archName'],
           env: env,
         );
         return;
@@ -495,8 +517,12 @@ class BuildCommand extends Command {
         await _buildDistributor(
           target: target,
           targets: targets,
-          args:
-              ' --description $archName --build-target-platform $defaultTarget',
+          extraArgs: [
+            '--description',
+            '$archName',
+            '--build-target-platform',
+            '$defaultTarget',
+          ],
           env: env,
         );
         return;
@@ -514,8 +540,12 @@ class BuildCommand extends Command {
         await _buildDistributor(
           target: target,
           targets: 'apk',
-          args:
-              ",split-per-abi --build-target-platform ${defaultTargets.join(",")}",
+          flutterBuildArgs:
+              'verbose,dart-define-from-file=env.json,split-per-abi',
+          extraArgs: [
+            '--build-target-platform',
+            defaultTargets.join(','),
+          ],
           env: env,
         );
         return;
@@ -524,7 +554,7 @@ class BuildCommand extends Command {
         await _buildDistributor(
           target: target,
           targets: 'dmg',
-          args: ' --description $archName',
+          extraArgs: ['--description', '$archName'],
           env: env,
         );
         return;
