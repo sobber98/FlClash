@@ -18,6 +18,7 @@ class CommonScaffold extends StatefulWidget {
   final Widget body;
   final Color? backgroundColor;
   final String? title;
+  final bool hideBackButton;
   final bool isLoading;
   final List<Widget>? actions;
   final bool? centerTitle;
@@ -33,6 +34,7 @@ class CommonScaffold extends StatefulWidget {
     required this.body,
     this.backgroundColor,
     this.title,
+    this.hideBackButton = false,
     this.actions,
     this.centerTitle,
     this.editState,
@@ -185,6 +187,9 @@ class CommonScaffoldState extends State<CommonScaffold> {
         icon: Icon(Icons.arrow_back),
       );
     }
+    if (widget.hideBackButton) {
+      return null;
+    }
     return backAction != null
         ? BackButton(
             onPressed: () {
@@ -269,7 +274,9 @@ class CommonScaffoldState extends State<CommonScaffold> {
                 builder: (_, state, _) {
                   return _buildAppBarWrap(
                     AppBar(
-                      automaticallyImplyLeading: backAction != null
+                      automaticallyImplyLeading: widget.hideBackButton
+                          ? false
+                          : backAction != null
                           ? false
                           : true,
                       animateColor: true,
@@ -386,16 +393,23 @@ class BaseScaffold extends StatelessWidget {
   final String title;
   final List<Widget> actions;
   final Widget body;
+  final bool hideBackButton;
 
   const BaseScaffold({
     super.key,
     required this.title,
     this.actions = const [],
     required this.body,
+    this.hideBackButton = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return CommonScaffold(body: body, title: title, actions: actions);
+    return CommonScaffold(
+      body: body,
+      title: title,
+      actions: actions,
+      hideBackButton: hideBackButton,
+    );
   }
 }

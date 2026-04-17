@@ -58,7 +58,6 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
   bool _desktopWindowOpened = false;
   bool _ignoreNextLinuxWindowClose = false;
   int _webProgress = 0;
-  String? _currentUrl;
   flutter_webview.WebViewController? _flutterWebViewController;
   windows_webview.WebviewController? _windowsWebViewController;
   desktop_webview.Webview? _linuxPaymentWindow;
@@ -156,7 +155,6 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
               return;
             }
             setState(() {
-              _currentUrl = url;
               _webProgress = 0;
             });
           },
@@ -165,7 +163,6 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
               return;
             }
             setState(() {
-              _currentUrl = url;
               _webProgress = 100;
             });
           },
@@ -304,11 +301,6 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
 
   Future<void> _handleObservedUrl(String url) async {
     final uri = Uri.tryParse(url);
-    if (mounted) {
-      setState(() {
-        _currentUrl = url;
-      });
-    }
     if (uri == null) {
       return;
     }
@@ -496,7 +488,6 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
         if (mounted) {
           setState(() {
             _desktopWindowOpened = true;
-            _currentUrl = url;
             _webViewFailed = false;
           });
         }
@@ -528,7 +519,6 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
       setState(() {
         _linuxPaymentWindow = paymentWindow;
         _desktopWindowOpened = true;
-        _currentUrl = url;
         _webViewFailed = false;
         _webProgress = 100;
       });
@@ -793,18 +783,6 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                       ),
                     ],
                   ),
-                  if (_currentUrl != null) ...[
-                    const SizedBox(height: 10),
-                    Text(
-                      _currentUrl!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF6B7280),
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -870,11 +848,9 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
               children: [
                 Expanded(
                   child: Text(
-                    _currentUrl ?? widget.paymentUrl ?? '支付页面加载中',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF6B7280),
+                    '支付页面',
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
