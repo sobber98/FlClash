@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+const _applicationSettingsBackground = Color(0xFFF5F6F8);
+
 class CloseConnectionsItem extends ConsumerWidget {
   const CloseConnectionsItem({super.key});
 
@@ -385,31 +387,258 @@ class ApplicationSettingView extends ConsumerWidget {
     final locale = ref.watch(
       appSettingProvider.select((state) => state.locale),
     );
+    final themeMode = ref.watch(
+      themeSettingProvider.select((state) => state.themeMode),
+    );
     final localeText = getLocaleString(utils.getLocaleForString(locale));
-    return BaseScaffold(
-      title: appLocalizations.application,
-      body: SingleChildScrollView(
-        padding: baseInfoEdgeInsets,
-        child: generateSectionV2(
-          title: appLocalizations.options,
-          items: [
-            ListItem(
-              leading: const Icon(Icons.language_rounded),
-              title: Text(appLocalizations.language),
-              subtitle: Text(localeText),
-              trailing: const Icon(Icons.chevron_right_rounded),
-              minVerticalPadding: 12,
-              onTap: () => _showLocalePicker(context, ref),
+    final themeText = switch (themeMode) {
+      ThemeMode.system => appLocalizations.auto,
+      ThemeMode.light => appLocalizations.light,
+      ThemeMode.dark => appLocalizations.dark,
+    };
+    return Scaffold(
+      backgroundColor: _applicationSettingsBackground,
+      appBar: AppBar(
+        backgroundColor: _applicationSettingsBackground,
+        elevation: 0,
+        centerTitle: false,
+        title: Text(appLocalizations.application),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+        children: [
+          _ApplicationSettingsHeader(
+            localeText: localeText,
+            themeText: themeText,
+          ),
+          const SizedBox(height: 16),
+          _ApplicationSettingsActionCard(
+            icon: Icons.language_rounded,
+            title: appLocalizations.language,
+            subtitle: '切换应用显示语言',
+            value: localeText,
+            onTap: () => _showLocalePicker(context, ref),
+          ),
+          const SizedBox(height: 14),
+          _ApplicationSettingsActionCard(
+            icon: Icons.palette_outlined,
+            title: appLocalizations.theme,
+            subtitle: appLocalizations.themeDesc,
+            value: themeText,
+            onTap: () => _pushThemePage(context),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ApplicationSettingsHeader extends StatelessWidget {
+  final String localeText;
+  final String themeText;
+
+  const _ApplicationSettingsHeader({
+    required this.localeText,
+    required this.themeText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10000000),
+            blurRadius: 18,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '应用设置',
+            style: context.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.8,
             ),
-            ListItem(
-              leading: const Icon(Icons.palette_outlined),
-              title: Text(appLocalizations.theme),
-              subtitle: Text(appLocalizations.themeDesc),
-              trailing: const Icon(Icons.chevron_right_rounded),
-              minVerticalPadding: 12,
-              onTap: () => _pushThemePage(context),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '统一管理语言和主题显示偏好',
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF9CA3AF),
             ),
-          ],
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: _ApplicationSettingsMetric(
+                  label: '当前语言',
+                  value: localeText,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ApplicationSettingsMetric(
+                  label: '主题模式',
+                  value: themeText,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: _ApplicationSettingsMetric(
+                  label: '可用入口',
+                  value: '2',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ApplicationSettingsMetric extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _ApplicationSettingsMetric({
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F7FB),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF9CA3AF),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ApplicationSettingsActionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String value;
+  final VoidCallback onTap;
+
+  const _ApplicationSettingsActionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(26),
+        onTap: onTap,
+        child: Ink(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(26),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x10000000),
+                blurRadius: 18,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Icon(icon, color: Colors.white),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      subtitle,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF9CA3AF),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF6F7FB),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        value,
+                        style: context.textTheme.labelLarge?.copyWith(
+                          color: const Color(0xFF374151),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: Color(0xFF9CA3AF),
+                size: 28,
+              ),
+            ],
+          ),
         ),
       ),
     );
