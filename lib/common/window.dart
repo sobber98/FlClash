@@ -16,6 +16,23 @@ class Window {
     return _instance!;
   }
 
+  Size _normalizeDesktopLandscapeSize(Size size) {
+    if (!system.isDesktop) {
+      return size;
+    }
+    var width = size.width;
+    var height = size.height;
+    if (width < height) {
+      final oldWidth = width;
+      width = height;
+      height = oldWidth;
+    }
+    return Size(
+      width < desktopMinLandscapeWidth ? desktopMinLandscapeWidth : width,
+      height < desktopMinLandscapeHeight ? desktopMinLandscapeHeight : height,
+    );
+  }
+
   Future<void> init(int version, WindowProps props) async {
     final acquire = await singleInstanceLock.acquire();
     if (!acquire) {
@@ -28,9 +45,13 @@ class Window {
     }
     await windowManager.ensureInitialized();
     // kDebugMode ? Size(680, 580) :
+    final initialSize = _normalizeDesktopLandscapeSize(props.size);
     WindowOptions windowOptions = WindowOptions(
-      size: props.size,
-      minimumSize: const Size(380, 400),
+      size: initialSize,
+      minimumSize: const Size(
+        desktopMinLandscapeWidth,
+        desktopMinLandscapeHeight,
+      ),
     );
     if (!system.isMacOS || version > 10) {
       await windowManager.setTitleBarStyle(TitleBarStyle.hidden);

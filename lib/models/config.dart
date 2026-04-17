@@ -141,7 +141,13 @@ abstract class WindowProps with _$WindowProps {
 extension WindowPropsExt on WindowProps {
   Size get _size => Size(width, height);
 
-  Size get size => _size.isEmpty ? Size(680, 580) : _size;
+  Size get size =>
+      _size.isEmpty
+          ? const Size(
+              desktopDefaultLandscapeWidth,
+              desktopDefaultLandscapeHeight,
+            )
+          : _size;
 }
 
 @freezed

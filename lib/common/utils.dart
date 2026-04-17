@@ -224,6 +224,7 @@ class Utils {
   }
 
   ViewMode getViewMode(double viewWidth) {
+    if (system.isDesktop) return ViewMode.desktop;
     if (viewWidth <= maxMobileWidth) return ViewMode.mobile;
     return ViewMode.desktop;
   }

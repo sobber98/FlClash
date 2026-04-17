@@ -59,6 +59,10 @@ const defaultExternalController = '127.0.0.1:9090';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
 const desktopSidebarWidth = 248.0;
+const desktopDefaultLandscapeWidth = 1280.0;
+const desktopDefaultLandscapeHeight = 800.0;
+const desktopMinLandscapeWidth = 960.0;
+const desktopMinLandscapeHeight = 600.0;
 const defaultTestUrl = 'https://www.gstatic.com/generate_204';
 final commonFilter = ImageFilter.blur(
   sigmaX: 5,
