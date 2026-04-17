@@ -386,34 +386,31 @@ class ApplicationSettingView extends ConsumerWidget {
       appSettingProvider.select((state) => state.locale),
     );
     final localeText = getLocaleString(utils.getLocaleForString(locale));
-    final items = <Widget>[
-      ListItem(
-        leading: const Icon(Icons.language_rounded),
-        title: Text(appLocalizations.language),
-        subtitle: Text(localeText),
-        trailing: const Icon(Icons.chevron_right_rounded),
-        onTap: () => _showLocalePicker(context, ref),
-      ),
-      ListItem(
-        leading: const Icon(Icons.palette_outlined),
-        title: Text(appLocalizations.theme),
-        subtitle: Text(appLocalizations.themeDesc),
-        trailing: const Icon(Icons.chevron_right_rounded),
-        onTap: () => _pushThemePage(context),
-      ),
-    ];
     return BaseScaffold(
       title: appLocalizations.application,
-      hideBackButton: true,
-      body: ListView.separated(
-        itemBuilder: (_, index) {
-          final item = items[index];
-          return item;
-        },
-        separatorBuilder: (_, _) {
-          return const Divider(height: 0);
-        },
-        itemCount: items.length,
+      body: SingleChildScrollView(
+        padding: baseInfoEdgeInsets,
+        child: generateSectionV2(
+          title: appLocalizations.options,
+          items: [
+            ListItem(
+              leading: const Icon(Icons.language_rounded),
+              title: Text(appLocalizations.language),
+              subtitle: Text(localeText),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              minVerticalPadding: 12,
+              onTap: () => _showLocalePicker(context, ref),
+            ),
+            ListItem(
+              leading: const Icon(Icons.palette_outlined),
+              title: Text(appLocalizations.theme),
+              subtitle: Text(appLocalizations.themeDesc),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              minVerticalPadding: 12,
+              onTap: () => _pushThemePage(context),
+            ),
+          ],
+        ),
       ),
     );
   }
