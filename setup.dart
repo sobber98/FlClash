@@ -108,16 +108,42 @@ class Build {
   static String get distPath => join(current, 'dist');
 
   static String get distributorExecutable {
+    final executableName = Platform.isWindows
+        ? 'flutter_distributor.bat'
+        : 'flutter_distributor';
+    final pubCache = Platform.environment['PUB_CACHE'];
+    final localAppData = Platform.environment['LOCALAPPDATA'];
     final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
-    if (home == null || home.isEmpty) {
-      return Platform.isWindows ? 'flutter_distributor.bat' : 'flutter_distributor';
+    final candidates = [
+      if (pubCache != null && pubCache.isNotEmpty) join(pubCache, 'bin', executableName),
+      if (Platform.isWindows &&
+          localAppData != null &&
+          localAppData.isNotEmpty)
+        join(localAppData, 'Pub', 'Cache', 'bin', executableName),
+      if (Platform.isWindows && home != null && home.isNotEmpty)
+        join(
+          home,
+          'AppData',
+          'Local',
+          'Pub',
+          'Cache',
+          'bin',
+          executableName,
+        ),
+      if (!Platform.isWindows && home != null && home.isNotEmpty)
+        join(
+          home,
+          '.pub-cache',
+          'bin',
+          executableName,
+        ),
+    ];
+    for (final candidate in candidates) {
+      if (File(candidate).existsSync()) {
+        return candidate;
+      }
     }
-    return join(
-      home,
-      '.pub-cache',
-      'bin',
-      Platform.isWindows ? 'flutter_distributor.bat' : 'flutter_distributor',
-    );
+    return executableName;
   }
 
   static String _getCc(BuildItem buildItem) {
@@ -395,7 +421,7 @@ class BuildCommand extends Command {
     await Build.exec(Build.getExecutable('sudo apt-get update'));
     await Build.exec(
       Build.getExecutable(
-        'sudo apt-get install -y cmake file pkg-config ninja-build libgtk-3-dev',
+        'sudo apt-get install -y cmake file pkg-config ninja-build libgtk-3-dev libwebkit2gtk-4.1-dev',
       ),
     );
     await Build.exec(
