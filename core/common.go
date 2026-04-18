@@ -64,7 +64,7 @@ func toExternalProvider(p cp.Provider) (*ExternalProvider, error) {
 			Type:             psp.Type().String(),
 			VehicleType:      psp.VehicleType().String(),
 			Count:            len(psp.Proxies()),
-			UpdateAt:         psp.UpdatedAt,
+			UpdateAt:         providerMeta.UpdatedAt,
 			Path:             psp.Vehicle().Path(),
 			SubscriptionInfo: providerMeta.SubscriptionInfo,
 		}, nil

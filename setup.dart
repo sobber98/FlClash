@@ -169,7 +169,13 @@ class Build {
     return 'gcc';
   }
 
-  static String get tags => 'with_gvisor';
+  static String tagsFor({required Mode mode, required Target target}) {
+    final tags = <String>['with_gvisor'];
+    if (mode == Mode.lib && target == Target.android) {
+      tags.add('cmfa');
+    }
+    return tags.join(',');
+  }
 
   static Future<void> exec(
     List<String> executable, {
@@ -256,7 +262,7 @@ class Build {
         'go',
         'build',
         '-ldflags=-w -s',
-        '-tags=$tags',
+        '-tags=${tagsFor(mode: mode, target: target)}',
         if (isLib) '-buildmode=c-shared',
         '-o',
         realOutPath,

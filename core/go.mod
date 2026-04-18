@@ -6,6 +6,8 @@ replace github.com/metacubex/mihomo => ./Clash.Meta
 
 replace github.com/sagernet/sing => github.com/metacubex/sing v0.0.0-20231118023733-957d84f17d2c
 
+replace github.com/sagernet/tfo-go => github.com/metacubex/tfo-go v0.0.0-20251204144243-738de9e3cd15
+
 require (
 	github.com/metacubex/mihomo v0.0.0-00010101000000-000000000000
 	github.com/oschwald/maxminddb-golang v1.12.0
@@ -19,7 +21,6 @@ require (
 	github.com/RyuaNerin/go-krypto v1.0.2 // indirect
 	github.com/Yawning/aez v0.0.0-20211027044916-e49e68abd344 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
-	github.com/ajg/form v1.5.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
@@ -32,9 +33,6 @@ require (
 	github.com/ericlagergren/subtle v0.0.0-20220507045147-890d697da010 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gaukas/godicttls v0.0.4 // indirect
-	github.com/go-chi/chi/v5 v5.0.10 // indirect
-	github.com/go-chi/cors v1.2.1 // indirect
-	github.com/go-chi/render v1.0.3 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
@@ -105,7 +103,7 @@ require (
 	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
