@@ -9,11 +9,8 @@ import (
 	"github.com/metacubex/mihomo/common/observable"
 	"github.com/metacubex/mihomo/common/utils"
 	"github.com/metacubex/mihomo/component/mmdb"
-	"github.com/metacubex/mihomo/component/resolver"
-	"github.com/metacubex/mihomo/component/updater"
 	"github.com/metacubex/mihomo/config"
 	"github.com/metacubex/mihomo/constant"
-	"github.com/metacubex/mihomo/constant/features"
 	cp "github.com/metacubex/mihomo/constant/provider"
 	"github.com/metacubex/mihomo/hub/executor"
 	"github.com/metacubex/mihomo/listener"
@@ -54,7 +51,6 @@ func handleStartListener() bool {
 	defer runLock.Unlock()
 	isRunning = true
 	updateListeners()
-	resolver.ResetConnection()
 	return true
 }
 
@@ -62,8 +58,7 @@ func handleStopListener() bool {
 	runLock.Lock()
 	defer runLock.Unlock()
 	isRunning = false
-	listener.StopListener()
-	resolver.ResetConnection()
+	listener.Cleanup()
 	return true
 }
 
@@ -74,7 +69,7 @@ func handleGetIsInit() bool {
 func handleForceGC() {
 	log.Infoln("[APP] request force GC")
 	runtime.GC()
-	if features.Android {
+	if runtime.GOOS == "android" {
 		debug.FreeOSMemory()
 	}
 }
@@ -100,8 +95,6 @@ func handleGetProxies() ProxiesData {
 	runLock.Lock()
 	defer runLock.Unlock()
 
-	nameList := config.GetProxyNameList()
-
 	proxies := make(map[string]constant.Proxy)
 
 	for name, proxy := range tunnel.Proxies() {
@@ -113,16 +106,9 @@ func handleGetProxies() ProxiesData {
 		}
 	}
 
-	hasGlobal := false
-	allNames := make([]string, 0, len(nameList)+1)
-
-	for _, name := range nameList {
-		if name == "GLOBAL" {
-			hasGlobal = true
-		}
-
-		p, ok := proxies[name]
-		if !ok || p == nil {
+	allNames := make([]string, 0, len(proxies))
+	for name, p := range proxies {
+		if p == nil {
 			continue
 		}
 		switch p.Type() {
@@ -131,11 +117,11 @@ func handleGetProxies() ProxiesData {
 		default:
 		}
 	}
-
-	if !hasGlobal {
-		if p, ok := proxies["GLOBAL"]; ok && p != nil {
-			allNames = append([]string{"GLOBAL"}, allNames...)
-		}
+	slices.Sort(allNames)
+	if p, ok := proxies["GLOBAL"]; ok && p != nil {
+		allNames = append([]string{"GLOBAL"}, slices.DeleteFunc(allNames, func(name string) bool {
+			return name == "GLOBAL"
+		})...)
 	}
 
 	return ProxiesData{
@@ -184,7 +170,7 @@ func handleChangeProxy(data string, fn func(string string)) {
 }
 
 func handleGetTraffic(onlyStatisticsProxy bool) string {
-	up, down := statistic.DefaultManager.NowTraffic(onlyStatisticsProxy)
+	up, down := statistic.DefaultManager.Now()
 	traffic := map[string]int64{
 		"up":   up,
 		"down": down,
@@ -198,10 +184,10 @@ func handleGetTraffic(onlyStatisticsProxy bool) string {
 }
 
 func handleGetTotalTraffic(onlyStatisticsProxy bool) string {
-	up, down := statistic.DefaultManager.TotalTraffic(onlyStatisticsProxy)
+	snapshot := statistic.DefaultManager.Snapshot()
 	traffic := map[string]int64{
-		"up":   up,
-		"down": down,
+		"up":   snapshot.UploadTotal,
+		"down": snapshot.DownloadTotal,
 	}
 	data, err := json.Marshal(traffic)
 	if err != nil {
@@ -224,7 +210,7 @@ func handleAsyncTestDelay(paramsString string, fn func(string)) {
 			return false, nil
 		}
 
-		expectedStatus, err := utils.NewUnsignedRanges[uint16]("")
+		expectedStatus, err := utils.NewIntRanges[uint16]("")
 		if err != nil {
 			fn("")
 			return false, nil
@@ -301,7 +287,7 @@ func closeConnections() {
 func handleResetConnections() bool {
 	runLock.Lock()
 	defer runLock.Unlock()
-	resolver.ResetConnection()
+	closeConnections()
 	return true
 }
 
@@ -359,31 +345,10 @@ func handleGetExternalProvider(externalProviderName string) string {
 func handleUpdateGeoData(geoType string, geoName string, fn func(value string)) {
 	go func() {
 		path := constant.Path.Resolve(geoName)
-		switch geoType {
-		case "MMDB":
-			err := updater.UpdateMMDBWithPath(path)
-			if err != nil {
-				fn(err.Error())
-				return
-			}
-		case "ASN":
-			err := updater.UpdateASNWithPath(path)
-			if err != nil {
-				fn(err.Error())
-				return
-			}
-		case "GEOIP":
-			err := updater.UpdateGeoIpWithPath(path)
-			if err != nil {
-				fn(err.Error())
-				return
-			}
-		case "GEOSITE":
-			err := updater.UpdateGeoSiteWithPath(path)
-			if err != nil {
-				fn(err.Error())
-				return
-			}
+		err := updateGeoDataWithPath(geoType, path)
+		if err != nil {
+			fn(err.Error())
+			return
 		}
 		fn("")
 	}()
@@ -463,7 +428,7 @@ func handleGetCountryCode(ip string, fn func(value string)) {
 	go func() {
 		runLock.Lock()
 		defer runLock.Unlock()
-		codes := mmdb.IPInstance().LookupCode(net.ParseIP(ip))
+		codes := mmdb.Instance().LookupCode(net.ParseIP(ip))
 		if len(codes) == 0 {
 			fn("")
 			return
@@ -549,32 +514,4 @@ func handleSetupConfig(bytes []byte) string {
 	return ""
 }
 
-func init() {
-	adapter.UrlTestHook = func(url string, name string, delay uint16) {
-		delayData := &Delay{
-			Url:  url,
-			Name: name,
-		}
-		if delay == 0 {
-			delayData.Value = -1
-		} else {
-			delayData.Value = int32(delay)
-		}
-		sendMessage(Message{
-			Type: DelayMessage,
-			Data: delayData,
-		})
-	}
-	statistic.DefaultRequestNotify = func(c statistic.Tracker) {
-		sendMessage(Message{
-			Type: RequestMessage,
-			Data: c,
-		})
-	}
-	executor.DefaultProviderLoadedHook = func(providerName string) {
-		sendMessage(Message{
-			Type: LoadedMessage,
-			Data: providerName,
-		})
-	}
-}
+func init() {}

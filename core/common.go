@@ -14,19 +14,18 @@ import (
 	"github.com/metacubex/mihomo/component/resolver"
 	"github.com/metacubex/mihomo/config"
 	"github.com/metacubex/mihomo/constant"
-	"github.com/metacubex/mihomo/constant/features"
 	cp "github.com/metacubex/mihomo/constant/provider"
-	"github.com/metacubex/mihomo/hub"
 	"github.com/metacubex/mihomo/hub/executor"
-	"github.com/metacubex/mihomo/hub/route"
 	"github.com/metacubex/mihomo/listener"
 	"github.com/metacubex/mihomo/log"
 	rp "github.com/metacubex/mihomo/rules/provider"
 	"github.com/metacubex/mihomo/tunnel"
+	"net/netip"
 	"os"
 	"path/filepath"
 	"runtime"
 	"sync"
+	"time"
 )
 
 var (
@@ -56,23 +55,31 @@ func toExternalProvider(p cp.Provider) (*ExternalProvider, error) {
 	switch p.(type) {
 	case *provider.ProxySetProvider:
 		psp := p.(*provider.ProxySetProvider)
+		providerMeta, err := readProviderMeta(psp)
+		if err != nil {
+			return nil, err
+		}
 		return &ExternalProvider{
 			Name:             psp.Name(),
 			Type:             psp.Type().String(),
 			VehicleType:      psp.VehicleType().String(),
-			Count:            psp.Count(),
-			UpdateAt:         psp.UpdatedAt(),
+			Count:            len(psp.Proxies()),
+			UpdateAt:         psp.UpdatedAt,
 			Path:             psp.Vehicle().Path(),
-			SubscriptionInfo: psp.GetSubscriptionInfo(),
+			SubscriptionInfo: providerMeta.SubscriptionInfo,
 		}, nil
 	case *rp.RuleSetProvider:
 		rsp := p.(*rp.RuleSetProvider)
+		providerMeta, err := readProviderMeta(rsp)
+		if err != nil {
+			return nil, err
+		}
 		return &ExternalProvider{
 			Name:        rsp.Name(),
 			Type:        rsp.Type().String(),
 			VehicleType: rsp.VehicleType().String(),
-			Count:       rsp.Count(),
-			UpdateAt:    rsp.UpdatedAt(),
+			Count:       providerMeta.RuleCount,
+			UpdateAt:    providerMeta.UpdatedAt,
 			Path:        rsp.Vehicle().Path(),
 		}, nil
 	default:
@@ -84,21 +91,43 @@ func sideUpdateExternalProvider(p cp.Provider, bytes []byte) error {
 	switch p.(type) {
 	case *provider.ProxySetProvider:
 		psp := p.(*provider.ProxySetProvider)
-		_, _, err := psp.SideUpdate(bytes)
-		if err == nil {
+		if psp.VehicleType() != cp.File {
+			return errors.New("side update is only supported for file providers on current core")
+		}
+		if err := os.WriteFile(psp.Vehicle().Path(), bytes, 0o644); err != nil {
 			return err
 		}
-		return nil
-	case rp.RuleSetProvider:
+		return psp.Update()
+	case *rp.RuleSetProvider:
 		rsp := p.(*rp.RuleSetProvider)
-		_, _, err := rsp.SideUpdate(bytes)
-		if err == nil {
+		if rsp.VehicleType() != cp.File {
+			return errors.New("side update is only supported for file providers on current core")
+		}
+		if err := os.WriteFile(rsp.Vehicle().Path(), bytes, 0o644); err != nil {
 			return err
 		}
-		return nil
+		return rsp.Update()
 	default:
 		return errors.New("not external provider")
 	}
+}
+
+type providerMetaSnapshot struct {
+	UpdatedAt        time.Time                  `json:"updatedAt"`
+	RuleCount        int                        `json:"ruleCount"`
+	SubscriptionInfo *provider.SubscriptionInfo `json:"subscriptionInfo"`
+}
+
+func readProviderMeta(value any) (*providerMetaSnapshot, error) {
+	data, err := json.Marshal(value)
+	if err != nil {
+		return nil, err
+	}
+	meta := &providerMetaSnapshot{}
+	if err := json.Unmarshal(data, meta); err != nil {
+		return nil, err
+	}
+	return meta, nil
 }
 
 func updateListeners() {
@@ -115,8 +144,6 @@ func updateListeners() {
 	allowLan := general.AllowLan
 	listener.SetAllowLan(allowLan)
 	inbound.SetSkipAuthPrefixes(general.SkipAuthPrefixes)
-	inbound.SetAllowedIPs(general.LanAllowedIPs)
-	inbound.SetDisAllowedIPs(general.LanDisAllowedIPs)
 
 	bindAddress := general.BindAddress
 	listener.SetBindAddress(bindAddress)
@@ -128,13 +155,13 @@ func updateListeners() {
 	listener.ReCreateShadowSocks(general.ShadowSocksConfig, tunnel.Tunnel)
 	listener.ReCreateVmess(general.VmessConfig, tunnel.Tunnel)
 	listener.ReCreateTuic(general.TuicServer, tunnel.Tunnel)
-	if !features.Android {
+	if runtime.GOOS != "android" {
 		listener.ReCreateTun(general.Tun, tunnel.Tunnel)
 	}
 }
 
 func stopListeners() {
-	listener.StopListener()
+	listener.Cleanup()
 }
 
 func patchSelectGroup(mapping map[string]string) {
@@ -217,19 +244,28 @@ func updateConfig(params *UpdateParams) {
 		resolver.DisableIPv6 = !general.IPv6
 	}
 	if params.ExternalController != nil {
-		currentConfig.Controller.ExternalController = *params.ExternalController
-		route.ReCreateServer(&route.Config{
-			Addr: currentConfig.Controller.ExternalController,
-		})
+		general.ExternalController = *params.ExternalController
 	}
 
 	if params.Tun != nil {
 		general.Tun.Enable = params.Tun.Enable
 		general.Tun.AutoRoute = *params.Tun.AutoRoute
 		general.Tun.Device = *params.Tun.Device
-		general.Tun.RouteAddress = *params.Tun.RouteAddress
 		general.Tun.DNSHijack = *params.Tun.DNSHijack
 		general.Tun.Stack = *params.Tun.Stack
+		if params.Tun.RouteAddress != nil {
+			var inet4RouteAddress []netip.Prefix
+			var inet6RouteAddress []netip.Prefix
+			for _, prefix := range *params.Tun.RouteAddress {
+				if prefix.Addr().Is4() {
+					inet4RouteAddress = append(inet4RouteAddress, prefix)
+				} else {
+					inet6RouteAddress = append(inet6RouteAddress, prefix)
+				}
+			}
+			general.Tun.Inet4RouteAddress = inet4RouteAddress
+			general.Tun.Inet6RouteAddress = inet6RouteAddress
+		}
 	}
 
 	updateListeners()
@@ -240,12 +276,11 @@ func applyConfig(params *SetupParams) error {
 	runLock.Lock()
 	defer runLock.Unlock()
 	var err error
-	constant.DefaultTestURL = params.TestURL
 	currentConfig, err = executor.ParseWithPath(filepath.Join(constant.Path.HomeDir(), "config.yaml"))
 	if err != nil {
-		currentConfig, _ = config.ParseRawConfig(config.DefaultRawConfig())
+		currentConfig, _ = config.ParseRawConfig(&config.RawConfig{})
 	}
-	hub.ApplyConfig(currentConfig)
+	executor.ApplyConfig(currentConfig, true)
 	patchSelectGroup(params.SelectedMap)
 	updateListeners()
 	return err
