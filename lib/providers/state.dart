@@ -27,14 +27,16 @@ GroupsState currentGroupsState(Ref ref) {
       }),
     ),
   );
+  final visibleGroups = groups.where((item) => item.hidden != true).toList();
+  final nonGlobalGroups = visibleGroups
+      .where((element) => element.name != GroupName.GLOBAL.name)
+      .toList();
   return GroupsState(
     value: switch (mode) {
       Mode.global => groups.toList(),
-      Mode.rule || Mode.direct =>
-        groups
-            .where((item) => item.hidden != true)
-            .where((element) => element.name != GroupName.GLOBAL.name)
-            .toList(),
+      Mode.rule || Mode.direct => nonGlobalGroups.isNotEmpty
+          ? nonGlobalGroups
+          : visibleGroups,
     },
   );
 }
