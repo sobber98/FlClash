@@ -60,6 +60,8 @@ CLAUDE.md
 
 #FlClash
 /libclash/
+/core/core
+/core/core.exe
 /android/app/src/main/jniLibs/
 /services/helper/target
 /macos/**/Package.resolved
