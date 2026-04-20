@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/metacubex/mihomo/adapter"
 	"github.com/metacubex/mihomo/adapter/outboundgroup"
+	"github.com/metacubex/mihomo/common/convert"
 	"github.com/metacubex/mihomo/common/observable"
 	"github.com/metacubex/mihomo/common/utils"
 	"github.com/metacubex/mihomo/component/mmdb"
@@ -18,6 +19,7 @@ import (
 	"github.com/metacubex/mihomo/tunnel"
 	"github.com/metacubex/mihomo/tunnel/statistic"
 	"golang.org/x/exp/slices"
+	"gopkg.in/yaml.v3"
 	"net"
 	"os"
 	"runtime"
@@ -84,10 +86,55 @@ func handleShutdown() bool {
 
 func handleValidateConfig(path string) string {
 	buf, err := readFile(path)
-	_, err = config.UnmarshalRawConfig(buf)
 	if err != nil {
 		return err.Error()
 	}
+	_, err = config.UnmarshalRawConfig(buf)
+	if err == nil {
+		return ""
+	}
+
+	// YAML parsing failed; try V2Ray base64 share link format as fallback
+	proxies, err2 := convert.ConvertsV2Ray(buf)
+	if err2 != nil || len(proxies) == 0 {
+		return err.Error()
+	}
+
+	// Build proxy names list for GLOBAL group
+	proxyNames := make([]string, 0, len(proxies))
+	for _, p := range proxies {
+		if name, ok := p["name"].(string); ok {
+			proxyNames = append(proxyNames, name)
+		}
+	}
+
+	// Convert V2Ray links to minimal Clash YAML config
+	clashConfig := map[string]interface{}{
+		"proxies": proxies,
+		"proxy-groups": []map[string]interface{}{
+			{
+				"name":    "auto",
+				"type":    "url-test",
+				"proxies": proxyNames,
+				"url":     "https://www.gstatic.com/generate_204",
+			},
+			{
+				"name":    "fallback",
+				"type":    "fallback",
+				"proxies": proxyNames,
+				"url":     "https://www.gstatic.com/generate_204",
+			},
+		},
+	}
+	yamlBuf, err3 := yaml.Marshal(clashConfig)
+	if err3 != nil {
+		return err.Error()
+	}
+
+	if err4 := os.WriteFile(path, yamlBuf, 0o666); err4 != nil {
+		return err4.Error()
+	}
+	log.Infoln("[APP] converted V2Ray subscription (%d proxies) to Clash YAML", len(proxies))
 	return ""
 }
 
