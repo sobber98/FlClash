@@ -424,7 +424,9 @@ extension ProfilesControllerExt on AppController {
             ? existing
             : existing.copyWith(url: subscribeUrl);
         await updateProfile(targetProfile, showLoading: true);
-        syncedProfile = _ref.read(profilesProvider).getProfile(targetProfile.id);
+        syncedProfile = _ref
+            .read(profilesProvider)
+            .getProfile(targetProfile.id);
       } else {
         syncedProfile = await addProfileFormURL(
           subscribeUrl,
@@ -441,6 +443,7 @@ extension ProfilesControllerExt on AppController {
       await Future.wait([
         _ref.read(v2boardSubscriptionProvider.notifier).fetch(),
         _ref.read(v2boardUserProvider.notifier).fetch(),
+        _ref.read(v2boardPlansProvider.notifier).fetch(),
       ]);
       return null;
     } catch (e) {
@@ -463,8 +466,16 @@ extension ProfilesControllerExt on AppController {
         .read(v2boardApiClientProvider.notifier)
         .init(serverUrl, authData: props.authData);
     if (props.autoSync) {
-      syncV2BoardSubscription();
+      unawaited(syncV2BoardSubscription());
+      return;
     }
+    unawaited(
+      Future.wait([
+        _ref.read(v2boardUserProvider.notifier).fetch(),
+        _ref.read(v2boardSubscriptionProvider.notifier).fetch(),
+        _ref.read(v2boardPlansProvider.notifier).fetch(),
+      ]),
+    );
   }
 }
 

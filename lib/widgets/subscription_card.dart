@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,8 +43,8 @@ class SubscriptionCard extends ConsumerWidget {
               ? currentPlan!.name
               : appLocalizations.v2boardSubscription)
         : '未登录';
-    final used = (user?.upload ?? 0) + (user?.download ?? 0);
-    final total = user?.transferEnable ?? subscription?.transferEnable ?? 0;
+    final used = v2boardResolvedUsedTraffic(user, subscription);
+    final total = v2boardResolvedTotalTraffic(user, subscription);
     final progress = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
 
     return CommonCard(
@@ -60,7 +61,9 @@ class SubscriptionCard extends ConsumerWidget {
                 Text(title, style: context.textTheme.titleMedium?.toSoftBold),
                 Text(
                   hasSubscription
-                      ? _formatDate(subscription?.expiredAt ?? user?.expiredAt)
+                      ? _formatDate(
+                          v2boardResolvedExpiredAt(user, subscription),
+                        )
                       : '登录后查看',
                   style: context.textTheme.bodySmall?.copyWith(
                     color: context.colorScheme.onSurfaceVariant,

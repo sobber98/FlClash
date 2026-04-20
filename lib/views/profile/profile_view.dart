@@ -17,8 +17,32 @@ import 'package:url_launcher/url_launcher.dart';
 
 const _profileBackground = Color(0xFFF5F6F8);
 
-class ProfileView extends ConsumerWidget {
+class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
+
+  @override
+  ConsumerState<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends ConsumerState<ProfileView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final props = ref.read(v2boardSettingProvider);
+      if (props?.isLoggedIn ?? false) {
+        _refresh();
+      }
+    });
+  }
+
+  Future<void> _refresh() async {
+    await Future.wait([
+      ref.read(v2boardUserProvider.notifier).fetch(),
+      ref.read(v2boardSubscriptionProvider.notifier).fetch(),
+      ref.read(v2boardPlansProvider.notifier).fetch(),
+    ]);
+  }
 
   void _showLoginSheet(BuildContext context) {
     showSheet(
@@ -41,7 +65,7 @@ class ProfileView extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final props = ref.watch(v2boardSettingProvider);
     final isLoggedIn = props?.isLoggedIn ?? false;
     final appName = ref.watch(appDisplayNameProvider);
@@ -114,39 +138,42 @@ class ProfileView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: _profileBackground,
       body: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(
-            isMobile ? 16 : 24,
-            14,
-            isMobile ? 16 : 24,
-            32,
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(
+              isMobile ? 16 : 24,
+              14,
+              isMobile ? 16 : 24,
+              32,
+            ),
+            children: [
+              Text(
+                '用户中心',
+                style: context.textTheme.displaySmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -1,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '管理您的账户与服务',
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: const Color(0xFF9CA3AF),
+                ),
+              ),
+              const SizedBox(height: 18),
+              _ProfileHeaderCard(
+                user: user,
+                subscription: subscription,
+                planName: currentPlan?.name ?? '未分配套餐',
+              ),
+              const SizedBox(height: 16),
+              _UsageCard(user: user, subscription: subscription),
+              const SizedBox(height: 16),
+              _SupportSection(appConfig: appConfig, user: user),
+            ],
           ),
-          children: [
-            Text(
-              '用户中心',
-              style: context.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: -1,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '管理您的账户与服务',
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF9CA3AF),
-              ),
-            ),
-            const SizedBox(height: 18),
-            _ProfileHeaderCard(
-              user: user,
-              subscription: subscription,
-              planName: currentPlan?.name ?? '未分配套餐',
-            ),
-            const SizedBox(height: 16),
-            _UsageCard(user: user, subscription: subscription),
-            const SizedBox(height: 16),
-            _SupportSection(appConfig: appConfig, user: user),
-          ],
         ),
       ),
     );
@@ -165,7 +192,7 @@ class _ProfileHeaderCard extends StatelessWidget {
   });
 
   String _expireText() {
-    final timestamp = subscription?.expiredAt ?? user?.expiredAt;
+    final timestamp = v2boardResolvedExpiredAt(user, subscription);
     if (timestamp == null || timestamp == 0) {
       return '长期有效';
     }
@@ -309,10 +336,8 @@ class _UsageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final used =
-        (user?.upload ?? subscription?.upload ?? 0) +
-        (user?.download ?? subscription?.download ?? 0);
-    final total = user?.transferEnable ?? subscription?.transferEnable ?? 0;
+    final used = v2boardResolvedUsedTraffic(user, subscription);
+    final total = v2boardResolvedTotalTraffic(user, subscription);
     final progress = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
     return Container(
       padding: const EdgeInsets.all(20),
@@ -460,9 +485,9 @@ class _SupportSection extends ConsumerWidget {
     final subscription = subState is AsyncData<V2BoardSubscription?>
         ? subState.value
         : null;
-    final upload = user?.upload ?? subscription?.upload ?? 0;
-    final download = user?.download ?? subscription?.download ?? 0;
-    final total = user?.transferEnable ?? subscription?.transferEnable ?? 0;
+    final upload = v2boardResolvedUpload(user, subscription);
+    final download = v2boardResolvedDownload(user, subscription);
+    final total = v2boardResolvedTotalTraffic(user, subscription);
     globalState.showMessage(
       title: '流量明细',
       message: TextSpan(

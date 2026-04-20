@@ -104,9 +104,10 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
         padding: const EdgeInsets.only(bottom: 20),
         children: [
           // User Info Card
-          _buildUserCard(context, user, plans, props),
+          _buildUserCard(context, user, sub, plans, props),
           // Traffic Usage
-          if (user != null) _buildTrafficCard(context, user),
+          if (user != null || sub != null)
+            _buildTrafficCard(context, user, sub),
           // Subscription
           if (sub != null) _buildSubscriptionSection(context, sub),
           // Actions
@@ -121,6 +122,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
   Widget _buildUserCard(
     BuildContext context,
     V2BoardUser? user,
+    V2BoardSubscription? sub,
     List<V2BoardPlan> plans,
     V2BoardProps? props,
   ) {
@@ -145,7 +147,10 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _getPlanName(user?.planId, plans),
+                        _getPlanName(
+                          user?.planId ?? int.tryParse(sub?.planId ?? ''),
+                          plans,
+                        ),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -160,7 +165,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
                 ),
               ],
             ),
-            if (user != null) ...[
+            if (user != null || sub != null) ...[
               const Divider(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -168,12 +173,12 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
                   _infoItem(
                     context,
                     appLocalizations.v2boardExpire,
-                    _formatExpireDate(user.expiredAt),
+                    _formatExpireDate(v2boardResolvedExpiredAt(user, sub)),
                   ),
                   _infoItem(
                     context,
                     appLocalizations.v2boardBalance,
-                    '¥${(user.balance / 100).toStringAsFixed(2)}',
+                    '¥${((user?.balance ?? 0) / 100).toStringAsFixed(2)}',
                   ),
                 ],
               ),
@@ -200,9 +205,15 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     );
   }
 
-  Widget _buildTrafficCard(BuildContext context, V2BoardUser user) {
-    final used = user.upload + user.download;
-    final total = user.transferEnable;
+  Widget _buildTrafficCard(
+    BuildContext context,
+    V2BoardUser? user,
+    V2BoardSubscription? sub,
+  ) {
+    final upload = v2boardResolvedUpload(user, sub);
+    final download = v2boardResolvedDownload(user, sub);
+    final used = upload + download;
+    final total = v2boardResolvedTotalTraffic(user, sub);
     final progress = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
 
     return Card(
@@ -236,11 +247,11 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${appLocalizations.upload}: ${_formatBytes(user.upload)}',
+                  '${appLocalizations.upload}: ${_formatBytes(upload)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 Text(
-                  '${appLocalizations.download}: ${_formatBytes(user.download)}',
+                  '${appLocalizations.download}: ${_formatBytes(download)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

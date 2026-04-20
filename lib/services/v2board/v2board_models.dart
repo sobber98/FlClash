@@ -129,6 +129,77 @@ abstract class V2BoardSubscription with _$V2BoardSubscription {
       _$V2BoardSubscriptionFromJson(json);
 }
 
+bool v2boardHasSubscriptionSnapshot(V2BoardSubscription? subscription) {
+  if (subscription == null) return false;
+  return subscription.transferEnable > 0 ||
+      subscription.upload > 0 ||
+      subscription.download > 0 ||
+      (subscription.expiredAt ?? 0) > 0 ||
+      (subscription.resetDay ?? 0) > 0 ||
+      subscription.planId.isNotEmpty ||
+      subscription.token.isNotEmpty ||
+      (subscription.subscribeUrl?.isNotEmpty ?? false);
+}
+
+int v2boardResolvedUpload(
+  V2BoardUser? user,
+  V2BoardSubscription? subscription,
+) {
+  if (v2boardHasSubscriptionSnapshot(subscription)) {
+    return subscription!.upload;
+  }
+  return user?.upload ?? 0;
+}
+
+int v2boardResolvedDownload(
+  V2BoardUser? user,
+  V2BoardSubscription? subscription,
+) {
+  if (v2boardHasSubscriptionSnapshot(subscription)) {
+    return subscription!.download;
+  }
+  return user?.download ?? 0;
+}
+
+int v2boardResolvedUsedTraffic(
+  V2BoardUser? user,
+  V2BoardSubscription? subscription,
+) {
+  return v2boardResolvedUpload(user, subscription) +
+      v2boardResolvedDownload(user, subscription);
+}
+
+int v2boardResolvedTotalTraffic(
+  V2BoardUser? user,
+  V2BoardSubscription? subscription,
+) {
+  if (v2boardHasSubscriptionSnapshot(subscription)) {
+    return subscription!.transferEnable;
+  }
+  return user?.transferEnable ?? 0;
+}
+
+int v2boardResolvedRemainingTraffic(
+  V2BoardUser? user,
+  V2BoardSubscription? subscription,
+) {
+  final remaining =
+      v2boardResolvedTotalTraffic(user, subscription) -
+      v2boardResolvedUsedTraffic(user, subscription);
+  return remaining < 0 ? 0 : remaining;
+}
+
+int? v2boardResolvedExpiredAt(
+  V2BoardUser? user,
+  V2BoardSubscription? subscription,
+) {
+  final subscriptionExpiredAt = subscription?.expiredAt;
+  if (subscriptionExpiredAt != null) {
+    return subscriptionExpiredAt;
+  }
+  return user?.expiredAt;
+}
+
 /// GET /user/notice/fetch item
 @freezed
 abstract class V2BoardNotice with _$V2BoardNotice {

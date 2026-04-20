@@ -72,10 +72,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final subscription = subState is AsyncData<V2BoardSubscription?>
         ? subState.value
         : null;
-    final remainingTraffic =
-        (user?.transferEnable ?? subscription?.transferEnable ?? 0) -
-        ((user?.upload ?? subscription?.upload ?? 0) +
-            (user?.download ?? subscription?.download ?? 0));
+    final remainingTraffic = v2boardResolvedRemainingTraffic(
+      user,
+      subscription,
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6F8),
@@ -117,10 +117,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               _InlineSummary(
                 compact: isMobile,
                 expireText: _remainingDays(
-                  subscription?.expiredAt ?? user?.expiredAt,
+                  v2boardResolvedExpiredAt(user, subscription),
                 ),
-                trafficText:
-                    '剩余流量: ${_formatBytes(remainingTraffic < 0 ? 0 : remainingTraffic)}',
+                trafficText: '剩余流量: ${_formatBytes(remainingTraffic)}',
               ),
             ],
           ),
@@ -152,7 +151,10 @@ class _AnnouncementBar extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 24,
+          ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560, maxHeight: 620),
             child: Padding(
@@ -165,9 +167,8 @@ class _AnnouncementBar extends StatelessWidget {
                       Expanded(
                         child: Text(
                           '公告详情',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w800),
                         ),
                       ),
                       IconButton(
@@ -187,7 +188,8 @@ class _AnnouncementBar extends StatelessWidget {
                   Expanded(
                     child: ListView.separated(
                       itemCount: notices.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: 12),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
                       itemBuilder: (_, index) {
                         final notice = notices[index];
                         final title = v2boardNoticeHeadline(notice);
@@ -203,27 +205,32 @@ class _AnnouncementBar extends StatelessWidget {
                             children: [
                               Text(
                                 title.isNotEmpty ? title : '公告 ${index + 1}',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w800),
                               ),
-                              if (_formatTime(notice.updatedAt ?? notice.createdAt).isNotEmpty) ...[
+                              if (_formatTime(
+                                notice.updatedAt ?? notice.createdAt,
+                              ).isNotEmpty) ...[
                                 const SizedBox(height: 6),
                                 Text(
-                                  _formatTime(notice.updatedAt ?? notice.createdAt),
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: const Color(0xFF9CA3AF),
+                                  _formatTime(
+                                    notice.updatedAt ?? notice.createdAt,
                                   ),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: const Color(0xFF9CA3AF),
+                                      ),
                                 ),
                               ],
                               if (content.isNotEmpty) ...[
                                 const SizedBox(height: 12),
                                 SelectableText(
                                   content,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    height: 1.55,
-                                    color: const Color(0xFF4B5563),
-                                  ),
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        height: 1.55,
+                                        color: const Color(0xFF4B5563),
+                                      ),
                                 ),
                               ],
                             ],
@@ -343,13 +350,11 @@ class _HeroStatusSection extends ConsumerWidget {
         SizedBox(height: compact ? 14 : 18),
         Text(
           title,
-          style: (compact
-                  ? context.textTheme.headlineMedium
-                  : context.textTheme.displaySmall)
-              ?.copyWith(
-            fontWeight: FontWeight.w800,
-            letterSpacing: -1,
-          ),
+          style:
+              (compact
+                      ? context.textTheme.headlineMedium
+                      : context.textTheme.displaySmall)
+                  ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: -1),
         ),
         SizedBox(height: compact ? 6 : 8),
         Padding(
@@ -357,12 +362,11 @@ class _HeroStatusSection extends ConsumerWidget {
           child: Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: (compact
-                    ? context.textTheme.bodySmall
-                    : context.textTheme.bodyMedium)
-                ?.copyWith(
-              color: const Color(0xFFA0A6B1),
-            ),
+            style:
+                (compact
+                        ? context.textTheme.bodySmall
+                        : context.textTheme.bodyMedium)
+                    ?.copyWith(color: const Color(0xFFA0A6B1)),
           ),
         ),
         if (nodeName?.isNotEmpty == true) ...[
@@ -372,13 +376,14 @@ class _HeroStatusSection extends ConsumerWidget {
             textAlign: TextAlign.center,
             maxLines: compact ? 2 : 1,
             overflow: TextOverflow.ellipsis,
-            style: (compact
-                    ? context.textTheme.bodySmall
-                    : context.textTheme.bodyMedium)
-                ?.copyWith(
-              color: const Color(0xFF6B7280),
-              fontWeight: FontWeight.w600,
-            ),
+            style:
+                (compact
+                        ? context.textTheme.bodySmall
+                        : context.textTheme.bodyMedium)
+                    ?.copyWith(
+                      color: const Color(0xFF6B7280),
+                      fontWeight: FontWeight.w600,
+                    ),
           ),
         ],
       ],
@@ -394,7 +399,9 @@ class _TunModeCard extends ConsumerWidget {
     final isAndroid = system.isAndroid;
     final enabled = isAndroid
         ? ref.watch(vpnSettingProvider.select((state) => state.enable))
-        : ref.watch(patchClashConfigProvider.select((state) => state.tun.enable));
+        : ref.watch(
+            patchClashConfigProvider.select((state) => state.tun.enable),
+          );
     final title = isAndroid ? 'VPN 模式' : 'TUN 模式';
     final subtitle = isAndroid ? '系统级代理开关' : '透明代理开关';
 
@@ -448,7 +455,9 @@ class _TunModeCard extends ConsumerWidget {
             enabled ? '当前已启用' : '当前未启用',
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: enabled ? const Color(0xFF047857) : const Color(0xFF6B7280),
+              color: enabled
+                  ? const Color(0xFF047857)
+                  : const Color(0xFF6B7280),
             ),
           ),
           const SizedBox(height: 6),
@@ -560,9 +569,19 @@ class _MarqueeTextState extends State<_MarqueeText>
                   offset: Offset(dx, 0),
                   child: Row(
                     children: [
-                      Text(widget.text, maxLines: 1, softWrap: false, style: style),
+                      Text(
+                        widget.text,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: style,
+                      ),
                       const SizedBox(width: _gap),
-                      Text(widget.text, maxLines: 1, softWrap: false, style: style),
+                      Text(
+                        widget.text,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: style,
+                      ),
                     ],
                   ),
                 );
@@ -607,22 +626,20 @@ class _OutboundModeCard extends ConsumerWidget {
                 children: [
                   Text(
                     '出站规则',
-                    style: (compact
-                            ? context.textTheme.titleMedium
-                            : context.textTheme.titleLarge)
-                        ?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style:
+                        (compact
+                                ? context.textTheme.titleMedium
+                                : context.textTheme.titleLarge)
+                            ?.copyWith(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '分流策略',
-                    style: (compact
-                            ? context.textTheme.bodySmall
-                            : context.textTheme.bodyMedium)
-                        ?.copyWith(
-                      color: const Color(0xFFA0A6B1),
-                    ),
+                    style:
+                        (compact
+                                ? context.textTheme.bodySmall
+                                : context.textTheme.bodyMedium)
+                            ?.copyWith(color: const Color(0xFFA0A6B1)),
                   ),
                 ],
               ),
@@ -647,7 +664,9 @@ class _OutboundModeCard extends ConsumerWidget {
                           vertical: compact ? 10 : 12,
                         ),
                         decoration: BoxDecoration(
-                          color: mode == item ? Colors.white : Colors.transparent,
+                          color: mode == item
+                              ? Colors.white
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: mode == item
                               ? const [
@@ -662,15 +681,16 @@ class _OutboundModeCard extends ConsumerWidget {
                         child: Text(
                           _label(item),
                           textAlign: TextAlign.center,
-                          style: (compact
-                                  ? context.textTheme.labelLarge
-                                  : context.textTheme.titleSmall)
-                              ?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: mode == item
-                                ? Colors.black
-                                : const Color(0xFF8D94A1),
-                          ),
+                          style:
+                              (compact
+                                      ? context.textTheme.labelLarge
+                                      : context.textTheme.titleSmall)
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: mode == item
+                                        ? Colors.black
+                                        : const Color(0xFF8D94A1),
+                                  ),
                         ),
                       ),
                     ),
@@ -722,24 +742,24 @@ class _NodeCard extends ConsumerWidget {
               children: [
                 Text(
                   '当前加速节点',
-                  style: (compact
-                          ? context.textTheme.bodySmall
-                          : context.textTheme.bodyMedium)
-                      ?.copyWith(
-                    color: const Color(0xFFA0A6B1),
-                  ),
+                  style:
+                      (compact
+                              ? context.textTheme.bodySmall
+                              : context.textTheme.bodyMedium)
+                          ?.copyWith(color: const Color(0xFFA0A6B1)),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  selectedProxyName?.isNotEmpty == true ? selectedProxyName! : '自动选择',
+                  selectedProxyName?.isNotEmpty == true
+                      ? selectedProxyName!
+                      : '自动选择',
                   maxLines: compact ? 2 : 1,
                   overflow: TextOverflow.ellipsis,
-                  style: (compact
-                          ? context.textTheme.titleLarge
-                          : context.textTheme.headlineSmall)
-                      ?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style:
+                      (compact
+                              ? context.textTheme.titleLarge
+                              : context.textTheme.headlineSmall)
+                          ?.copyWith(fontWeight: FontWeight.w800),
                 ),
               ],
             ),
@@ -813,13 +833,14 @@ class _SummaryText extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           text,
-          style: (compact
-                  ? context.textTheme.bodySmall
-                  : context.textTheme.bodyMedium)
-              ?.copyWith(
-            color: const Color(0xFFA0A6B1),
-            fontWeight: FontWeight.w600,
-          ),
+          style:
+              (compact
+                      ? context.textTheme.bodySmall
+                      : context.textTheme.bodyMedium)
+                  ?.copyWith(
+                    color: const Color(0xFFA0A6B1),
+                    fontWeight: FontWeight.w600,
+                  ),
         ),
       ],
     );
@@ -831,21 +852,14 @@ class _DashboardCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool compact;
 
-  const _DashboardCard({
-    required this.child,
-    this.onTap,
-    this.compact = false,
-  });
+  const _DashboardCard({required this.child, this.onTap, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
     return CommonCard(
       type: CommonCardType.filled,
       onPressed: onTap,
-      child: Padding(
-        padding: EdgeInsets.all(compact ? 18 : 24),
-        child: child,
-      ),
+      child: Padding(padding: EdgeInsets.all(compact ? 18 : 24), child: child),
     );
   }
 }
