@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fl_clash/services/v2board/v2board_endpoints.dart';
 import 'package:fl_clash/services/v2board/v2board_models.dart';
+import 'package:fl_clash/services/v2board/v2board_ticket_models.dart';
 
 class V2BoardApiException implements Exception {
   final String message;
@@ -57,7 +58,7 @@ class V2BoardApi {
     if (body is Map<String, dynamic>) {
       if (body.containsKey('message') && !body.containsKey('data')) {
         throw V2BoardApiException(
-          body['message']?.toString() ?? 'Unknown error',
+          _extractErrorMessage(body),
           statusCode: response.statusCode,
         );
       }
@@ -196,6 +197,68 @@ class V2BoardApi {
         .toList();
   }
 
+  Future<List<V2BoardTicket>> fetchTickets() async {
+    final response = await _request(() => _dio.get(_endpoints.ticketFetch));
+    final body = _extractData(response);
+    final list = body['data'] as List<dynamic>? ?? [];
+    return list
+        .whereType<Map>()
+        .map((item) => V2BoardTicket.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+  }
+
+  Future<V2BoardTicket> getTicketDetail(int id) async {
+    final response = await _request(
+      () => _dio.get(_endpoints.ticketFetch, queryParameters: {'id': id}),
+    );
+    final body = _extractData(response);
+    final data = body['data'];
+    if (data is Map<String, dynamic>) {
+      return V2BoardTicket.fromJson(data);
+    }
+    if (data is Map) {
+      return V2BoardTicket.fromJson(Map<String, dynamic>.from(data));
+    }
+    throw const V2BoardApiException('Invalid ticket detail response');
+  }
+
+  Future<bool> createTicket({
+    required String subject,
+    required int level,
+    required String message,
+  }) async {
+    final response = await _request(
+      () => _dio.post(
+        _endpoints.ticketSave,
+        data: {'subject': subject, 'level': level, 'message': message},
+      ),
+    );
+    final body = _extractData(response);
+    final data = body['data'];
+    return data == true || data != null;
+  }
+
+  Future<bool> replyTicket({required int id, required String message}) async {
+    final response = await _request(
+      () => _dio.post(
+        _endpoints.ticketReply,
+        data: {'id': id, 'message': message},
+      ),
+    );
+    final body = _extractData(response);
+    final data = body['data'];
+    return data == true || data != null;
+  }
+
+  Future<bool> closeTicket(int id) async {
+    final response = await _request(
+      () => _dio.post(_endpoints.ticketClose, data: {'id': id}),
+    );
+    final body = _extractData(response);
+    final data = body['data'];
+    return data == true || data != null;
+  }
+
   Future<Map<String, dynamic>> createOrder({
     required int planId,
     required String period,
@@ -232,11 +295,9 @@ class V2BoardApi {
 
   Future<Map<String, dynamic>> checkoutOrder(
     String tradeNo,
-    String paymentMethod,
-    {
+    String paymentMethod, {
     String? callbackUrl,
-  }
-  ) async {
+  }) async {
     final payload = <String, dynamic>{
       'trade_no': tradeNo,
       if (paymentMethod.isNotEmpty) 'method': paymentMethod,
@@ -247,10 +308,7 @@ class V2BoardApi {
       payload['success_url'] = callbackUrl;
     }
     final response = await _request(
-      () => _dio.post(
-        _endpoints.orderCheckout,
-        data: payload,
-      ),
+      () => _dio.post(_endpoints.orderCheckout, data: payload),
     );
     return _extractDynamicData(response);
   }
@@ -351,12 +409,10 @@ class V2BoardApi {
         );
       }
       if (e.response?.data is Map<String, dynamic>) {
-        final msg = (e.response!.data as Map<String, dynamic>)['message'];
-        if (msg != null) {
-          throw V2BoardApiException(
-            msg.toString(),
-            statusCode: e.response?.statusCode,
-          );
+        final body = e.response!.data as Map<String, dynamic>;
+        final msg = _extractErrorMessage(body);
+        if (msg.isNotEmpty) {
+          throw V2BoardApiException(msg, statusCode: e.response?.statusCode);
         }
       }
       if (e.type == DioExceptionType.connectionTimeout ||
@@ -368,5 +424,35 @@ class V2BoardApi {
         statusCode: e.response?.statusCode,
       );
     }
+  }
+
+  String _extractErrorMessage(Map<String, dynamic> body) {
+    final errors = body['errors'];
+    if (errors is Map) {
+      final parts = <String>[];
+      for (final value in errors.values) {
+        if (value is List) {
+          for (final item in value) {
+            final text = item?.toString().trim() ?? '';
+            if (text.isNotEmpty) {
+              parts.add(text);
+            }
+          }
+          continue;
+        }
+        final text = value?.toString().trim() ?? '';
+        if (text.isNotEmpty) {
+          parts.add(text);
+        }
+      }
+      if (parts.isNotEmpty) {
+        return parts.join('\n');
+      }
+    }
+    final message = body['message']?.toString().trim() ?? '';
+    if (message.isNotEmpty) {
+      return message;
+    }
+    return 'Unknown error';
   }
 }

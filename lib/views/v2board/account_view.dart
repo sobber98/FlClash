@@ -3,6 +3,7 @@ import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/subscription/ticket_list_view.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +12,7 @@ class V2BoardAccountView extends ConsumerStatefulWidget {
   const V2BoardAccountView({super.key});
 
   @override
-  ConsumerState<V2BoardAccountView> createState() =>
-      _V2BoardAccountViewState();
+  ConsumerState<V2BoardAccountView> createState() => _V2BoardAccountViewState();
 }
 
 class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
@@ -29,6 +29,9 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     ref.read(v2boardSubscriptionProvider.notifier).fetch();
     ref.read(v2boardPlansProvider.notifier).fetch();
     ref.read(v2boardNoticesProvider.notifier).fetch();
+    ref
+        .read(v2boardTicketPollingControllerProvider)
+        .refreshNow(notifyOnNewReplies: false);
   }
 
   void _logout() {
@@ -36,6 +39,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     ref.read(v2boardApiClientProvider.notifier).clear();
     ref.read(v2boardUserProvider.notifier).clear();
     ref.read(v2boardSubscriptionProvider.notifier).clear();
+    ref.read(v2boardTicketsProvider.notifier).clear();
   }
 
   Future<void> _syncSubscription() async {
@@ -84,11 +88,18 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     final plansState = ref.watch(v2boardPlansProvider);
     final noticesState = ref.watch(v2boardNoticesProvider);
     final props = ref.watch(v2boardSettingProvider);
+    final ticketReminderState = ref.watch(v2boardTicketReminderProvider);
 
     final user = userState is AsyncData<V2BoardUser?> ? userState.value : null;
-    final sub = subState is AsyncData<V2BoardSubscription?> ? subState.value : null;
-    final plans = plansState is AsyncData<List<V2BoardPlan>> ? plansState.value : <V2BoardPlan>[];
-    final notices = noticesState is AsyncData<List<V2BoardNotice>> ? noticesState.value : <V2BoardNotice>[];
+    final sub = subState is AsyncData<V2BoardSubscription?>
+        ? subState.value
+        : null;
+    final plans = plansState is AsyncData<List<V2BoardPlan>>
+        ? plansState.value
+        : <V2BoardPlan>[];
+    final notices = noticesState is AsyncData<List<V2BoardNotice>>
+        ? noticesState.value
+        : <V2BoardNotice>[];
 
     return RefreshIndicator(
       onRefresh: _refreshData,
@@ -102,7 +113,10 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
           // Subscription
           if (sub != null) _buildSubscriptionSection(context, sub),
           // Actions
-          ..._buildActionSection(context),
+          ..._buildActionSection(
+            context,
+            ticketReminderState.pendingReplyCount,
+          ),
           // Notices
           if (notices.isNotEmpty) ..._buildNoticesSection(context, notices),
         ],
@@ -125,10 +139,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 24,
-                  child: Icon(Icons.person, size: 28),
-                ),
+                CircleAvatar(radius: 24, child: Icon(Icons.person, size: 28)),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -142,10 +153,8 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
                       Text(
                         _getPlanName(user?.planId, plans),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -188,8 +197,8 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 2),
         Text(value, style: Theme.of(context).textTheme.titleSmall),
@@ -258,9 +267,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
         leading: const Icon(Icons.sync),
         title: Text(appLocalizations.v2boardSubscription),
         subtitle: sub.resetDay != null
-            ? Text(
-                '${appLocalizations.v2boardSubscription}: ${sub.resetDay}',
-              )
+            ? Text('${appLocalizations.v2boardSubscription}: ${sub.resetDay}')
             : null,
         trailing: FilledButton.tonal(
           onPressed: _syncSubscription,
@@ -270,7 +277,10 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     );
   }
 
-  List<Widget> _buildActionSection(BuildContext context) {
+  List<Widget> _buildActionSection(
+    BuildContext context,
+    int pendingReplyCount,
+  ) {
     return generateSection(
       title: appLocalizations.v2boardActions,
       items: [
@@ -285,6 +295,23 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
           subtitle: Text(appLocalizations.v2boardSyncSubscriptionDesc),
           onTap: _syncSubscription,
         ),
+        ListItem(
+          leading: const Icon(Icons.support_agent_rounded),
+          title: const Text('我的工单'),
+          subtitle: Text(
+            pendingReplyCount > 0
+                ? '有 $pendingReplyCount 条工单收到客服回复'
+                : '查看客服回复并继续跟进当前问题',
+          ),
+          trailing: pendingReplyCount > 0
+              ? _TicketReplyBadge(count: pendingReplyCount)
+              : null,
+          onTap: () {
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const TicketListView()));
+          },
+        ),
       ],
     );
   }
@@ -295,20 +322,20 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
   ) {
     return generateSection(
       title: appLocalizations.v2boardNotices,
-      items: notices.take(5).map(
+      items: notices
+          .take(5)
+          .map(
             (notice) => ListItem(
               title: Text(v2boardNoticeHeadline(notice)),
-              subtitle: Text(
-                () {
-                  final content = v2boardPlainText(
-                    notice.content,
-                    preserveLineBreaks: false,
-                  );
-                  return content.length > 50
-                      ? '${content.substring(0, 50)}...'
-                      : content;
-                }(),
-              ),
+              subtitle: Text(() {
+                final content = v2boardPlainText(
+                  notice.content,
+                  preserveLineBreaks: false,
+                );
+                return content.length > 50
+                    ? '${content.substring(0, 50)}...'
+                    : content;
+              }()),
               onTap: () {
                 globalState.showMessage(
                   title: v2boardNoticeHeadline(notice),
@@ -317,6 +344,30 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
               },
             ),
           ),
+    );
+  }
+}
+
+class _TicketReplyBadge extends StatelessWidget {
+  final int count;
+
+  const _TicketReplyBadge({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFE4E6),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        count > 99 ? '99+' : '$count',
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: const Color(0xFFBE123C),
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     );
   }
 }

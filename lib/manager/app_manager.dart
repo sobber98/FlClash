@@ -26,6 +26,7 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    ref.read(v2boardTicketPollingControllerProvider);
     ref.listenManual(checkIpProvider, (prev, next) {
       if (prev != next && next.a && next.c) {
         ref.read(networkDetectionProvider.notifier).startCheck();
@@ -67,6 +68,11 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
     commonPrint.log('$state');
     if (state == AppLifecycleState.resumed) {
       render?.resume();
+      unawaited(
+        ref
+            .read(v2boardTicketPollingControllerProvider)
+            .refreshNow(notifyOnNewReplies: true),
+      );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         appController.tryCheckIp();
         if (system.isAndroid) {

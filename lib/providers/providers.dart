@@ -5,3 +5,4 @@ export 'config.dart';
 export 'state.dart';
 export 'subscription.dart';
 export 'v2board.dart';
+export 'v2board_ticket.dart';

@@ -7,6 +7,7 @@ import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/subscription/order_list_view.dart';
+import 'package:fl_clash/views/subscription/ticket_list_view.dart';
 import 'package:fl_clash/views/v2board/login_view.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -48,10 +49,9 @@ class ProfileView extends ConsumerWidget {
     final userState = ref.watch(v2boardUserProvider);
     final subState = ref.watch(v2boardSubscriptionProvider);
     final currentPlan = ref.watch(currentPlanProvider);
-    final appConfig = ref.watch(appConfigProvider).maybeWhen(
-          data: (config) => config,
-          orElse: AppConfig.defaults,
-        );
+    final appConfig = ref
+        .watch(appConfigProvider)
+        .maybeWhen(data: (config) => config, orElse: AppConfig.defaults);
     final user = userState is AsyncData<V2BoardUser?> ? userState.value : null;
     final subscription = subState is AsyncData<V2BoardSubscription?>
         ? subState.value
@@ -169,10 +169,9 @@ class _ProfileHeaderCard extends StatelessWidget {
     if (timestamp == null || timestamp == 0) {
       return '长期有效';
     }
-    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000)
-        .toString()
-        .split(' ')
-        .first;
+    return DateTime.fromMillisecondsSinceEpoch(
+      timestamp * 1000,
+    ).toString().split(' ').first;
   }
 
   @override
@@ -252,7 +251,10 @@ class _ProfileHeaderCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1F2024),
                   borderRadius: BorderRadius.circular(14),
@@ -307,7 +309,8 @@ class _UsageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final used = (user?.upload ?? subscription?.upload ?? 0) +
+    final used =
+        (user?.upload ?? subscription?.upload ?? 0) +
         (user?.download ?? subscription?.download ?? 0);
     final total = user?.transferEnable ?? subscription?.transferEnable ?? 0;
     final progress = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
@@ -463,7 +466,8 @@ class _SupportSection extends ConsumerWidget {
     globalState.showMessage(
       title: '流量明细',
       message: TextSpan(
-        text: '上传: ${_formatBytes(upload)}\n下载: ${_formatBytes(download)}\n总量: ${_formatBytes(total)}',
+        text:
+            '上传: ${_formatBytes(upload)}\n下载: ${_formatBytes(download)}\n总量: ${_formatBytes(total)}',
       ),
     );
   }
@@ -471,6 +475,7 @@ class _SupportSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final serverUrl = ref.watch(appServerUrlProvider);
+    final ticketReminderState = ref.watch(v2boardTicketReminderProvider);
     final websiteUrl = _websiteUrl(serverUrl);
     final telegramUrl = _telegramUrl();
     final mailUrl = _mailUrl();
@@ -530,7 +535,19 @@ class _SupportSection extends ConsumerWidget {
           _SupportListTile(
             icon: Icons.support_agent_rounded,
             title: '我的工单',
-            onTap: () => _openLink(mailUrl, '暂未配置工单联系邮箱'),
+            subtitle: ticketReminderState.pendingReplyCount > 0
+                ? '有 ${ticketReminderState.pendingReplyCount} 条工单收到客服回复'
+                : null,
+            badgeText: ticketReminderState.pendingReplyCount > 0
+                ? (ticketReminderState.pendingReplyCount > 99
+                      ? '99+'
+                      : '${ticketReminderState.pendingReplyCount}')
+                : null,
+            onTap: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const TicketListView()));
+            },
           ),
           _SupportListTile(
             icon: Icons.chat_bubble_outline_rounded,
@@ -557,7 +574,8 @@ class _SupportSection extends ConsumerWidget {
               globalState.showMessage(
                 title: '我的钱包',
                 message: TextSpan(
-                  text: '账户余额: ¥${((user?.balance ?? 0) / 100).toStringAsFixed(2)}\n佣金余额: ¥${((user?.commissionBalance ?? 0) / 100).toStringAsFixed(2)}',
+                  text:
+                      '账户余额: ¥${((user?.balance ?? 0) / 100).toStringAsFixed(2)}\n佣金余额: ¥${((user?.commissionBalance ?? 0) / 100).toStringAsFixed(2)}',
                 ),
               );
             },
@@ -566,9 +584,7 @@ class _SupportSection extends ConsumerWidget {
             icon: Icons.settings_outlined,
             title: '应用设置',
             onTap: () {
-              Navigator.of(
-                context,
-              ).push(
+              Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => const ApplicationSettingView(),
                 ),
@@ -626,11 +642,15 @@ class _ActionTile extends StatelessWidget {
 class _SupportListTile extends StatelessWidget {
   final IconData icon;
   final String title;
+  final String? subtitle;
+  final String? badgeText;
   final VoidCallback onTap;
 
   const _SupportListTile({
     required this.icon,
     required this.title,
+    this.subtitle,
+    this.badgeText,
     required this.onTap,
   });
 
@@ -645,7 +665,37 @@ class _SupportListTile extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF)),
+      subtitle: subtitle == null
+          ? null
+          : Text(
+              subtitle!,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: const Color(0xFF6B7280),
+              ),
+            ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (badgeText != null) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFE4E6),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                badgeText!,
+                style: context.textTheme.labelMedium?.copyWith(
+                  color: const Color(0xFFBE123C),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+          ],
+          const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF)),
+        ],
+      ),
       onTap: onTap,
     );
   }
