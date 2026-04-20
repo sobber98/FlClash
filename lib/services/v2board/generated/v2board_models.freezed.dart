@@ -885,7 +885,7 @@ as int?,
 /// @nodoc
 mixin _$V2BoardSubscription {
 
-@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) String get planId; String get token;@JsonKey(name: 'expired_at') int? get expiredAt;@JsonKey(name: 'u') int get upload;@JsonKey(name: 'd') int get download;@JsonKey(name: 'transfer_enable') int get transferEnable;@JsonKey(name: 'subscribe_url') String? get subscribeUrl;@JsonKey(name: 'reset_day') int? get resetDay;
+@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) String get planId; String get token;@JsonKey(name: 'expired_at') int? get expiredAt;@JsonKey(name: 'u') int get upload;@JsonKey(name: 'd') int get download;@JsonKey(name: 'transfer_enable') int get transferEnable;@JsonKey(name: 'plan') V2BoardPlan? get plan;@JsonKey(name: 'subscribe_url') String? get subscribeUrl;@JsonKey(name: 'reset_day') int? get resetDay;
 /// Create a copy of V2BoardSubscription
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -898,16 +898,16 @@ $V2BoardSubscriptionCopyWith<V2BoardSubscription> get copyWith => _$V2BoardSubsc
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is V2BoardSubscription&&(identical(other.planId, planId) || other.planId == planId)&&(identical(other.token, token) || other.token == token)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.upload, upload) || other.upload == upload)&&(identical(other.download, download) || other.download == download)&&(identical(other.transferEnable, transferEnable) || other.transferEnable == transferEnable)&&(identical(other.subscribeUrl, subscribeUrl) || other.subscribeUrl == subscribeUrl)&&(identical(other.resetDay, resetDay) || other.resetDay == resetDay));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is V2BoardSubscription&&(identical(other.planId, planId) || other.planId == planId)&&(identical(other.token, token) || other.token == token)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.upload, upload) || other.upload == upload)&&(identical(other.download, download) || other.download == download)&&(identical(other.transferEnable, transferEnable) || other.transferEnable == transferEnable)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.subscribeUrl, subscribeUrl) || other.subscribeUrl == subscribeUrl)&&(identical(other.resetDay, resetDay) || other.resetDay == resetDay));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,planId,token,expiredAt,upload,download,transferEnable,subscribeUrl,resetDay);
+int get hashCode => Object.hash(runtimeType,planId,token,expiredAt,upload,download,transferEnable,plan,subscribeUrl,resetDay);
 
 @override
 String toString() {
-  return 'V2BoardSubscription(planId: $planId, token: $token, expiredAt: $expiredAt, upload: $upload, download: $download, transferEnable: $transferEnable, subscribeUrl: $subscribeUrl, resetDay: $resetDay)';
+  return 'V2BoardSubscription(planId: $planId, token: $token, expiredAt: $expiredAt, upload: $upload, download: $download, transferEnable: $transferEnable, plan: $plan, subscribeUrl: $subscribeUrl, resetDay: $resetDay)';
 }
 
 
@@ -918,11 +918,11 @@ abstract mixin class $V2BoardSubscriptionCopyWith<$Res>  {
   factory $V2BoardSubscriptionCopyWith(V2BoardSubscription value, $Res Function(V2BoardSubscription) _then) = _$V2BoardSubscriptionCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) String planId, String token,@JsonKey(name: 'expired_at') int? expiredAt,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'subscribe_url') String? subscribeUrl,@JsonKey(name: 'reset_day') int? resetDay
+@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) String planId, String token,@JsonKey(name: 'expired_at') int? expiredAt,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'plan') V2BoardPlan? plan,@JsonKey(name: 'subscribe_url') String? subscribeUrl,@JsonKey(name: 'reset_day') int? resetDay
 });
 
 
-
+$V2BoardPlanCopyWith<$Res>? get plan;
 
 }
 /// @nodoc
@@ -935,7 +935,7 @@ class _$V2BoardSubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of V2BoardSubscription
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? planId = null,Object? token = null,Object? expiredAt = freezed,Object? upload = null,Object? download = null,Object? transferEnable = null,Object? subscribeUrl = freezed,Object? resetDay = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? planId = null,Object? token = null,Object? expiredAt = freezed,Object? upload = null,Object? download = null,Object? transferEnable = null,Object? plan = freezed,Object? subscribeUrl = freezed,Object? resetDay = freezed,}) {
   return _then(_self.copyWith(
 planId: null == planId ? _self.planId : planId // ignore: cast_nullable_to_non_nullable
 as String,token: null == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
@@ -943,12 +943,25 @@ as String,expiredAt: freezed == expiredAt ? _self.expiredAt : expiredAt // ignor
 as int?,upload: null == upload ? _self.upload : upload // ignore: cast_nullable_to_non_nullable
 as int,download: null == download ? _self.download : download // ignore: cast_nullable_to_non_nullable
 as int,transferEnable: null == transferEnable ? _self.transferEnable : transferEnable // ignore: cast_nullable_to_non_nullable
-as int,subscribeUrl: freezed == subscribeUrl ? _self.subscribeUrl : subscribeUrl // ignore: cast_nullable_to_non_nullable
+as int,plan: freezed == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
+as V2BoardPlan?,subscribeUrl: freezed == subscribeUrl ? _self.subscribeUrl : subscribeUrl // ignore: cast_nullable_to_non_nullable
 as String?,resetDay: freezed == resetDay ? _self.resetDay : resetDay // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
+/// Create a copy of V2BoardSubscription
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$V2BoardPlanCopyWith<$Res>? get plan {
+    if (_self.plan == null) {
+    return null;
+  }
 
+  return $V2BoardPlanCopyWith<$Res>(_self.plan!, (value) {
+    return _then(_self.copyWith(plan: value));
+  });
+}
 }
 
 
@@ -1030,10 +1043,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson)  String planId,  String token, @JsonKey(name: 'expired_at')  int? expiredAt, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'subscribe_url')  String? subscribeUrl, @JsonKey(name: 'reset_day')  int? resetDay)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson)  String planId,  String token, @JsonKey(name: 'expired_at')  int? expiredAt, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan')  V2BoardPlan? plan, @JsonKey(name: 'subscribe_url')  String? subscribeUrl, @JsonKey(name: 'reset_day')  int? resetDay)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _V2BoardSubscription() when $default != null:
-return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.download,_that.transferEnable,_that.subscribeUrl,_that.resetDay);case _:
+return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.download,_that.transferEnable,_that.plan,_that.subscribeUrl,_that.resetDay);case _:
   return orElse();
 
 }
@@ -1051,10 +1064,10 @@ return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.down
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson)  String planId,  String token, @JsonKey(name: 'expired_at')  int? expiredAt, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'subscribe_url')  String? subscribeUrl, @JsonKey(name: 'reset_day')  int? resetDay)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson)  String planId,  String token, @JsonKey(name: 'expired_at')  int? expiredAt, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan')  V2BoardPlan? plan, @JsonKey(name: 'subscribe_url')  String? subscribeUrl, @JsonKey(name: 'reset_day')  int? resetDay)  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardSubscription():
-return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.download,_that.transferEnable,_that.subscribeUrl,_that.resetDay);case _:
+return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.download,_that.transferEnable,_that.plan,_that.subscribeUrl,_that.resetDay);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1071,10 +1084,10 @@ return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.down
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson)  String planId,  String token, @JsonKey(name: 'expired_at')  int? expiredAt, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'subscribe_url')  String? subscribeUrl, @JsonKey(name: 'reset_day')  int? resetDay)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson)  String planId,  String token, @JsonKey(name: 'expired_at')  int? expiredAt, @JsonKey(name: 'u')  int upload, @JsonKey(name: 'd')  int download, @JsonKey(name: 'transfer_enable')  int transferEnable, @JsonKey(name: 'plan')  V2BoardPlan? plan, @JsonKey(name: 'subscribe_url')  String? subscribeUrl, @JsonKey(name: 'reset_day')  int? resetDay)?  $default,) {final _that = this;
 switch (_that) {
 case _V2BoardSubscription() when $default != null:
-return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.download,_that.transferEnable,_that.subscribeUrl,_that.resetDay);case _:
+return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.download,_that.transferEnable,_that.plan,_that.subscribeUrl,_that.resetDay);case _:
   return null;
 
 }
@@ -1086,7 +1099,7 @@ return $default(_that.planId,_that.token,_that.expiredAt,_that.upload,_that.down
 @JsonSerializable()
 
 class _V2BoardSubscription implements V2BoardSubscription {
-  const _V2BoardSubscription({@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) this.planId = '', this.token = '', @JsonKey(name: 'expired_at') this.expiredAt, @JsonKey(name: 'u') this.upload = 0, @JsonKey(name: 'd') this.download = 0, @JsonKey(name: 'transfer_enable') this.transferEnable = 0, @JsonKey(name: 'subscribe_url') this.subscribeUrl, @JsonKey(name: 'reset_day') this.resetDay});
+  const _V2BoardSubscription({@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) this.planId = '', this.token = '', @JsonKey(name: 'expired_at') this.expiredAt, @JsonKey(name: 'u') this.upload = 0, @JsonKey(name: 'd') this.download = 0, @JsonKey(name: 'transfer_enable') this.transferEnable = 0, @JsonKey(name: 'plan') this.plan, @JsonKey(name: 'subscribe_url') this.subscribeUrl, @JsonKey(name: 'reset_day') this.resetDay});
   factory _V2BoardSubscription.fromJson(Map<String, dynamic> json) => _$V2BoardSubscriptionFromJson(json);
 
 @override@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) final  String planId;
@@ -1095,6 +1108,7 @@ class _V2BoardSubscription implements V2BoardSubscription {
 @override@JsonKey(name: 'u') final  int upload;
 @override@JsonKey(name: 'd') final  int download;
 @override@JsonKey(name: 'transfer_enable') final  int transferEnable;
+@override@JsonKey(name: 'plan') final  V2BoardPlan? plan;
 @override@JsonKey(name: 'subscribe_url') final  String? subscribeUrl;
 @override@JsonKey(name: 'reset_day') final  int? resetDay;
 
@@ -1111,16 +1125,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _V2BoardSubscription&&(identical(other.planId, planId) || other.planId == planId)&&(identical(other.token, token) || other.token == token)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.upload, upload) || other.upload == upload)&&(identical(other.download, download) || other.download == download)&&(identical(other.transferEnable, transferEnable) || other.transferEnable == transferEnable)&&(identical(other.subscribeUrl, subscribeUrl) || other.subscribeUrl == subscribeUrl)&&(identical(other.resetDay, resetDay) || other.resetDay == resetDay));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _V2BoardSubscription&&(identical(other.planId, planId) || other.planId == planId)&&(identical(other.token, token) || other.token == token)&&(identical(other.expiredAt, expiredAt) || other.expiredAt == expiredAt)&&(identical(other.upload, upload) || other.upload == upload)&&(identical(other.download, download) || other.download == download)&&(identical(other.transferEnable, transferEnable) || other.transferEnable == transferEnable)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.subscribeUrl, subscribeUrl) || other.subscribeUrl == subscribeUrl)&&(identical(other.resetDay, resetDay) || other.resetDay == resetDay));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,planId,token,expiredAt,upload,download,transferEnable,subscribeUrl,resetDay);
+int get hashCode => Object.hash(runtimeType,planId,token,expiredAt,upload,download,transferEnable,plan,subscribeUrl,resetDay);
 
 @override
 String toString() {
-  return 'V2BoardSubscription(planId: $planId, token: $token, expiredAt: $expiredAt, upload: $upload, download: $download, transferEnable: $transferEnable, subscribeUrl: $subscribeUrl, resetDay: $resetDay)';
+  return 'V2BoardSubscription(planId: $planId, token: $token, expiredAt: $expiredAt, upload: $upload, download: $download, transferEnable: $transferEnable, plan: $plan, subscribeUrl: $subscribeUrl, resetDay: $resetDay)';
 }
 
 
@@ -1131,11 +1145,11 @@ abstract mixin class _$V2BoardSubscriptionCopyWith<$Res> implements $V2BoardSubs
   factory _$V2BoardSubscriptionCopyWith(_V2BoardSubscription value, $Res Function(_V2BoardSubscription) _then) = __$V2BoardSubscriptionCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) String planId, String token,@JsonKey(name: 'expired_at') int? expiredAt,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'subscribe_url') String? subscribeUrl,@JsonKey(name: 'reset_day') int? resetDay
+@JsonKey(name: 'plan_id', fromJson: v2boardStringFromJson, toJson: v2boardStringToJson) String planId, String token,@JsonKey(name: 'expired_at') int? expiredAt,@JsonKey(name: 'u') int upload,@JsonKey(name: 'd') int download,@JsonKey(name: 'transfer_enable') int transferEnable,@JsonKey(name: 'plan') V2BoardPlan? plan,@JsonKey(name: 'subscribe_url') String? subscribeUrl,@JsonKey(name: 'reset_day') int? resetDay
 });
 
 
-
+@override $V2BoardPlanCopyWith<$Res>? get plan;
 
 }
 /// @nodoc
@@ -1148,7 +1162,7 @@ class __$V2BoardSubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of V2BoardSubscription
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? planId = null,Object? token = null,Object? expiredAt = freezed,Object? upload = null,Object? download = null,Object? transferEnable = null,Object? subscribeUrl = freezed,Object? resetDay = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? planId = null,Object? token = null,Object? expiredAt = freezed,Object? upload = null,Object? download = null,Object? transferEnable = null,Object? plan = freezed,Object? subscribeUrl = freezed,Object? resetDay = freezed,}) {
   return _then(_V2BoardSubscription(
 planId: null == planId ? _self.planId : planId // ignore: cast_nullable_to_non_nullable
 as String,token: null == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
@@ -1156,13 +1170,26 @@ as String,expiredAt: freezed == expiredAt ? _self.expiredAt : expiredAt // ignor
 as int?,upload: null == upload ? _self.upload : upload // ignore: cast_nullable_to_non_nullable
 as int,download: null == download ? _self.download : download // ignore: cast_nullable_to_non_nullable
 as int,transferEnable: null == transferEnable ? _self.transferEnable : transferEnable // ignore: cast_nullable_to_non_nullable
-as int,subscribeUrl: freezed == subscribeUrl ? _self.subscribeUrl : subscribeUrl // ignore: cast_nullable_to_non_nullable
+as int,plan: freezed == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
+as V2BoardPlan?,subscribeUrl: freezed == subscribeUrl ? _self.subscribeUrl : subscribeUrl // ignore: cast_nullable_to_non_nullable
 as String?,resetDay: freezed == resetDay ? _self.resetDay : resetDay // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
 
+/// Create a copy of V2BoardSubscription
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$V2BoardPlanCopyWith<$Res>? get plan {
+    if (_self.plan == null) {
+    return null;
+  }
 
+  return $V2BoardPlanCopyWith<$Res>(_self.plan!, (value) {
+    return _then(_self.copyWith(plan: value));
+  });
+}
 }
 
 

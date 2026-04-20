@@ -73,10 +73,18 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
-  String _getPlanName(int? planId, List<V2BoardPlan> plans) {
-    if (planId == null) return appLocalizations.v2boardNoPlan;
-    final plan = plans.where((p) => p.id == planId).firstOrNull;
-    return plan?.name ?? appLocalizations.v2boardNoPlan;
+  String _getPlanName(
+    V2BoardUser? user,
+    V2BoardSubscription? sub,
+    List<V2BoardPlan> plans,
+  ) {
+    final plan = v2boardResolvedPlan(
+      user: user,
+      subscription: sub,
+      plans: plans,
+    );
+    final name = plan?.name.trim() ?? '';
+    return name.isNotEmpty ? name : appLocalizations.v2boardNoPlan;
   }
 
   @override
@@ -147,10 +155,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _getPlanName(
-                          user?.planId ?? int.tryParse(sub?.planId ?? ''),
-                          plans,
-                        ),
+                        _getPlanName(user, sub, plans),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),

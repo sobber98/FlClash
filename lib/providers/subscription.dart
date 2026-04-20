@@ -44,16 +44,7 @@ final currentPlanProvider = Provider<V2BoardPlan?>((ref) {
   final plans = _asyncDataOrNull(plansState) ?? const <V2BoardPlan>[];
   final user = _asyncDataOrNull(userState);
   final sub = _asyncDataOrNull(subState);
-  final planId = user?.planId ?? int.tryParse(sub?.planId ?? '');
-  if (planId == null) {
-    return null;
-  }
-  for (final plan in plans) {
-    if (plan.id == planId) {
-      return plan;
-    }
-  }
-  return null;
+  return v2boardResolvedPlan(user: user, subscription: sub, plans: plans);
 });
 
 T? _asyncDataOrNull<T>(AsyncValue<T> value) {

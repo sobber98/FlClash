@@ -121,6 +121,7 @@ abstract class V2BoardSubscription with _$V2BoardSubscription {
     @Default(0) @JsonKey(name: 'u') int upload,
     @Default(0) @JsonKey(name: 'd') int download,
     @Default(0) @JsonKey(name: 'transfer_enable') int transferEnable,
+    @JsonKey(name: 'plan') V2BoardPlan? plan,
     @JsonKey(name: 'subscribe_url') String? subscribeUrl,
     @JsonKey(name: 'reset_day') int? resetDay,
   }) = _V2BoardSubscription;
@@ -198,6 +199,30 @@ int? v2boardResolvedExpiredAt(
     return subscriptionExpiredAt;
   }
   return user?.expiredAt;
+}
+
+V2BoardPlan? v2boardResolvedPlan({
+  V2BoardUser? user,
+  V2BoardSubscription? subscription,
+  Iterable<V2BoardPlan> plans = const [],
+}) {
+  final embeddedPlan = subscription?.plan;
+  if ((embeddedPlan?.name.trim().isNotEmpty ?? false)) {
+    return embeddedPlan;
+  }
+
+  final planId = user?.planId ?? int.tryParse(subscription?.planId ?? '');
+  if (planId == null) {
+    return null;
+  }
+
+  for (final plan in plans) {
+    if (plan.id == planId) {
+      return plan;
+    }
+  }
+
+  return null;
 }
 
 /// GET /user/notice/fetch item
@@ -293,6 +318,10 @@ extension V2BoardPropsExt on V2BoardProps {
 
   String get subscribeUrl {
     if (!isLoggedIn || subscribeToken.isEmpty) return '';
-    return '$serverUrl/client/subscribe?token=$subscribeToken';
+    final normalizedServerUrl = serverUrl.trim().replaceFirst(RegExp(r'/+$'), '');
+    if (normalizedServerUrl.endsWith('/api/v1')) {
+      return '$normalizedServerUrl/client/subscribe?token=$subscribeToken';
+    }
+    return '$normalizedServerUrl/api/v1/client/subscribe?token=$subscribeToken';
   }
 }

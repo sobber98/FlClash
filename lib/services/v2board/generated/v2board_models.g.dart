@@ -103,6 +103,9 @@ _V2BoardSubscription _$V2BoardSubscriptionFromJson(Map<String, dynamic> json) =>
       upload: (json['u'] as num?)?.toInt() ?? 0,
       download: (json['d'] as num?)?.toInt() ?? 0,
       transferEnable: (json['transfer_enable'] as num?)?.toInt() ?? 0,
+      plan: json['plan'] == null
+          ? null
+          : V2BoardPlan.fromJson(json['plan'] as Map<String, dynamic>),
       subscribeUrl: json['subscribe_url'] as String?,
       resetDay: (json['reset_day'] as num?)?.toInt(),
     );
@@ -116,6 +119,7 @@ Map<String, dynamic> _$V2BoardSubscriptionToJson(
   'u': instance.upload,
   'd': instance.download,
   'transfer_enable': instance.transferEnable,
+  'plan': instance.plan,
   'subscribe_url': instance.subscribeUrl,
   'reset_day': instance.resetDay,
 };

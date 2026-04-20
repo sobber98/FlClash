@@ -166,7 +166,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               _ProfileHeaderCard(
                 user: user,
                 subscription: subscription,
-                planName: currentPlan?.name ?? '未分配套餐',
+                planName:
+                    currentPlan?.name ??
+                    subscription?.plan?.name ??
+                    '未分配套餐',
               ),
               const SizedBox(height: 16),
               _UsageCard(user: user, subscription: subscription),
