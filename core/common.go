@@ -276,11 +276,19 @@ func applyConfig(params *SetupParams) error {
 	runLock.Lock()
 	defer runLock.Unlock()
 	var err error
-	currentConfig, err = executor.ParseWithPath(filepath.Join(constant.Path.HomeDir(), "config.yaml"))
+	configPath := filepath.Join(constant.Path.HomeDir(), "config.yaml")
+	log.Infoln("[APP] applyConfig: reading config from %s", configPath)
+	currentConfig, err = executor.ParseWithPath(configPath)
 	if err != nil {
+		log.Errorln("[APP] applyConfig: ParseWithPath failed: %v", err)
 		currentConfig, _ = config.ParseRawConfig(&config.RawConfig{})
+	} else {
+		log.Infoln("[APP] applyConfig: parsed OK, proxies=%d groups=%d providers=%d",
+			len(currentConfig.Proxies), len(currentConfig.Proxies)-2, len(currentConfig.Providers))
 	}
 	executor.ApplyConfig(currentConfig, true)
+	log.Infoln("[APP] applyConfig: ApplyConfig done, tunnel proxies=%d tunnel providers=%d",
+		len(tunnel.Proxies()), len(tunnel.Providers()))
 	patchSelectGroup(params.SelectedMap)
 	updateListeners()
 	return err

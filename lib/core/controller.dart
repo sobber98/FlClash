@@ -202,8 +202,6 @@ class CoreController {
     final res = await _interface.getConfig(profilePath);
     if (res.isSuccess) {
       final data = Map<String, dynamic>.from(res.data);
-      data['rules'] = data['rule'];
-      data.remove('rule');
       return data;
     } else {
       throw res.message;

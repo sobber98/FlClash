@@ -100,10 +100,29 @@ func handleGetProxies() ProxiesData {
 	for name, proxy := range tunnel.Proxies() {
 		proxies[name] = proxy
 	}
-	for _, p := range tunnel.Providers() {
-		for _, proxy := range p.Proxies() {
+	log.Infoln("[APP] handleGetProxies: tunnel.Proxies count=%d", len(tunnel.Proxies()))
+	for provName, p := range tunnel.Providers() {
+		provProxies := p.Proxies()
+		log.Infoln("[APP] handleGetProxies: provider '%s' type=%s proxies=%d", provName, p.VehicleType().String(), len(provProxies))
+		for _, proxy := range provProxies {
 			proxies[proxy.Name()] = proxy
 		}
+	}
+
+	log.Infoln("[APP] handleGetProxies: total proxies in map=%d", len(proxies))
+
+	// Log GLOBAL group members
+	if globalProxy, ok := proxies["GLOBAL"]; ok && globalProxy != nil {
+		globalData, _ := json.Marshal(globalProxy)
+		var globalMap map[string]interface{}
+		_ = json.Unmarshal(globalData, &globalMap)
+		if allField, ok := globalMap["all"]; ok {
+			log.Infoln("[APP] handleGetProxies: GLOBAL.all = %v", allField)
+		} else {
+			log.Warnln("[APP] handleGetProxies: GLOBAL has no 'all' field")
+		}
+	} else {
+		log.Warnln("[APP] handleGetProxies: GLOBAL proxy not found!")
 	}
 
 	allNames := make([]string, 0, len(proxies))
@@ -123,6 +142,7 @@ func handleGetProxies() ProxiesData {
 			return name == "GLOBAL"
 		})...)
 	}
+	log.Infoln("[APP] handleGetProxies: allNames=%v", allNames)
 
 	return ProxiesData{
 		All:     allNames,
