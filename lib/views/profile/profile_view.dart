@@ -475,7 +475,6 @@ class _SupportSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final serverUrl = ref.watch(appServerUrlProvider);
-    final ticketReminderState = ref.watch(v2boardTicketReminderProvider);
     final websiteUrl = _websiteUrl(serverUrl);
     final telegramUrl = _telegramUrl();
     final mailUrl = _mailUrl();
@@ -535,14 +534,6 @@ class _SupportSection extends ConsumerWidget {
           _SupportListTile(
             icon: Icons.support_agent_rounded,
             title: '我的工单',
-            subtitle: ticketReminderState.pendingReplyCount > 0
-                ? '有 ${ticketReminderState.pendingReplyCount} 条工单收到客服回复'
-                : null,
-            badgeText: ticketReminderState.pendingReplyCount > 0
-                ? (ticketReminderState.pendingReplyCount > 99
-                      ? '99+'
-                      : '${ticketReminderState.pendingReplyCount}')
-                : null,
             onTap: () {
               Navigator.of(
                 context,
@@ -642,15 +633,11 @@ class _ActionTile extends StatelessWidget {
 class _SupportListTile extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String? subtitle;
-  final String? badgeText;
   final VoidCallback onTap;
 
   const _SupportListTile({
     required this.icon,
     required this.title,
-    this.subtitle,
-    this.badgeText,
     required this.onTap,
   });
 
@@ -665,36 +652,9 @@ class _SupportListTile extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      subtitle: subtitle == null
-          ? null
-          : Text(
-              subtitle!,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF6B7280),
-              ),
-            ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (badgeText != null) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFE4E6),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                badgeText!,
-                style: context.textTheme.labelMedium?.copyWith(
-                  color: const Color(0xFFBE123C),
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-          ],
-          const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF)),
-        ],
+      trailing: const Icon(
+        Icons.chevron_right_rounded,
+        color: Color(0xFF9CA3AF),
       ),
       onTap: onTap,
     );

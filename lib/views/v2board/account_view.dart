@@ -29,9 +29,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     ref.read(v2boardSubscriptionProvider.notifier).fetch();
     ref.read(v2boardPlansProvider.notifier).fetch();
     ref.read(v2boardNoticesProvider.notifier).fetch();
-    ref
-        .read(v2boardTicketPollingControllerProvider)
-        .refreshNow(notifyOnNewReplies: false);
+    ref.read(v2boardTicketsProvider.notifier).refresh();
   }
 
   void _logout() {
@@ -88,7 +86,6 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     final plansState = ref.watch(v2boardPlansProvider);
     final noticesState = ref.watch(v2boardNoticesProvider);
     final props = ref.watch(v2boardSettingProvider);
-    final ticketReminderState = ref.watch(v2boardTicketReminderProvider);
 
     final user = userState is AsyncData<V2BoardUser?> ? userState.value : null;
     final sub = subState is AsyncData<V2BoardSubscription?>
@@ -113,10 +110,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
           // Subscription
           if (sub != null) _buildSubscriptionSection(context, sub),
           // Actions
-          ..._buildActionSection(
-            context,
-            ticketReminderState.pendingReplyCount,
-          ),
+          ..._buildActionSection(context),
           // Notices
           if (notices.isNotEmpty) ..._buildNoticesSection(context, notices),
         ],
@@ -277,10 +271,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     );
   }
 
-  List<Widget> _buildActionSection(
-    BuildContext context,
-    int pendingReplyCount,
-  ) {
+  List<Widget> _buildActionSection(BuildContext context) {
     return generateSection(
       title: appLocalizations.v2boardActions,
       items: [
@@ -298,14 +289,7 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
         ListItem(
           leading: const Icon(Icons.support_agent_rounded),
           title: const Text('我的工单'),
-          subtitle: Text(
-            pendingReplyCount > 0
-                ? '有 $pendingReplyCount 条工单收到客服回复'
-                : '查看客服回复并继续跟进当前问题',
-          ),
-          trailing: pendingReplyCount > 0
-              ? _TicketReplyBadge(count: pendingReplyCount)
-              : null,
+          subtitle: const Text('查看客服回复并继续跟进当前问题'),
           onTap: () {
             Navigator.of(
               context,
@@ -344,30 +328,6 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
               },
             ),
           ),
-    );
-  }
-}
-
-class _TicketReplyBadge extends StatelessWidget {
-  final int count;
-
-  const _TicketReplyBadge({required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFE4E6),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        count > 99 ? '99+' : '$count',
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: const Color(0xFFBE123C),
-          fontWeight: FontWeight.w700,
-        ),
-      ),
     );
   }
 }

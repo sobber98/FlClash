@@ -27,9 +27,7 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
   }
 
   Future<void> _refresh() async {
-    await ref
-        .read(v2boardTicketPollingControllerProvider)
-        .refreshNow(notifyOnNewReplies: false);
+    await ref.read(v2boardTicketsProvider.notifier).refresh();
   }
 
   Future<void> _openComposer() async {
@@ -152,7 +150,6 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
   @override
   Widget build(BuildContext context) {
     final ticketsState = ref.watch(v2boardTicketsProvider);
-    final reminderState = ref.watch(v2boardTicketReminderProvider);
     return Scaffold(
       backgroundColor: _ticketsBackground,
       appBar: AppBar(
@@ -196,8 +193,6 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
                     openCount: 0,
                     closedCount: 0,
                   ),
-                  const SizedBox(height: 12),
-                  _TicketPollingNotice(reminderState: reminderState),
                   const SizedBox(height: 16),
                   _TicketEmptyState(onCreate: _creating ? null : _openComposer),
                 ],
@@ -210,16 +205,10 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
                 if (index == 0) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: Column(
-                      children: [
-                        _TicketSummaryCard(
-                          totalCount: tickets.length,
-                          openCount: openCount,
-                          closedCount: closedCount,
-                        ),
-                        const SizedBox(height: 12),
-                        _TicketPollingNotice(reminderState: reminderState),
-                      ],
+                    child: _TicketSummaryCard(
+                      totalCount: tickets.length,
+                      openCount: openCount,
+                      closedCount: closedCount,
                     ),
                   );
                 }
@@ -249,8 +238,6 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
                 openCount: 0,
                 closedCount: 0,
               ),
-              const SizedBox(height: 12),
-              _TicketPollingNotice(reminderState: reminderState),
               const SizedBox(height: 16),
               _TicketErrorState(error: error),
             ],
@@ -281,26 +268,6 @@ class _TicketDetailViewState extends ConsumerState<TicketDetailView> {
   @override
   void initState() {
     super.initState();
-    ref.listenManual<AsyncValue<List<V2BoardTicket>>>(v2boardTicketsProvider, (
-      _,
-      next,
-    ) {
-      final tickets = next.asData?.value;
-      if (!mounted || tickets == null) {
-        return;
-      }
-      final updatedTicket = tickets
-          .where((ticket) => ticket.id == widget.ticketId)
-          .firstOrNull;
-      if (updatedTicket == null || !_shouldApplyTicketSnapshot(updatedTicket)) {
-        return;
-      }
-      setState(() {
-        _ticket = updatedTicket;
-        _loading = false;
-        _error = null;
-      });
-    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadTicket();
     });
@@ -364,9 +331,7 @@ class _TicketDetailViewState extends ConsumerState<TicketDetailView> {
       await api.replyTicket(id: ticket.id, message: message);
       _replyController.clear();
       await _loadTicket();
-      await ref
-          .read(v2boardTicketPollingControllerProvider)
-          .refreshNow(notifyOnNewReplies: false);
+      await ref.read(v2boardTicketsProvider.notifier).refresh();
       if (!mounted) {
         return;
       }
@@ -412,9 +377,7 @@ class _TicketDetailViewState extends ConsumerState<TicketDetailView> {
     try {
       await api.closeTicket(ticket.id);
       await _loadTicket();
-      await ref
-          .read(v2boardTicketPollingControllerProvider)
-          .refreshNow(notifyOnNewReplies: false);
+      await ref.read(v2boardTicketsProvider.notifier).refresh();
       if (!mounted) {
         return;
       }
@@ -463,22 +426,6 @@ class _TicketDetailViewState extends ConsumerState<TicketDetailView> {
     final hour = date.hour.toString().padLeft(2, '0');
     final minute = date.minute.toString().padLeft(2, '0');
     return '${date.year}-$month-$day $hour:$minute';
-  }
-
-  bool _shouldApplyTicketSnapshot(V2BoardTicket nextTicket) {
-    final currentTicket = _ticket;
-    if (currentTicket == null) {
-      return true;
-    }
-    if (nextTicket.messages.isEmpty &&
-        currentTicket.messages.isNotEmpty &&
-        nextTicket.statusFingerprint == currentTicket.statusFingerprint) {
-      return false;
-    }
-    return nextTicket.statusFingerprint != currentTicket.statusFingerprint ||
-        nextTicket.latestReplyFingerprint !=
-            currentTicket.latestReplyFingerprint ||
-        nextTicket.messages.length != currentTicket.messages.length;
   }
 
   @override
@@ -707,88 +654,6 @@ class _TicketMetric extends StatelessWidget {
             style: context.textTheme.titleLarge?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TicketPollingNotice extends StatelessWidget {
-  final V2BoardTicketReminderState reminderState;
-
-  const _TicketPollingNotice({required this.reminderState});
-
-  String _formatCheckedAt(DateTime? checkedAt) {
-    if (checkedAt == null) {
-      return '尚未检查';
-    }
-    final hour = checkedAt.hour.toString().padLeft(2, '0');
-    final minute = checkedAt.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final pendingReplyCount = reminderState.pendingReplyCount;
-    final description = pendingReplyCount > 0
-        ? '检测到 $pendingReplyCount 条工单收到客服回复，列表会每 30 秒自动刷新。'
-        : '已开启自动刷新，每 30 秒检查一次客服回复。';
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: pendingReplyCount > 0
-                  ? const Color(0xFFFFE4E6)
-                  : const Color(0xFFEFF6FF),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              pendingReplyCount > 0
-                  ? Icons.mark_chat_unread_rounded
-                  : Icons.autorenew_rounded,
-              color: pendingReplyCount > 0
-                  ? const Color(0xFFBE123C)
-                  : const Color(0xFF2563EB),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  pendingReplyCount > 0 ? '发现客服新回复' : '自动刷新已开启',
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF6B7280),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '上次检查: ${_formatCheckedAt(reminderState.lastCheckedAt)}',
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF9CA3AF),
-                  ),
-                ),
-              ],
             ),
           ),
         ],

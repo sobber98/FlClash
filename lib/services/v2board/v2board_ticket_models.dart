@@ -63,19 +63,6 @@ class V2BoardTicket {
     return !isClosed && replyStatus == 1;
   }
 
-  String get statusFingerprint {
-    return '$id:$status:$replyStatus:${updatedAt ?? createdAt ?? 0}';
-  }
-
-  String get latestReplyFingerprint {
-    final latestMessage = latestTicketMessage;
-    if (latestMessage == null) {
-      return '$id:$replyStatus:${updatedAt ?? createdAt ?? 0}:$status';
-    }
-    final timestamp = latestMessage.updatedAt ?? latestMessage.createdAt ?? 0;
-    return '$id:${latestMessage.id}:$timestamp:${latestMessage.isMe ? 1 : 0}:$status';
-  }
-
   String get latestMessage {
     if (messages.isEmpty) {
       return '';
