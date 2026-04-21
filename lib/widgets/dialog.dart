@@ -24,7 +24,14 @@ class CommonDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final size = ref.watch(viewSizeProvider);
+    final providerSize = ref.watch(viewSizeProvider);
+    // Fallback to MediaQuery when the provider hasn't been populated yet
+    // (e.g., when the dialog is shown inside a modal overlay before the
+    // LayoutBuilder updates the provider). This prevents maxHeight from
+    // becoming negative (-40 when height == 0) which would clip the content
+    // area to zero and make all form fields invisible.
+    final mediaSize = MediaQuery.sizeOf(context);
+    final size = providerSize == Size.zero ? mediaSize : providerSize;
     return AlertDialog(
       title: Text(title),
       actions: actions,
