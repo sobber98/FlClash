@@ -610,6 +610,27 @@ class _SupportSection extends ConsumerWidget {
               );
             },
           ),
+          const Divider(height: 24),
+          _SupportListTile(
+            icon: Icons.logout_rounded,
+            title: '退出登录',
+            color: Theme.of(context).colorScheme.error,
+            onTap: () async {
+              final confirmed = await globalState.showMessage(
+                title: '退出登录',
+                message: const TextSpan(text: '确定要退出登录吗？退出后需重新登录才能使用账户功能。'),
+                confirmText: '退出',
+              );
+              if (confirmed != true) return;
+              ref.read(v2boardSettingProvider.notifier).value = null;
+              ref.read(v2boardApiClientProvider.notifier).clear();
+              ref.read(v2boardUserProvider.notifier).clear();
+              ref.read(v2boardSubscriptionProvider.notifier).clear();
+              ref.read(v2boardPlansProvider.notifier).clear();
+              ref.read(v2boardNoticesProvider.notifier).clear();
+              ref.read(v2boardTicketsProvider.notifier).clear();
+            },
+          ),
         ],
       ),
     );
@@ -662,22 +683,26 @@ class _SupportListTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
+  final Color? color;
 
   const _SupportListTile({
     required this.icon,
     required this.title,
     required this.onTap,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = color ?? const Color(0xFF4B5563);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-      leading: Icon(icon, color: const Color(0xFF4B5563)),
+      leading: Icon(icon, color: effectiveColor),
       title: Text(
         title,
         style: context.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
+          color: color,
         ),
       ),
       trailing: const Icon(
