@@ -9,6 +9,7 @@ class AppConfig {
   final bool? enableRegistration;
   final String supportEmail;
   final String telegramGroup;
+  final List<String> blockedNodeKeywords;
   final Map<String, dynamic> extras;
 
   const AppConfig({
@@ -19,6 +20,7 @@ class AppConfig {
     this.enableRegistration,
     this.supportEmail = '',
     this.telegramGroup = '',
+    this.blockedNodeKeywords = const [],
     this.extras = const {},
   });
 
@@ -44,6 +46,9 @@ class AppConfig {
       telegramGroup: _readString(
         json['telegramGroup'] ?? json['telegram_group'],
       ),
+      blockedNodeKeywords: _readStringList(
+        json['blockedNodeKeywords'] ?? json['blocked_node_keywords'],
+      ),
       extras: extras,
     );
   }
@@ -57,6 +62,7 @@ class AppConfig {
     bool clearEnableRegistration = false,
     String? supportEmail,
     String? telegramGroup,
+    List<String>? blockedNodeKeywords,
     Map<String, dynamic>? extras,
   }) {
     return AppConfig(
@@ -69,6 +75,7 @@ class AppConfig {
           : enableRegistration ?? this.enableRegistration,
       supportEmail: supportEmail ?? this.supportEmail,
       telegramGroup: telegramGroup ?? this.telegramGroup,
+      blockedNodeKeywords: blockedNodeKeywords ?? this.blockedNodeKeywords,
       extras: extras ?? this.extras,
     );
   }
@@ -88,6 +95,9 @@ class AppConfig {
       telegramGroup: other.telegramGroup.trim().isNotEmpty
           ? other.telegramGroup
           : telegramGroup,
+      blockedNodeKeywords: other.blockedNodeKeywords.isNotEmpty
+          ? other.blockedNodeKeywords
+          : blockedNodeKeywords,
       extras: {...extras, ...other.extras},
     );
   }
@@ -101,6 +111,7 @@ class AppConfig {
       'enableRegistration': enableRegistration,
       'supportEmail': supportEmail,
       'telegramGroup': telegramGroup,
+      'blockedNodeKeywords': blockedNodeKeywords,
       ...extras,
     };
   }
@@ -131,6 +142,8 @@ class AppConfig {
     'support_email',
     'telegramGroup',
     'telegram_group',
+    'blockedNodeKeywords',
+    'blocked_node_keywords',
   };
 }
 
@@ -138,6 +151,14 @@ String _readString(Object? value) {
   if (value == null) return '';
   if (value is String) return value.trim();
   return value.toString().trim();
+}
+
+List<String> _readStringList(Object? value) {
+  if (value == null) return const [];
+  if (value is List) {
+    return value.map((e) => _readString(e)).where((s) => s.isNotEmpty).toList();
+  }
+  return const [];
 }
 
 bool? _readBoolNullable(Object? value) {

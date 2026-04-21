@@ -53,3 +53,12 @@ final appDefaultModeProvider = Provider<Mode?>((ref) {
       .watch(appConfigProvider)
       .maybeWhen(data: (config) => config.defaultMode, orElse: () => null);
 });
+
+final blockedNodeKeywordsProvider = Provider<List<String>>((ref) {
+  return ref
+      .watch(appConfigProvider)
+      .maybeWhen(
+        data: (config) => config.blockedNodeKeywords,
+        orElse: () => const [],
+      );
+});

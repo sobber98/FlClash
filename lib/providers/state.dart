@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'app.dart';
+import 'app_config.dart';
 import 'config.dart';
 import 'database.dart';
 
@@ -243,20 +244,47 @@ ProfilesState profilesState(Ref ref) {
 @riverpod
 GroupsState filterGroupsState(Ref ref, String query) {
   final currentGroups = ref.watch(currentGroupsStateProvider);
-  if (query.isEmpty) {
-    return currentGroups;
-  }
+  final blockedKeywords = ref.watch(blockedNodeKeywordsProvider);
+  final allGroups = currentGroups.value;
+
+  // Known group types to exclude from the proxy list inside a group.
+  // URLTest (自动选择) is intentionally kept — it is a useful auto-pick option.
+  const hiddenGroupTypes = {'Selector', 'Fallback', 'LoadBalance', 'Relay'};
+
+  // Only show Selector-type groups as top-level tabs.
+  // This hides Fallback / URLTest groups from the tab bar.
+  final selectorGroups =
+      allGroups.where((g) => g.type == GroupType.Selector).toList();
+  final displayGroups =
+      selectorGroups.isNotEmpty ? selectorGroups : allGroups;
+
   final lowQuery = query.toLowerCase();
-  final groups = currentGroups.value
-      .map((group) {
-        return group.copyWith(
-          all: group.all
-              .where((proxy) => proxy.name.toLowerCase().contains(lowQuery))
-              .toList(),
-        );
-      })
-      .where((group) => group.all.isNotEmpty)
-      .toList();
+
+  final groups = displayGroups.map((group) {
+    var proxies = group.all.where((proxy) {
+      // Filter out non-URLTest group-type proxies (e.g. Fallback, Selector).
+      if (hiddenGroupTypes.contains(proxy.type)) { return false; }
+      // Apply compile-time blocked keyword filter.
+      if (blockedKeywords.any(
+        (kw) => kw.isNotEmpty && proxy.name.contains(kw),
+      )) { return false; }
+      // Apply search query filter.
+      if (query.isNotEmpty &&
+          !proxy.name.toLowerCase().contains(lowQuery)) { return false; }
+      return true;
+    }).toList();
+
+    // URLTest proxies (自动选择) are sorted to the top of the list.
+    proxies.sort((a, b) {
+      final aIsAuto = a.type == 'URLTest';
+      final bIsAuto = b.type == 'URLTest';
+      if (aIsAuto == bIsAuto) return 0;
+      return aIsAuto ? -1 : 1;
+    });
+
+    return group.copyWith(all: proxies);
+  }).where((group) => group.all.isNotEmpty).toList();
+
   return currentGroups.copyWith(value: groups);
 }
 

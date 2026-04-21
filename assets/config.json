@@ -4,5 +4,6 @@
   "appName": "FlClash",
   "enableRegistration": true,
   "supportEmail": "",
-  "telegramGroup": ""
+  "telegramGroup": "",
+  "blockedNodeKeywords": ["剩余流量", "套餐到期", "官网", "群组", "重置流量"]
 }

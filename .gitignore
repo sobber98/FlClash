@@ -70,3 +70,4 @@ devtools_options.yaml
 # FVM Version Cache
 .fvm/
 .fvmrc
+.github/copilot-instructions.md

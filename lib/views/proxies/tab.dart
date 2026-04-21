@@ -178,6 +178,22 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
       );
     }
     _keyMap = {};
+
+    // When there is only one group, skip the tab bar entirely and show the
+    // node list directly — giving a clean, flat proxy list view.
+    if (groups.length == 1) {
+      final group = groups.first;
+      return ProxyGroupView(
+        key: _keyMap.updateCacheValue(
+          group.name,
+          () => GlobalObjectKey<_ProxyGroupViewState>(group.name),
+        ),
+        group: group,
+        columns: state.columns,
+        cardType: state.proxyCardType,
+      );
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
