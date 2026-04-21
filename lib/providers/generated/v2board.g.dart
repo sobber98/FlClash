@@ -219,7 +219,7 @@ final class V2boardPlansProvider
   }
 }
 
-String _$v2boardPlansHash() => r'3c2360e85b8f0771db6e51b5183e8a9d2c9bd8db';
+String _$v2boardPlansHash() => r'4d5d717f95ed7bfccb3692db6c0c71e130d67f38';
 
 abstract class _$V2boardPlans extends $Notifier<AsyncValue<List<V2BoardPlan>>> {
   AsyncValue<List<V2BoardPlan>> build();
@@ -282,7 +282,7 @@ final class V2boardNoticesProvider
   }
 }
 
-String _$v2boardNoticesHash() => r'3ffa3a4b13175a849bdd286c6b6c2615c426ab1d';
+String _$v2boardNoticesHash() => r'68104e67123ea103f2df2eb260a0497b421291bc';
 
 abstract class _$V2boardNotices
     extends $Notifier<AsyncValue<List<V2BoardNotice>>> {
