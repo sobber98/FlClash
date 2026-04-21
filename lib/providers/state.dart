@@ -251,10 +251,21 @@ GroupsState filterGroupsState(Ref ref, String query) {
   // URLTest (自动选择) is intentionally kept — it is a useful auto-pick option.
   const hiddenGroupTypes = {'Selector', 'Fallback', 'LoadBalance', 'Relay'};
 
+  // Built-in special proxies that should never appear in the node list.
+  const hiddenProxyNames = {'DIRECT', 'REJECT'};
+
   // Only show Selector-type groups as top-level tabs.
-  // This hides Fallback / URLTest groups from the tab bar.
-  final selectorGroups =
-      allGroups.where((g) => g.type == GroupType.Selector).toList();
+  // In global mode the GLOBAL group is present — show only it to avoid
+  // duplicate tabs (e.g. GLOBAL + v2box both being Selector type).
+  // In rule/direct mode currentGroupsState already excludes GLOBAL, so we
+  // just keep all Selector groups.
+  final globalGroup = allGroups
+      .where((g) => g.name == GroupName.GLOBAL.name)
+      .cast<Group?>()
+      .firstOrNull;
+  final selectorGroups = globalGroup != null
+      ? [globalGroup]
+      : allGroups.where((g) => g.type == GroupType.Selector).toList();
   final displayGroups =
       selectorGroups.isNotEmpty ? selectorGroups : allGroups;
 
@@ -264,6 +275,8 @@ GroupsState filterGroupsState(Ref ref, String query) {
     var proxies = group.all.where((proxy) {
       // Filter out non-URLTest group-type proxies (e.g. Fallback, Selector).
       if (hiddenGroupTypes.contains(proxy.type)) { return false; }
+      // Filter out built-in special proxies (DIRECT, REJECT).
+      if (hiddenProxyNames.contains(proxy.name)) { return false; }
       // Apply compile-time blocked keyword filter.
       if (blockedKeywords.any(
         (kw) => kw.isNotEmpty && proxy.name.contains(kw),
