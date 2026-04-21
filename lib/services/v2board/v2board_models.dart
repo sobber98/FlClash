@@ -311,6 +311,19 @@ abstract class V2BoardProps with _$V2BoardProps {
       _$V2BoardPropsFromJson(json);
 }
 
+String resolveV2BoardServerUrl({
+  required String configuredServerUrl,
+  V2BoardProps? props,
+}) {
+  final normalizedConfiguredServerUrl = configuredServerUrl
+      .trim()
+      .replaceFirst(RegExp(r'/+$'), '');
+  if (normalizedConfiguredServerUrl.isNotEmpty) {
+    return normalizedConfiguredServerUrl;
+  }
+  return props?.serverUrl.trim().replaceFirst(RegExp(r'/+$'), '') ?? '';
+}
+
 extension V2BoardPropsExt on V2BoardProps {
   bool get isLoggedIn =>
       authData.isNotEmpty &&

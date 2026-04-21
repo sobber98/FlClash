@@ -31,6 +31,12 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
   }
 
   Future<void> _openComposer() async {
+    final tickets = ref.read(v2boardTicketsProvider).asData?.value;
+    final hasOpenTicket = tickets?.any((ticket) => !ticket.isClosed) ?? false;
+    if (hasOpenTicket) {
+      globalState.showNotifier('存在其它工单尚未处理，请先等待回复或关闭当前工单');
+      return;
+    }
     final draft = await globalState.showCommonDialog<_TicketDraft>(
       context: context,
       child: const _TicketComposerDialog(),
@@ -47,11 +53,14 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
       _creating = true;
     });
     try {
-      await api.createTicket(
+      final created = await api.createTicket(
         subject: draft.subject,
         level: draft.level,
         message: draft.message,
       );
+      if (!created) {
+        throw const V2BoardApiException('工单创建失败');
+      }
       await _refresh();
       if (!mounted) {
         return;
@@ -328,7 +337,10 @@ class _TicketDetailViewState extends ConsumerState<TicketDetailView> {
       _submitting = true;
     });
     try {
-      await api.replyTicket(id: ticket.id, message: message);
+      final replied = await api.replyTicket(id: ticket.id, message: message);
+      if (!replied) {
+        throw const V2BoardApiException('工单回复失败');
+      }
       _replyController.clear();
       await _loadTicket();
       await ref.read(v2boardTicketsProvider.notifier).refresh();
@@ -375,7 +387,10 @@ class _TicketDetailViewState extends ConsumerState<TicketDetailView> {
       _submitting = true;
     });
     try {
-      await api.closeTicket(ticket.id);
+      final closed = await api.closeTicket(ticket.id);
+      if (!closed) {
+        throw const V2BoardApiException('工单关闭失败');
+      }
       await _loadTicket();
       await ref.read(v2boardTicketsProvider.notifier).refresh();
       if (!mounted) {

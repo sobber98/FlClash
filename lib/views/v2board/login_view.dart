@@ -47,12 +47,10 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
   }
 
   String _resolveServerUrl() {
-    final configuredServer = ref.read(appServerUrlProvider).trim();
-    if (configuredServer.isNotEmpty) {
-      return configuredServer;
-    }
-    final storedServer = ref.read(v2boardSettingProvider)?.serverUrl.trim();
-    return storedServer ?? '';
+    return resolveV2BoardServerUrl(
+      configuredServerUrl: ref.read(appServerUrlProvider),
+      props: ref.read(v2boardSettingProvider),
+    );
   }
 
   void _showServerUnavailableTip() {
@@ -293,12 +291,10 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
   }
 
   String _resolveServerUrl() {
-    final configuredServer = ref.read(appServerUrlProvider).trim();
-    if (configuredServer.isNotEmpty) {
-      return configuredServer;
-    }
-    final storedServer = ref.read(v2boardSettingProvider)?.serverUrl.trim();
-    return storedServer ?? '';
+    return resolveV2BoardServerUrl(
+      configuredServerUrl: ref.read(appServerUrlProvider),
+      props: ref.read(v2boardSettingProvider),
+    );
   }
 
   void _showServerUnavailableTip() {

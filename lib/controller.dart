@@ -365,9 +365,10 @@ extension ProfilesControllerExt on AppController {
   Future<String?> syncV2BoardSubscription() async {
     final props = _ref.read(v2boardSettingProvider);
     final configuredServerUrl = _ref.read(appServerUrlProvider);
-    final serverUrl = props?.serverUrl.trim().isNotEmpty == true
-        ? props!.serverUrl.trim()
-        : configuredServerUrl.trim();
+    final serverUrl = resolveV2BoardServerUrl(
+      configuredServerUrl: configuredServerUrl,
+      props: props,
+    );
     if (props == null || !props.isLoggedIn || serverUrl.isEmpty) {
       return 'V2Board is not logged in';
     }
@@ -458,10 +459,16 @@ extension ProfilesControllerExt on AppController {
   void initV2BoardOnStart() {
     final props = _ref.read(v2boardSettingProvider);
     final configuredServerUrl = _ref.read(appServerUrlProvider);
-    final serverUrl = props?.serverUrl.trim().isNotEmpty == true
-        ? props!.serverUrl.trim()
-        : configuredServerUrl.trim();
+    final serverUrl = resolveV2BoardServerUrl(
+      configuredServerUrl: configuredServerUrl,
+      props: props,
+    );
     if (props == null || !props.isLoggedIn || serverUrl.isEmpty) return;
+    if (props.serverUrl.trim() != serverUrl) {
+      _ref.read(v2boardSettingProvider.notifier).value = props.copyWith(
+        serverUrl: serverUrl,
+      );
+    }
     _ref
         .read(v2boardApiClientProvider.notifier)
         .init(serverUrl, authData: props.authData);

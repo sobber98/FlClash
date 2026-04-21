@@ -34,8 +34,9 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
   String _statusText(int status) {
     return switch (status) {
       0 => '待支付',
-      1 => '已支付',
+      1 => '开通中',
       2 => '已取消',
+      3 => '已完成',
       _ => '未知',
     };
   }
@@ -43,8 +44,9 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
   Color _statusColor(int status) {
     return switch (status) {
       0 => const Color(0xFFB45309),
-      1 => const Color(0xFF047857),
+      1 => const Color(0xFF2563EB),
       2 => const Color(0xFF6B7280),
+      3 => const Color(0xFF047857),
       _ => const Color(0xFF4B5563),
     };
   }
@@ -52,8 +54,9 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
   Color _statusBackground(int status) {
     return switch (status) {
       0 => const Color(0xFFFFF7ED),
-      1 => const Color(0xFFECFDF5),
+      1 => const Color(0xFFEFF6FF),
       2 => const Color(0xFFF3F4F6),
+      3 => const Color(0xFFECFDF5),
       _ => const Color(0xFFF3F4F6),
     };
   }
@@ -188,15 +191,21 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
         child: ordersState.when(
           data: (orders) {
             final pendingCount = orders.where((order) => order.status == 0).length;
-            final paidCount = orders.where((order) => order.status == 1).length;
-            final totalPaid = orders
-                .where((order) => order.status == 1)
+            final completedCount = orders
+                .where((order) => order.status == 3)
+                .length;
+            final totalCompleted = orders
+                .where((order) => order.status == 3)
                 .fold<int>(0, (sum, order) => sum + order.totalAmount);
             if (orders.isEmpty) {
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: const [
-                  _OrdersHeader(pendingCount: 0, paidCount: 0, totalPaid: '¥0.00'),
+                  _OrdersHeader(
+                    pendingCount: 0,
+                    completedCount: 0,
+                    totalCompleted: '¥0.00',
+                  ),
                   SizedBox(height: 16),
                   _OrdersEmptyState(),
                 ],
@@ -211,8 +220,8 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
                     padding: const EdgeInsets.only(bottom: 16),
                     child: _OrdersHeader(
                       pendingCount: pendingCount,
-                      paidCount: paidCount,
-                      totalPaid: _formatPrice(totalPaid),
+                      completedCount: completedCount,
+                      totalCompleted: _formatPrice(totalCompleted),
                     ),
                   );
                 }
@@ -252,7 +261,11 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
           error: (error, _) => ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              const _OrdersHeader(pendingCount: 0, paidCount: 0, totalPaid: '¥0.00'),
+              const _OrdersHeader(
+                pendingCount: 0,
+                completedCount: 0,
+                totalCompleted: '¥0.00',
+              ),
               const SizedBox(height: 16),
               _OrdersErrorState(error: error),
             ],
@@ -266,13 +279,13 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
 
 class _OrdersHeader extends StatelessWidget {
   final int pendingCount;
-  final int paidCount;
-  final String totalPaid;
+  final int completedCount;
+  final String totalCompleted;
 
   const _OrdersHeader({
     required this.pendingCount,
-    required this.paidCount,
-    required this.totalPaid,
+    required this.completedCount,
+    required this.totalCompleted,
   });
 
   @override
@@ -319,15 +332,15 @@ class _OrdersHeader extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _OrdersMetric(
-                  label: '已支付',
-                  value: '$paidCount',
+                  label: '已完成',
+                  value: '$completedCount',
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _OrdersMetric(
                   label: '累计支付',
-                  value: totalPaid,
+                  value: totalCompleted,
                 ),
               ),
             ],

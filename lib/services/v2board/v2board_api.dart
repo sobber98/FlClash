@@ -67,6 +67,39 @@ class V2BoardApi {
     throw V2BoardApiException('Invalid response format');
   }
 
+  bool _extractBooleanResult(
+    Response response, {
+    required String fallbackMessage,
+  }) {
+    final body = _extractData(response);
+    final data = body['data'];
+    if (_isTruthyData(data)) {
+      return true;
+    }
+    final message = body['message']?.toString().trim() ?? '';
+    throw V2BoardApiException(
+      message.isNotEmpty ? message : fallbackMessage,
+      statusCode: response.statusCode,
+    );
+  }
+
+  bool _isTruthyData(dynamic data) {
+    if (data == null || data == false) {
+      return false;
+    }
+    if (data is num) {
+      return data != 0;
+    }
+    if (data is String) {
+      final normalized = data.trim().toLowerCase();
+      return normalized.isNotEmpty &&
+          normalized != '0' &&
+          normalized != 'false' &&
+          normalized != 'null';
+    }
+    return true;
+  }
+
   // --- Guest ---
 
   Future<V2BoardCommConfig> getGuestCommConfig() async {
@@ -131,8 +164,10 @@ class V2BoardApi {
         data: {'email': email, 'isforget': isForget ? '1' : '0'},
       ),
     );
-    final body = _extractData(response);
-    return body['data'] == true;
+    return _extractBooleanResult(
+      response,
+      fallbackMessage: 'Failed to send email verification',
+    );
   }
 
   Future<bool> forgetPassword({
@@ -146,8 +181,10 @@ class V2BoardApi {
         data: {'email': email, 'password': password, 'email_code': emailCode},
       ),
     );
-    final body = _extractData(response);
-    return body['data'] == true;
+    return _extractBooleanResult(
+      response,
+      fallbackMessage: 'Failed to reset password',
+    );
   }
 
   // --- User ---
@@ -233,9 +270,10 @@ class V2BoardApi {
         data: {'subject': subject, 'level': level, 'message': message},
       ),
     );
-    final body = _extractData(response);
-    final data = body['data'];
-    return data == true || data != null;
+    return _extractBooleanResult(
+      response,
+      fallbackMessage: 'Failed to create ticket',
+    );
   }
 
   Future<bool> replyTicket({required int id, required String message}) async {
@@ -245,18 +283,20 @@ class V2BoardApi {
         data: {'id': id, 'message': message},
       ),
     );
-    final body = _extractData(response);
-    final data = body['data'];
-    return data == true || data != null;
+    return _extractBooleanResult(
+      response,
+      fallbackMessage: 'Failed to reply ticket',
+    );
   }
 
   Future<bool> closeTicket(int id) async {
     final response = await _request(
       () => _dio.post(_endpoints.ticketClose, data: {'id': id}),
     );
-    final body = _extractData(response);
-    final data = body['data'];
-    return data == true || data != null;
+    return _extractBooleanResult(
+      response,
+      fallbackMessage: 'Failed to close ticket',
+    );
   }
 
   Future<Map<String, dynamic>> createOrder({
@@ -326,12 +366,12 @@ class V2BoardApi {
       return data;
     }
     if (data is num) {
-      return data != 0;
+      return data == 3;
     }
     if (data is Map<String, dynamic>) {
       final status = data['status'];
       if (status is num) {
-        return status == 1;
+        return status == 3;
       }
       final paid = data['paid'];
       if (paid is bool) {
