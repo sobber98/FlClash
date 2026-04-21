@@ -31,6 +31,9 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
   }
 
   Future<void> _openComposer() async {
+    // Refresh from server first to avoid stale-cache false negatives
+    await _refresh();
+    if (!mounted) return;
     final tickets = ref.read(v2boardTicketsProvider).asData?.value;
     final hasOpenTicket = tickets?.any((ticket) => !ticket.isClosed) ?? false;
     if (hasOpenTicket) {
@@ -67,6 +70,8 @@ class _TicketListViewState extends ConsumerState<TicketListView> {
       }
       globalState.showNotifier('工单已创建');
     } catch (error) {
+      // Refresh so user sees any open ticket that blocked creation
+      await _refresh();
       if (!mounted) {
         return;
       }
