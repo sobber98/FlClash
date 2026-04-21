@@ -7,6 +7,7 @@
 - [项目概述](#项目概述)
 - [技术栈](#技术栈)
 - [目录结构](#目录结构)
+- [运行时配置](#运行时配置)
 - [架构设计](#架构设计)
   - [整体架构](#整体架构)
   - [Flutter 应用层](#flutter-应用层)
@@ -174,6 +175,23 @@ FlClash/
 ├── analysis_options.yaml         # Lint 配置
 └── distribute_options.yaml       # 分发配置
 ```
+
+---
+
+## 运行时配置
+
+应用启动时会读取 [assets/config.json](../assets/config.json) 作为运行时品牌与服务端配置，主要字段如下：
+
+- `serverUrl`: V2Board API 地址
+- `ossUrl`: 远程配置地址，配置后会与本地配置合并
+- `appName`: 应用展示名称
+- `enableRegistration`: 是否显示注册入口
+- `supportEmail`: 在线客服邮箱
+- `officialWebsite`: 官方网站地址，个人中心中的“官方网站”按钮优先使用该字段
+- `telegramGroup`: Telegram 群组或链接
+- `blockedNodeKeywords`: 节点过滤关键字列表
+
+未配置 `officialWebsite` 时，界面仍会回退到历史兼容逻辑，从扩展字段或 `serverUrl` 推导官网地址。
 
 ---
 

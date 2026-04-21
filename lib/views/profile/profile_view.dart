@@ -167,9 +167,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 user: user,
                 subscription: subscription,
                 planName:
-                    currentPlan?.name ??
-                    subscription?.plan?.name ??
-                    '未分配套餐',
+                    currentPlan?.name ?? subscription?.plan?.name ?? '未分配套餐',
               ),
               const SizedBox(height: 16),
               _UsageCard(user: user, subscription: subscription),
@@ -433,6 +431,10 @@ class _SupportSection extends ConsumerWidget {
   }
 
   String _websiteUrl(String serverUrl) {
+    final configuredWebsite = appConfig.resolvedOfficialWebsite;
+    if (configuredWebsite.isNotEmpty) {
+      return configuredWebsite;
+    }
     final extras = appConfig.extras;
     final candidates = [
       extras['websiteUrl'],

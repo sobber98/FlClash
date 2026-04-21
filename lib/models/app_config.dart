@@ -8,6 +8,7 @@ class AppConfig {
   final Mode? defaultMode;
   final bool? enableRegistration;
   final String supportEmail;
+  final String officialWebsite;
   final String telegramGroup;
   final List<String> blockedNodeKeywords;
   final Map<String, dynamic> extras;
@@ -19,6 +20,7 @@ class AppConfig {
     this.defaultMode,
     this.enableRegistration,
     this.supportEmail = '',
+    this.officialWebsite = '',
     this.telegramGroup = '',
     this.blockedNodeKeywords = const [],
     this.extras = const {},
@@ -43,6 +45,9 @@ class AppConfig {
         json['enableRegistration'] ?? json['enable_registration'],
       ),
       supportEmail: _readString(json['supportEmail'] ?? json['support_email']),
+      officialWebsite: _readString(
+        json['officialWebsite'] ?? json['official_website'],
+      ),
       telegramGroup: _readString(
         json['telegramGroup'] ?? json['telegram_group'],
       ),
@@ -61,6 +66,7 @@ class AppConfig {
     bool? enableRegistration,
     bool clearEnableRegistration = false,
     String? supportEmail,
+    String? officialWebsite,
     String? telegramGroup,
     List<String>? blockedNodeKeywords,
     Map<String, dynamic>? extras,
@@ -74,6 +80,7 @@ class AppConfig {
           ? null
           : enableRegistration ?? this.enableRegistration,
       supportEmail: supportEmail ?? this.supportEmail,
+      officialWebsite: officialWebsite ?? this.officialWebsite,
       telegramGroup: telegramGroup ?? this.telegramGroup,
       blockedNodeKeywords: blockedNodeKeywords ?? this.blockedNodeKeywords,
       extras: extras ?? this.extras,
@@ -92,6 +99,9 @@ class AppConfig {
       supportEmail: other.supportEmail.trim().isNotEmpty
           ? other.supportEmail
           : supportEmail,
+      officialWebsite: other.officialWebsite.trim().isNotEmpty
+          ? other.officialWebsite
+          : officialWebsite,
       telegramGroup: other.telegramGroup.trim().isNotEmpty
           ? other.telegramGroup
           : telegramGroup,
@@ -110,6 +120,7 @@ class AppConfig {
       'defaultMode': defaultMode?.name,
       'enableRegistration': enableRegistration,
       'supportEmail': supportEmail,
+      'officialWebsite': officialWebsite,
       'telegramGroup': telegramGroup,
       'blockedNodeKeywords': blockedNodeKeywords,
       ...extras,
@@ -124,6 +135,8 @@ class AppConfig {
     final value = appName.trim();
     return value.isEmpty ? constants.appName : value;
   }
+
+  String get resolvedOfficialWebsite => officialWebsite.trim();
 
   bool get resolvedEnableRegistration => enableRegistration ?? true;
 
@@ -140,6 +153,8 @@ class AppConfig {
     'enable_registration',
     'supportEmail',
     'support_email',
+    'officialWebsite',
+    'official_website',
     'telegramGroup',
     'telegram_group',
     'blockedNodeKeywords',
