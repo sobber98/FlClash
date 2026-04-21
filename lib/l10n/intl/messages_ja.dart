@@ -651,6 +651,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "V2Boardパネルにログインしてサブスクリプションを管理",
     ),
     "v2boardLogout": MessageLookupByLibrary.simpleMessage("ログアウト"),
+    "v2boardLogoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "ログアウトしてもよろしいですか？再度ログインが必要になります。",
+    ),
     "v2boardNoExpire": MessageLookupByLibrary.simpleMessage("期限なし"),
     "v2boardNoPlan": MessageLookupByLibrary.simpleMessage("プランなし"),
     "v2boardNotices": MessageLookupByLibrary.simpleMessage("お知らせ"),

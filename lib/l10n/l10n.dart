@@ -3764,6 +3764,16 @@ class AppLocalizations {
     return Intl.message('Logout', name: 'v2boardLogout', desc: '', args: []);
   }
 
+  /// `Are you sure you want to logout?`
+  String get v2boardLogoutConfirm {
+    return Intl.message(
+      'Are you sure you want to logout?',
+      name: 'v2boardLogoutConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Server Address`
   String get v2boardServer {
     return Intl.message(

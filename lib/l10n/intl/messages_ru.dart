@@ -899,6 +899,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Войдите в панель V2Board для управления подпиской",
     ),
     "v2boardLogout": MessageLookupByLibrary.simpleMessage("Выйти"),
+    "v2boardLogoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "Вы уверены, что хотите выйти? Для доступа к функциям аккаунта потребуется повторный вход.",
+    ),
     "v2boardNoExpire": MessageLookupByLibrary.simpleMessage("Без срока"),
     "v2boardNoPlan": MessageLookupByLibrary.simpleMessage("Нет плана"),
     "v2boardNotices": MessageLookupByLibrary.simpleMessage("Объявления"),

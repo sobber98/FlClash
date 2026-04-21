@@ -577,6 +577,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "v2boardLogin": MessageLookupByLibrary.simpleMessage("登录"),
     "v2boardLoginDesc": MessageLookupByLibrary.simpleMessage("登录V2Board面板管理订阅"),
     "v2boardLogout": MessageLookupByLibrary.simpleMessage("退出登录"),
+    "v2boardLogoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "确定要退出登录吗？退出后需重新登录才能使用账户功能。",
+    ),
     "v2boardNoExpire": MessageLookupByLibrary.simpleMessage("无到期时间"),
     "v2boardNoPlan": MessageLookupByLibrary.simpleMessage("暂无套餐"),
     "v2boardNotices": MessageLookupByLibrary.simpleMessage("公告"),

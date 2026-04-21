@@ -32,11 +32,19 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
     ref.read(v2boardTicketsProvider.notifier).refresh();
   }
 
-  void _logout() {
+  Future<void> _logout() async {
+    final confirmed = await globalState.showMessage(
+      title: appLocalizations.v2boardLogout,
+      message: TextSpan(text: appLocalizations.v2boardLogoutConfirm),
+      confirmText: appLocalizations.v2boardLogout,
+    );
+    if (confirmed != true) return;
     ref.read(v2boardSettingProvider.notifier).value = null;
     ref.read(v2boardApiClientProvider.notifier).clear();
     ref.read(v2boardUserProvider.notifier).clear();
     ref.read(v2boardSubscriptionProvider.notifier).clear();
+    ref.read(v2boardPlansProvider.notifier).clear();
+    ref.read(v2boardNoticesProvider.notifier).clear();
     ref.read(v2boardTicketsProvider.notifier).clear();
   }
 
@@ -311,6 +319,17 @@ class _V2BoardAccountViewState extends ConsumerState<V2BoardAccountView> {
               context,
             ).push(MaterialPageRoute(builder: (_) => const TicketListView()));
           },
+        ),
+        ListItem(
+          leading: Icon(
+            Icons.logout,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          title: Text(
+            appLocalizations.v2boardLogout,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+          onTap: _logout,
         ),
       ],
     );

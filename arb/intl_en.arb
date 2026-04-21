@@ -479,6 +479,7 @@
   "v2boardLoginDesc": "Login to V2Board panel to manage subscription",
   "v2boardRegister": "Register",
   "v2boardLogout": "Logout",
+  "v2boardLogoutConfirm": "Are you sure you want to logout? You will need to login again to access account features.",
   "v2boardServer": "Server Address",
   "v2boardServerTip": "Please enter a valid URL starting with http",
   "v2boardPasswordTip": "Password must be at least 8 characters",

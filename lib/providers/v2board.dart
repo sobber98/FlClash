@@ -90,6 +90,10 @@ class V2boardPlans extends _$V2boardPlans {
       state = AsyncError(e, StackTrace.current);
     }
   }
+
+  void clear() {
+    state = const AsyncData([]);
+  }
 }
 
 @riverpod
@@ -109,5 +113,9 @@ class V2boardNotices extends _$V2boardNotices {
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
+  }
+
+  void clear() {
+    state = const AsyncData([]);
   }
 }

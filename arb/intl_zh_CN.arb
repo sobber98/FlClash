@@ -480,6 +480,7 @@
   "v2boardLoginDesc": "登录V2Board面板管理订阅",
   "v2boardRegister": "注册",
   "v2boardLogout": "退出登录",
+  "v2boardLogoutConfirm": "确定要退出登录吗？退出后需重新登录才能使用账户功能。",
   "v2boardServer": "服务器地址",
   "v2boardServerTip": "请输入以http开头的有效URL",
   "v2boardPasswordTip": "密码至少8位",

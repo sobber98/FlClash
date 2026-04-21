@@ -846,6 +846,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Login to V2Board panel to manage subscription",
     ),
     "v2boardLogout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "v2boardLogoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to logout? You will need to login again to access account features.",
+    ),
     "v2boardNoExpire": MessageLookupByLibrary.simpleMessage("No expiration"),
     "v2boardNoPlan": MessageLookupByLibrary.simpleMessage("No plan"),
     "v2boardNotices": MessageLookupByLibrary.simpleMessage("Notices"),
