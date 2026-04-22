@@ -4,6 +4,7 @@ import com.follow.clash.RunState
 import com.follow.clash.Service
 import com.follow.clash.State
 import com.follow.clash.common.Components
+import com.follow.clash.common.GlobalState
 import com.follow.clash.invokeMethodOnMainThread
 import com.follow.clash.models.SharedState
 import com.google.gson.Gson
@@ -95,8 +96,36 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler,
     fun handleSendEvent(value: String?) {
         launch(Dispatchers.Main) {
             semaphore.withPermit {
+                logCoreEvent(value)
                 flutterMethodChannel.invokeMethod("event", value)
             }
+        }
+    }
+
+    private fun logCoreEvent(value: String?) {
+        if (value.isNullOrEmpty()) {
+            return
+        }
+        runCatching {
+            val event = Gson().fromJson(value, Map::class.java)
+            when (event["type"]?.toString()) {
+                "log" -> {
+                    val data = event["data"] as? Map<*, *>
+                    val level = data?.get("LogLevel")?.toString()?.lowercase() ?: "info"
+                    val payload = data?.get("Payload")?.toString() ?: value
+                    GlobalState.log("[core/$level] $payload")
+                }
+
+                "crash" -> {
+                    GlobalState.log("[core/crash] ${event["data"]}")
+                }
+
+                "loaded" -> {
+                    GlobalState.log("[core/loaded] ${event["data"]}")
+                }
+            }
+        }.onFailure {
+            GlobalState.log("[core/raw] $value")
         }
     }
 
@@ -121,6 +150,7 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler,
             Service.setEventListener {
                 handleSendEvent(it)
             }.onSuccess {
+                Service.invokeAction("{\"id\":\"android-startLog\",\"method\":\"startLog\"}", null)
                 result.success("")
             }.onFailure {
                 result.success(it.message)

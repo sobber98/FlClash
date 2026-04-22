@@ -143,6 +143,7 @@ object State {
                 startService()
             },
             onResult = {
+                GlobalState.log("quickSetup result: ${if (it.isEmpty()) "<empty>" else it}")
                 if (it.isNotEmpty()) {
                     GlobalState.application.showToast(it)
                 }
