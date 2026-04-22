@@ -220,8 +220,9 @@ class VpnService : SystemVpnService(), IBaseService,
                     )
                 )
             }
-            establish()?.detachFd()
-                ?: throw NullPointerException("Establish VPN rejected by system")
+            establish()?.detachFd()?.also {
+                GlobalState.log("VPN established")
+            } ?: throw NullPointerException("Establish VPN rejected by system")
         }
         Core.startTun(
             fd,
@@ -231,6 +232,7 @@ class VpnService : SystemVpnService(), IBaseService,
             options.address,
             options.dns
         )
+        GlobalState.log("Core.startTun invoked")
     }
 
     override fun start() {
@@ -239,7 +241,9 @@ class VpnService : SystemVpnService(), IBaseService,
             State.options?.let {
                 handleStart(it)
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            GlobalState.log("VpnService start error: $e")
+            Log.e("VpnService", "start failed", e)
             stop()
         }
     }
