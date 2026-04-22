@@ -661,22 +661,26 @@ SharedState sharedState(Ref ref) {
           VM3(state.onlyStatisticsProxy, state.crashlytics, state.testUrl),
     ),
   );
-  final bypassDomain = ref.watch(
-    networkSettingProvider.select((state) => state.bypassDomain),
-  );
-  final clashConfigVM2 = ref.watch(
-    patchClashConfigProvider.select(
-      (state) => VM2(state.tun.stack.name, state.mixedPort),
+  final networkVM2 = ref.watch(
+    networkSettingProvider.select(
+      (state) => VM2(state.bypassDomain, state.routeMode),
     ),
   );
+  final mixedPort = ref.watch(
+    patchClashConfigProvider.select((state) => state.mixedPort),
+  );
+  final tun = ref.watch(patchClashConfigProvider.select((state) => state.tun));
   final vpnSetting = ref.watch(vpnSettingProvider);
   final currentProfileName = currentProfileVM2.a;
   final selectedMap = currentProfileVM2.b;
   final onlyStatisticsProxy = appSettingVM3.a;
   final crashlytics = appSettingVM3.b;
   final testUrl = appSettingVM3.c;
-  final stack = clashConfigVM2.a;
-  final port = clashConfigVM2.b;
+  final bypassDomain = networkVM2.a;
+  final routeMode = networkVM2.b;
+  final realTun = tun.getRealTun(routeMode);
+  final stack = realTun.stack.name;
+  final port = mixedPort;
   return SharedState(
     currentProfileName: currentProfileName,
     onlyStatisticsProxy: onlyStatisticsProxy,
@@ -695,6 +699,7 @@ SharedState sharedState(Ref ref) {
       accessControlProps: vpnSetting.accessControlProps,
       allowBypass: vpnSetting.allowBypass,
       bypassDomain: bypassDomain,
+      routeAddress: realTun.routeAddress,
     ),
   );
 }
