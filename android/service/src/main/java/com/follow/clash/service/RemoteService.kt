@@ -104,10 +104,13 @@ class RemoteService : Service(),
             callback: ICallbackInterface,
             onStarted: IVoidInterface
         ) {
+            GlobalState.log("quickSetup: Core.quickSetup starting")
             Core.quickSetup(initParamsString, setupParamsString) {
+                GlobalState.log("quickSetup: Core callback fired, result len=${it?.length ?: -1}")
                 launch {
                     runCatching {
                         val chunks = it?.chunkedForAidl() ?: listOf()
+                        GlobalState.log("quickSetup: sending ${chunks.size} chunk(s)")
                         for ((index, chunk) in chunks.withIndex()) {
                             suspendCancellableCoroutine { cont ->
                                 callback.onResult(
@@ -121,6 +124,9 @@ class RemoteService : Service(),
                                 )
                             }
                         }
+                        GlobalState.log("quickSetup: all chunks sent")
+                    }.onFailure {
+                        GlobalState.log("quickSetup: callback error: ${it.message}")
                     }
                 }
             }

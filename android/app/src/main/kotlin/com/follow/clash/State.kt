@@ -136,6 +136,7 @@ object State {
         initParams["version"] = android.os.Build.VERSION.SDK_INT
         val initParamsString = Gson().toJson(initParams)
         val setupParamsString = Gson().toJson(sharedState.setupParams)
+        GlobalState.log("setupAndStart: calling quickSetup")
         Service.quickSetup(
             initParamsString,
             setupParamsString,
