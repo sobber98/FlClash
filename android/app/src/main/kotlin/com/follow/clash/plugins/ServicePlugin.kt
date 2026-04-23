@@ -150,7 +150,13 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler,
             Service.setEventListener {
                 handleSendEvent(it)
             }.onSuccess {
-                Service.invokeAction("{\"id\":\"android-startLog\",\"method\":\"startLog\"}", null)
+                val startLogResult = Service.invokeAction(
+                    "{\"id\":\"android-startLog\",\"method\":\"startLog\"}",
+                    null
+                )
+                GlobalState.log(
+                    "core startLog request: ${startLogResult.exceptionOrNull()?.message ?: "ok"}"
+                )
                 result.success("")
             }.onFailure {
                 result.success(it.message)
