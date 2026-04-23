@@ -76,7 +76,10 @@ class RemoteService : Service(),
 
     private val binder = object : IRemoteInterface.Stub() {
         override fun invokeAction(data: String, callback: ICallbackInterface) {
+            val method = try { org.json.JSONObject(data).optString("method", "?") } catch (_: Exception) { "?" }
+            GlobalState.log("invokeAction: $method")
             Core.invokeAction(data) {
+                GlobalState.log("invokeAction result: $method len=${it?.length ?: -1}")
                 launch {
                     runCatching {
                         val chunks = it?.chunkedForAidl() ?: listOf()
@@ -93,6 +96,8 @@ class RemoteService : Service(),
                                 )
                             }
                         }
+                    }.onFailure {
+                        GlobalState.log("invokeAction callback error: $method ${it.message}")
                     }
                 }
             }
@@ -174,6 +179,8 @@ class RemoteService : Service(),
                                     )
                                 }
                             }
+                        }.onFailure {
+                            GlobalState.log("setEventListener event error: ${it.message}")
                         }
                     }
                 }
