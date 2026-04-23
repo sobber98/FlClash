@@ -232,7 +232,7 @@ class VpnService : SystemVpnService(), IBaseService,
             options.address,
             options.dns
         )
-        GlobalState.log("Core.startTun invoked")
+        GlobalState.log("Core.startTun invoked stack=${options.stack} address=${options.address} dns=${options.dns} routeAddress=${options.routeAddress}")
     }
 
     override fun start() {
