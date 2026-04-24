@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _detailBackground = Color(0xFFF5F6F8);
 const _cardTextColor = Color(0xFF0F172A);
-const _cardSubtitleColor = Color(0xFF6B7280);
 
 class PlanDetailView extends ConsumerStatefulWidget {
   final V2BoardPlan plan;
