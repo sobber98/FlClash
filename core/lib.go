@@ -44,11 +44,9 @@ func (th *TunHandler) start(fd int, stack, address, dns string) {
 	th.initHook()
 	tunListener := t.Start(fd, stack, address, dns)
 	if tunListener != nil {
-		log.Errorln("[TUN] listener started OK, address=%v", tunListener.Address())
 		th.listener = tunListener
 		return
 	}
-	log.Errorln("[TUN] listener is nil after t.Start — TUN failed to start")
 	th.clear()
 }
 

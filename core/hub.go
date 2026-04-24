@@ -470,7 +470,6 @@ func handleStartLog() {
 		logSubscriber = nil
 	}
 	logSubscriber = log.Subscribe()
-	log.Errorln("[APP] startLog: log subscriber active, level=%v", log.Level())
 	go func() {
 		for logData := range logSubscriber {
 			if logData.LogLevel < log.Level() {

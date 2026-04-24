@@ -17,7 +17,6 @@ import (
 func Start(fd int, stack string, address, dns string) *sing_tun.Listener {
 	var prefix4 []netip.Prefix
 	var prefix6 []netip.Prefix
-	log.Errorln("[TUN] Start fd=%d stack=%s address=%s dns=%s", fd, stack, address, dns)
 	tunStack, ok := constant.StackTypeMapping[strings.ToLower(stack)]
 	if !ok {
 		tunStack = constant.TunSystem
@@ -68,6 +67,5 @@ func Start(fd int, stack string, address, dns string) *sing_tun.Listener {
 		return nil
 	}
 
-	log.Errorln("[TUN] sing_tun started successfully address4=%v address6=%v dnsHijack=%v", prefix4, prefix6, dnsHijack)
 	return listener
 }
