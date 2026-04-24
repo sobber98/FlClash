@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _detailBackground = Color(0xFFF5F6F8);
+const _cardTextColor = Color(0xFF0F172A);
+const _cardSubtitleColor = Color(0xFF6B7280);
 
 class PlanDetailView extends ConsumerStatefulWidget {
   final V2BoardPlan plan;
@@ -283,6 +285,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                       '支付方式',
                       style: context.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
+                        color: _cardTextColor,
                       ),
                     ),
                   ),
@@ -372,6 +375,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                               style: context.textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.8,
+                                color: _cardTextColor,
                               ),
                             ),
                           ],
@@ -468,6 +472,7 @@ class _DetailHeroCard extends StatelessWidget {
             style: context.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -1,
+              color: _cardTextColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -561,6 +566,7 @@ class _SectionCard extends StatelessWidget {
             style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.6,
+              color: _cardTextColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -601,6 +607,7 @@ class _SummaryRow extends StatelessWidget {
             textAlign: TextAlign.right,
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
+              color: _cardTextColor,
             ),
           ),
         ),

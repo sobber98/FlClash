@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _marketBackground = Color(0xFFF5F6F8);
+const _cardTextColor = Color(0xFF0F172A);
+const _cardSubtitleColor = Color(0xFF6B7280);
 
 enum _PlanFilter { all, recurring, onetime }
 
@@ -90,6 +92,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                           style: context.textTheme.displaySmall?.copyWith(
                             fontWeight: FontWeight.w800,
                             letterSpacing: -1,
+                            color: _cardTextColor,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -300,6 +303,7 @@ class _PlanCard extends StatelessWidget {
               style: context.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.8,
+                color: _cardTextColor,
               ),
             ),
             const SizedBox(height: 6),
@@ -477,6 +481,7 @@ class _MarketLoginNotice extends StatelessWidget {
             '登录后即可查看套餐与购买记录',
             style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
+              color: _cardTextColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -536,7 +541,9 @@ class _EmptyMarketState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text('当前分类下暂无可购买套餐。', style: context.textTheme.titleMedium),
+      child: Text('当前分类下暂无可购买套餐。',
+          style: context.textTheme.titleMedium
+              ?.copyWith(color: _cardSubtitleColor)),
     );
   }
 }
@@ -554,7 +561,9 @@ class _MarketErrorState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text(error.toString(), style: context.textTheme.titleMedium),
+      child: Text(error.toString(),
+          style: context.textTheme.titleMedium
+              ?.copyWith(color: _cardTextColor)),
     );
   }
 }
