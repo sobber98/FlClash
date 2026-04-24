@@ -107,21 +107,28 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler,
             return
         }
         runCatching {
-            val event = Gson().fromJson(value, Map::class.java)
-            when (event["type"]?.toString()) {
+            // value is an ActionResult JSON:
+            // {"id":"","method":"message","data":{"type":"log","data":{...}},"code":0}
+            val actionResult = Gson().fromJson(value, Map::class.java)
+            val message = actionResult["data"] as? Map<*, *>
+            when (message?.get("type")?.toString()) {
                 "log" -> {
-                    val data = event["data"] as? Map<*, *>
+                    val data = message["data"] as? Map<*, *>
                     val level = data?.get("LogLevel")?.toString()?.lowercase() ?: "info"
                     val payload = data?.get("Payload")?.toString() ?: value
                     GlobalState.log("[core/$level] $payload")
                 }
 
                 "crash" -> {
-                    GlobalState.log("[core/crash] ${event["data"]}")
+                    GlobalState.log("[core/crash] ${message["data"]}")
                 }
 
                 "loaded" -> {
-                    GlobalState.log("[core/loaded] ${event["data"]}")
+                    GlobalState.log("[core/loaded] ${message["data"]}")
+                }
+
+                else -> {
+                    GlobalState.log("[core/raw] $value")
                 }
             }
         }.onFailure {
