@@ -6,10 +6,11 @@ import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+const _authTextColor = Color(0xFF0F172A);
 const _authFieldBackground = Color(0xFFF6F7FB);
 const _authFieldBorder = Color(0xFFE8EBF1);
 const _authHintColor = Color(0xFFC3C8D1);
-const _authSubtitleColor = Color(0xFFB4BAC5);
+const _authSubtitleColor = Color(0xFF8B919E);
 
 class V2BoardLoginView extends ConsumerStatefulWidget {
   final bool showRegisterAction;
@@ -152,6 +153,7 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
               style: context.textTheme.displaySmall?.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: -1,
+                color: _authTextColor,
               ),
             ),
             const SizedBox(height: 10),
@@ -442,6 +444,7 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
                       style: context.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w800,
                         letterSpacing: -1,
+                        color: _authTextColor,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -704,6 +707,7 @@ class _AuthInput extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
+      style: const TextStyle(color: _authTextColor),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: _authHintColor),
@@ -718,7 +722,7 @@ class _AuthInput extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(color: Colors.black, width: 1.2),
+          borderSide: const BorderSide(color: _authTextColor, width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(28),
@@ -751,7 +755,7 @@ class _AuthPrimaryButton extends StatelessWidget {
       child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: Colors.black,
+          backgroundColor: _authTextColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
@@ -802,8 +806,8 @@ class _AuthSecondaryButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFF9AA0AA),
-          side: const BorderSide(color: _authFieldBorder),
+          foregroundColor: _authSubtitleColor,
+          side: const BorderSide(color: _authFieldBorder, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
@@ -812,6 +816,7 @@ class _AuthSecondaryButton extends StatelessWidget {
           label,
           style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
+            color: _authTextColor,
           ),
         ),
       ),
@@ -833,7 +838,7 @@ class _AuthCompactButton extends StatelessWidget {
     return FilledButton(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
-        backgroundColor: Colors.black,
+        backgroundColor: _authTextColor,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
