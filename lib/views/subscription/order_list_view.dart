@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _ordersBackground = Color(0xFFF5F6F8);
+const _cardTextColor = Color(0xFF0F172A);
 
 class OrderListView extends ConsumerStatefulWidget {
   const OrderListView({super.key});
@@ -311,6 +312,7 @@ class _OrdersHeader extends StatelessWidget {
             style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.8,
+              color: _cardTextColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -379,6 +381,7 @@ class _OrdersMetric extends StatelessWidget {
             value,
             style: context.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
+              color: _cardTextColor,
             ),
           ),
         ],
@@ -456,6 +459,7 @@ class _OrderCard extends StatelessWidget {
                       planName?.isNotEmpty == true ? planName! : '订阅服务订单',
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
+                        color: _cardTextColor,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -641,7 +645,10 @@ class _OrderInfoRow extends StatelessWidget {
             style: (emphasize
                     ? context.textTheme.titleMedium
                     : context.textTheme.bodyLarge)
-                ?.copyWith(fontWeight: FontWeight.w700),
+                ?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: _cardTextColor,
+            ),
           ),
         ),
       ],
@@ -662,7 +669,9 @@ class _OrdersEmptyState extends StatelessWidget {
       ),
       child: Text(
         '当前没有任何订单记录，下拉可以重新获取最新结果。',
-        style: context.textTheme.titleMedium,
+        style: context.textTheme.titleMedium?.copyWith(
+          color: _cardTextColor,
+        ),
       ),
     );
   }
@@ -681,7 +690,10 @@ class _OrdersErrorState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text(error.toString(), style: context.textTheme.titleMedium),
+      child: Text(error.toString(),
+          style: context.textTheme.titleMedium?.copyWith(
+            color: _cardTextColor,
+          )),
     );
   }
 }

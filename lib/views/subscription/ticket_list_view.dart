@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _ticketsBackground = Color(0xFFF5F6F8);
+const _cardTextColor = Color(0xFF0F172A);
 
 class TicketListView extends ConsumerStatefulWidget {
   const TicketListView({super.key});
@@ -726,6 +727,7 @@ class _TicketCard extends StatelessWidget {
                       ticket.subject.isEmpty ? '未命名工单' : ticket.subject,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
+                        color: _cardTextColor,
                       ),
                     ),
                   ),
@@ -848,6 +850,7 @@ class _TicketDetailHeader extends StatelessWidget {
             ticket.subject.isEmpty ? '未命名工单' : ticket.subject,
             style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
+              color: _cardTextColor,
             ),
           ),
           const SizedBox(height: 12),
@@ -904,6 +907,7 @@ class _TicketInfoRow extends StatelessWidget {
             textAlign: TextAlign.right,
             style: context.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w700,
+              color: _cardTextColor,
             ),
           ),
         ),
@@ -1001,6 +1005,7 @@ class _TicketEmptyState extends StatelessWidget {
             '当前没有任何工单记录。',
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
+              color: _cardTextColor,
             ),
           ),
           const SizedBox(height: 10),
@@ -1035,7 +1040,9 @@ class _TicketErrorState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text(error.toString(), style: context.textTheme.titleMedium),
+      child: Text(error.toString(), style: context.textTheme.titleMedium?.copyWith(
+        color: _cardTextColor,
+      )),
     );
   }
 }
@@ -1051,7 +1058,9 @@ class _TicketEmptyDetailState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text('没有获取到工单详情。', style: context.textTheme.titleMedium),
+      child: Text('没有获取到工单详情。', style: context.textTheme.titleMedium?.copyWith(
+        color: _cardTextColor,
+      )),
     );
   }
 }
