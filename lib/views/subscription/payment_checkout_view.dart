@@ -6,7 +6,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart'
-    as desktop_webview;
+  as desktop_webview;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -196,8 +196,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
       return;
     }
     try {
-      final version =
-          await windows_webview.WebviewController.getWebViewVersion();
+      final version = await windows_webview.WebviewController.getWebViewVersion();
       if (version == null) {
         if (!mounted) {
           return;
@@ -470,10 +469,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
 
   Future<void> _openLinuxPaymentWindow({bool auto = false}) async {
     final url = widget.paymentUrl;
-    if (!_usingLinuxPaymentWindow ||
-        url == null ||
-        url.isEmpty ||
-        _openingPayment) {
+    if (!_usingLinuxPaymentWindow || url == null || url.isEmpty || _openingPayment) {
       return;
     }
     setState(() {
@@ -662,17 +658,14 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   color: _stageBackground(),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   _stageTitle(),
-                  style: context.fixedTextTheme.labelLarge?.copyWith(
+                  style: context.textTheme.labelLarge?.copyWith(
                     color: _stageColor(),
                     fontWeight: FontWeight.w800,
                   ),
@@ -680,17 +673,14 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
               ),
               if (_supportsClientSidePayment)
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3F5F8),
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     _webViewStatusText(),
-                    style: context.fixedTextTheme.labelLarge?.copyWith(
+                    style: context.textTheme.labelLarge?.copyWith(
                       color: const Color(0xFF47505E),
                       fontWeight: FontWeight.w700,
                     ),
@@ -701,7 +691,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
           const SizedBox(height: 18),
           Text(
             widget.planName,
-            style: context.fixedTextTheme.headlineSmall?.copyWith(
+            style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.8,
             ),
@@ -709,7 +699,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
           const SizedBox(height: 8),
           Text(
             _hint,
-            style: context.fixedTextTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF6B7280),
               height: 1.5,
             ),
@@ -725,7 +715,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
           const SizedBox(height: 12),
           Text(
             _lastCheckedText(),
-            style: context.fixedTextTheme.bodySmall?.copyWith(
+            style: context.textTheme.bodySmall?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
@@ -754,14 +744,14 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
           children: [
             Text(
               '支付窗口',
-              style: context.fixedTextTheme.headlineSmall?.copyWith(
+              style: context.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Linux 桌面端将使用应用内专用支付窗口完成支付。若你关闭窗口或支付超时，订单会保留，可直接恢复继续支付。',
-              style: context.fixedTextTheme.bodyMedium?.copyWith(
+              style: context.textTheme.bodyMedium?.copyWith(
                 color: const Color(0xFF9CA3AF),
               ),
             ),
@@ -787,7 +777,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                       const SizedBox(width: 10),
                       Text(
                         _desktopWindowOpened ? '支付窗口运行中' : '支付窗口未打开',
-                        style: context.fixedTextTheme.titleMedium?.copyWith(
+                        style: context.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -819,14 +809,14 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
           children: [
             Text(
               '支付页面',
-              style: context.fixedTextTheme.headlineSmall?.copyWith(
+              style: context.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               '当前平台暂不支持客户端内支付页面。',
-              style: context.fixedTextTheme.bodyMedium?.copyWith(
+              style: context.textTheme.bodyMedium?.copyWith(
                 color: const Color(0xFF9CA3AF),
               ),
             ),
@@ -859,7 +849,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                 Expanded(
                   child: Text(
                     '支付页面',
-                    style: context.fixedTextTheme.titleMedium?.copyWith(
+                    style: context.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -906,15 +896,17 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                             const SizedBox(height: 12),
                             Text(
                               '支付页加载失败',
-                              style: context.fixedTextTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.w800),
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               '可以刷新重试。',
                               textAlign: TextAlign.center,
-                              style: context.fixedTextTheme.bodyMedium
-                                  ?.copyWith(color: const Color(0xFF6B7280)),
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: const Color(0xFF6B7280),
+                              ),
                             ),
                           ],
                         ),
@@ -948,7 +940,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
         children: [
           Text(
             '支付操作',
-            style: context.fixedTextTheme.headlineSmall?.copyWith(
+            style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -959,7 +951,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                 : _usingLinuxPaymentWindow
                 ? 'Linux 桌面端会打开应用内支付窗口；如果你关闭窗口、支付超时或临时离开，可稍后恢复订单继续支付。'
                 : '当前平台暂不支持客户端内支付。',
-            style: context.fixedTextTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
@@ -982,15 +974,11 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
             ),
             const SizedBox(height: 12),
           ],
-          if (_usingLinuxPaymentWindow &&
-              widget.paymentUrl != null &&
-              widget.paymentUrl!.isNotEmpty) ...[
+          if (_usingLinuxPaymentWindow && widget.paymentUrl != null && widget.paymentUrl!.isNotEmpty) ...[
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: _openingPayment
-                    ? null
-                    : () => _openLinuxPaymentWindow(),
+                onPressed: _openingPayment ? null : () => _openLinuxPaymentWindow(),
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
@@ -999,7 +987,9 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: Text(_openingPayment ? '正在打开支付窗口...' : '打开支付窗口'),
+                child: Text(
+                  _openingPayment ? '正在打开支付窗口...' : '打开支付窗口',
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -1018,8 +1008,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
             ),
           ),
           const SizedBox(height: 12),
-          if (_stage != _PaymentStage.success &&
-              _stage != _PaymentStage.cancelled) ...[
+          if (_stage != _PaymentStage.success && _stage != _PaymentStage.cancelled) ...[
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
@@ -1140,7 +1129,7 @@ class _PaymentSummaryRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: context.fixedTextTheme.bodyMedium?.copyWith(
+          style: context.textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9CA3AF),
           ),
         ),
@@ -1149,7 +1138,7 @@ class _PaymentSummaryRow extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: context.fixedTextTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),

@@ -31,7 +31,7 @@ class TrafficUsage extends StatelessWidget {
                 flex: 1,
                 child: Text(
                   trafficValue.traffic.value,
-                  style: context.fixedTextTheme.bodySmall,
+                  style: context.textTheme.bodySmall,
                   maxLines: 1,
                 ),
               ),
@@ -40,7 +40,7 @@ class TrafficUsage extends StatelessWidget {
         ),
         Text(
           trafficValue.traffic.unit,
-          style: context.fixedTextTheme.bodySmall?.toLighter,
+          style: context.textTheme.bodySmall?.toLighter,
         ),
       ],
     );
@@ -100,13 +100,13 @@ class TrafficUsage extends StatelessWidget {
                                   maxLines: 1,
                                   appLocalizations.upload,
                                   overflow: TextOverflow.ellipsis,
-                                  style: context.fixedTextTheme.bodySmall,
+                                  style: context.textTheme.bodySmall,
                                 );
                                 final downloadText = Text(
                                   maxLines: 1,
                                   appLocalizations.download,
                                   overflow: TextOverflow.ellipsis,
-                                  style: context.fixedTextTheme.bodySmall,
+                                  style: context.textTheme.bodySmall,
                                 );
                                 final uploadTextSize = globalState.measure
                                     .computeTextSize(uploadText);
@@ -141,8 +141,7 @@ class TrafficUsage extends StatelessWidget {
                                           maxLines: 1,
                                           appLocalizations.upload,
                                           overflow: TextOverflow.ellipsis,
-                                          style:
-                                              context.fixedTextTheme.bodySmall,
+                                          style: context.textTheme.bodySmall,
                                         ),
                                       ],
                                     ),
@@ -166,8 +165,7 @@ class TrafficUsage extends StatelessWidget {
                                           maxLines: 1,
                                           appLocalizations.download,
                                           overflow: TextOverflow.ellipsis,
-                                          style:
-                                              context.fixedTextTheme.bodySmall,
+                                          style: context.textTheme.bodySmall,
                                         ),
                                       ],
                                     ),

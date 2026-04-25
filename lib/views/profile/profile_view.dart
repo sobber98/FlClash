@@ -104,12 +104,12 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text(appName, style: context.fixedTextTheme.headlineSmall),
+                    Text(appName, style: context.textTheme.headlineSmall),
                     const SizedBox(height: 8),
                     Text(
                       '登录后查看订阅状态、同步订阅与公告。',
                       textAlign: TextAlign.center,
-                      style: context.fixedTextTheme.bodyMedium?.copyWith(
+                      style: context.textTheme.bodyMedium?.copyWith(
                         color: context.colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -150,7 +150,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             children: [
               Text(
                 '用户中心',
-                style: context.fixedTextTheme.displaySmall?.copyWith(
+                style: context.textTheme.displaySmall?.copyWith(
                   fontWeight: FontWeight.w800,
                   letterSpacing: -1,
                 ),
@@ -158,7 +158,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               const SizedBox(height: 8),
               Text(
                 '管理您的账户与服务',
-                style: context.fixedTextTheme.bodyLarge?.copyWith(
+                style: context.textTheme.bodyLarge?.copyWith(
                   color: const Color(0xFF9CA3AF),
                 ),
               ),
@@ -241,7 +241,7 @@ class _ProfileHeaderCard extends StatelessWidget {
                         email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: context.fixedTextTheme.headlineSmall?.copyWith(
+                        style: context.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.6,
                         ),
@@ -259,7 +259,7 @@ class _ProfileHeaderCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   planName,
-                  style: context.fixedTextTheme.titleMedium?.copyWith(
+                  style: context.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF10B981),
                     fontWeight: FontWeight.w700,
                   ),
@@ -273,7 +273,7 @@ class _ProfileHeaderCard extends StatelessWidget {
             children: [
               Text(
                 '到期时间',
-                style: context.fixedTextTheme.bodyMedium?.copyWith(
+                style: context.textTheme.bodyMedium?.copyWith(
                   color: const Color(0xFF9CA3AF),
                 ),
               ),
@@ -289,7 +289,7 @@ class _ProfileHeaderCard extends StatelessWidget {
                 ),
                 child: Text(
                   _expireText(),
-                  style: context.fixedTextTheme.titleSmall?.copyWith(
+                  style: context.textTheme.titleSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
@@ -363,14 +363,14 @@ class _UsageCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   '已用流量',
-                  style: context.fixedTextTheme.titleLarge?.copyWith(
+                  style: context.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
               Text(
                 '${_formatBytes(used)} / ${_formatBytes(total)}',
-                style: context.fixedTextTheme.titleLarge?.copyWith(
+                style: context.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -389,7 +389,7 @@ class _UsageCard extends StatelessWidget {
           const SizedBox(height: 18),
           Text(
             _resetText(),
-            style: context.fixedTextTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
@@ -530,7 +530,7 @@ class _SupportSection extends ConsumerWidget {
               const SizedBox(width: 10),
               Text(
                 '帮助与支持',
-                style: context.fixedTextTheme.titleLarge?.copyWith(
+                style: context.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -668,7 +668,7 @@ class _ActionTile extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: context.fixedTextTheme.titleMedium?.copyWith(
+                style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -702,7 +702,7 @@ class _SupportListTile extends StatelessWidget {
       leading: Icon(icon, color: effectiveColor),
       title: Text(
         title,
-        style: context.fixedTextTheme.titleMedium?.copyWith(
+        style: context.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: color,
         ),

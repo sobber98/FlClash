@@ -89,7 +89,7 @@ class _StartButtonState extends ConsumerState<StartButton>
                   .computeTextSize(
                     Text(
                       utils.getTimeDifference(DateTime.now()),
-                      style: context.fixedTextTheme.titleMedium?.toSoftBold,
+                      style: context.textTheme.titleMedium?.toSoftBold,
                     ),
                   )
                   .width +
