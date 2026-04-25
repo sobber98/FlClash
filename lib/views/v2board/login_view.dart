@@ -151,7 +151,7 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
               '欢迎回来',
               textAlign: TextAlign.center,
               style: context.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
                 letterSpacing: -1,
                 color: _authTextColor,
               ),
@@ -442,7 +442,7 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
                       '开启自由之旅',
                       textAlign: TextAlign.center,
                       style: context.textTheme.displaySmall?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -1,
                         color: _authTextColor,
                       ),
@@ -778,7 +778,7 @@ class _AuthPrimaryButton extends StatelessWidget {
                     label,
                     style: context.textTheme.titleMedium?.copyWith(
                       color: Colors.white,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(width: 10),

@@ -269,7 +269,7 @@ class _ProxyOverviewCard extends StatelessWidget {
           Text(
             '代理中心',
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.6,
             ),
           ),
@@ -375,7 +375,7 @@ class _ProxyMetric extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],

@@ -297,7 +297,7 @@ class ApplicationSettingView extends ConsumerWidget {
                 Text(
                   '选择语言',
                   style: context.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -351,7 +351,7 @@ class ApplicationSettingView extends ConsumerWidget {
                                           color: selected
                                               ? Colors.white
                                               : Colors.black,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                   ),
                                 ),
@@ -463,7 +463,7 @@ class _ApplicationSettingsHeader extends StatelessWidget {
           Text(
             '应用设置',
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.8,
             ),
           ),
@@ -537,7 +537,7 @@ class _ApplicationSettingsMetric extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -600,7 +600,7 @@ class _ApplicationSettingsActionCard extends StatelessWidget {
                     Text(
                       title,
                       style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -624,7 +624,7 @@ class _ApplicationSettingsActionCard extends StatelessWidget {
                         value,
                         style: context.textTheme.labelLarge?.copyWith(
                           color: const Color(0xFF374151),
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),

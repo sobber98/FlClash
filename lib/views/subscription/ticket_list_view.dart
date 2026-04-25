@@ -616,7 +616,7 @@ class _TicketSummaryCard extends StatelessWidget {
             '工单中心',
             style: context.textTheme.headlineSmall?.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
@@ -674,7 +674,7 @@ class _TicketMetric extends StatelessWidget {
             value,
             style: context.textTheme.titleLarge?.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -726,7 +726,7 @@ class _TicketCard extends StatelessWidget {
                     child: Text(
                       ticket.subject.isEmpty ? '未命名工单' : ticket.subject,
                       style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         color: _cardTextColor,
                       ),
                     ),
@@ -813,7 +813,7 @@ class _TicketChip extends StatelessWidget {
         text,
         style: context.textTheme.bodySmall?.copyWith(
           color: color,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -849,7 +849,7 @@ class _TicketDetailHeader extends StatelessWidget {
           Text(
             ticket.subject.isEmpty ? '未命名工单' : ticket.subject,
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: _cardTextColor,
             ),
           ),
@@ -906,7 +906,7 @@ class _TicketInfoRow extends StatelessWidget {
             value,
             textAlign: TextAlign.right,
             style: context.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: _cardTextColor,
             ),
           ),
@@ -958,7 +958,7 @@ class _TicketMessageBubble extends StatelessWidget {
                   color: message.isMe
                       ? Colors.white70
                       : const Color(0xFF6B7280),
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 10),
@@ -1004,7 +1004,7 @@ class _TicketEmptyState extends StatelessWidget {
           Text(
             '当前没有任何工单记录。',
             style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: _cardTextColor,
             ),
           ),

@@ -168,7 +168,7 @@ class _AnnouncementBar extends StatelessWidget {
                         child: Text(
                           '公告详情',
                           style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.w800),
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
                       IconButton(
@@ -206,7 +206,7 @@ class _AnnouncementBar extends StatelessWidget {
                               Text(
                                 title.isNotEmpty ? title : '公告 ${index + 1}',
                                 style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w800),
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                               ),
                               if (_formatTime(
                                 notice.updatedAt ?? notice.createdAt,
@@ -295,7 +295,7 @@ class _AnnouncementBar extends StatelessWidget {
                         '最新公告',
                         style: context.textTheme.labelLarge?.copyWith(
                           color: const Color(0xFF9CA3AF),
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -354,7 +354,7 @@ class _HeroStatusSection extends ConsumerWidget {
               (compact
                       ? context.textTheme.headlineMedium
                       : context.textTheme.displaySmall)
-                  ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: -1),
+                  ?.copyWith(fontWeight: FontWeight.w600, letterSpacing: -1),
         ),
         SizedBox(height: compact ? 6 : 8),
         Padding(
@@ -421,7 +421,7 @@ class _TunModeCard extends ConsumerWidget {
                     Text(
                       title,
                       style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -454,7 +454,7 @@ class _TunModeCard extends ConsumerWidget {
           Text(
             enabled ? '当前已启用' : '当前未启用',
             style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: enabled
                   ? const Color(0xFF047857)
                   : const Color(0xFF6B7280),
@@ -630,7 +630,7 @@ class _OutboundModeCard extends ConsumerWidget {
                         (compact
                                 ? context.textTheme.titleMedium
                                 : context.textTheme.titleLarge)
-                            ?.copyWith(fontWeight: FontWeight.w800),
+                            ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -686,7 +686,7 @@ class _OutboundModeCard extends ConsumerWidget {
                                       ? context.textTheme.labelLarge
                                       : context.textTheme.titleSmall)
                                   ?.copyWith(
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     color: mode == item
                                         ? Colors.black
                                         : const Color(0xFF8D94A1),
@@ -759,7 +759,7 @@ class _NodeCard extends ConsumerWidget {
                       (compact
                               ? context.textTheme.titleLarge
                               : context.textTheme.headlineSmall)
-                          ?.copyWith(fontWeight: FontWeight.w800),
+                          ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -769,7 +769,7 @@ class _NodeCard extends ConsumerWidget {
               '切换',
               style: context.textTheme.titleSmall?.copyWith(
                 color: const Color(0xFFB1B7C2),
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           SizedBox(width: compact ? 4 : 8),

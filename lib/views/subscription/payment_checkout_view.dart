@@ -667,7 +667,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                   _stageTitle(),
                   style: context.textTheme.labelLarge?.copyWith(
                     color: _stageColor(),
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -682,7 +682,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                     _webViewStatusText(),
                     style: context.textTheme.labelLarge?.copyWith(
                       color: const Color(0xFF47505E),
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -692,7 +692,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
           Text(
             widget.planName,
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.8,
             ),
           ),
@@ -745,7 +745,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
             Text(
               '支付窗口',
               style: context.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
@@ -778,7 +778,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                       Text(
                         _desktopWindowOpened ? '支付窗口运行中' : '支付窗口未打开',
                         style: context.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -810,7 +810,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
             Text(
               '支付页面',
               style: context.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
@@ -850,7 +850,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                   child: Text(
                     '支付页面',
                     style: context.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -897,7 +897,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
                             Text(
                               '支付页加载失败',
                               style: context.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -941,7 +941,7 @@ class _PaymentCheckoutViewState extends ConsumerState<PaymentCheckoutView> {
           Text(
             '支付操作',
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
@@ -1139,7 +1139,7 @@ class _PaymentSummaryRow extends StatelessWidget {
             value,
             textAlign: TextAlign.right,
             style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

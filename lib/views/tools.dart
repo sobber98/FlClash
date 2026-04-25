@@ -105,7 +105,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
                 Text(
                   '选择语言',
                   style: context.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -157,7 +157,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
                                       color: selected
                                           ? Colors.white
                                           : Colors.black,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
@@ -398,7 +398,7 @@ class _ToolsHeroCard extends StatelessWidget {
           Text(
             '工具中心',
             style: context.textTheme.displaySmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -1,
             ),
           ),
@@ -487,7 +487,7 @@ class _ToolsMetric extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -528,7 +528,7 @@ class _ToolsQuickAction extends StatelessWidget {
                 label,
                 style: context.textTheme.labelLarge?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -565,7 +565,7 @@ class _ToolSectionCard extends ConsumerWidget {
           Text(
             section.title,
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.6,
             ),
           ),
@@ -624,7 +624,7 @@ class _ToolTile extends ConsumerWidget {
                     Text(
                       action.title,
                       style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 4),

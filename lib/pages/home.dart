@@ -225,7 +225,7 @@ class _DesktopShell extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: context.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -290,7 +290,7 @@ class _DesktopShell extends ConsumerWidget {
                               Text(
                                 '用户中心',
                                 style: context.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -374,7 +374,7 @@ class _MobileNavItem extends StatelessWidget {
                 label,
                 style: context.textTheme.labelLarge?.copyWith(
                   color: selected ? activeColor : const Color(0xFF4B5563),
-                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w600,
                 ),
               ),
             ],
@@ -435,7 +435,7 @@ class _DesktopNavItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.titleSmall?.copyWith(
                     color: selected ? Colors.white : const Color(0xFF4B5563),
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

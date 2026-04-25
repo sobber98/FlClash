@@ -151,7 +151,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               Text(
                 '用户中心',
                 style: context.textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: -1,
                 ),
               ),
@@ -242,7 +242,7 @@ class _ProfileHeaderCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.6,
                         ),
                       ),
@@ -261,7 +261,7 @@ class _ProfileHeaderCard extends StatelessWidget {
                   planName,
                   style: context.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF10B981),
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -291,7 +291,7 @@ class _ProfileHeaderCard extends StatelessWidget {
                   _expireText(),
                   style: context.textTheme.titleSmall?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -364,14 +364,14 @@ class _UsageCard extends StatelessWidget {
                 child: Text(
                   '已用流量',
                   style: context.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               Text(
                 '${_formatBytes(used)} / ${_formatBytes(total)}',
                 style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -531,7 +531,7 @@ class _SupportSection extends ConsumerWidget {
               Text(
                 '帮助与支持',
                 style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -669,7 +669,7 @@ class _ActionTile extends StatelessWidget {
               child: Text(
                 title,
                 style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

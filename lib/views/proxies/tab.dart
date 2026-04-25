@@ -242,7 +242,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                         unselectedLabelColor: const Color(0xFF8B95A7),
                         labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                         labelStyle: context.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                         ),
                         unselectedLabelStyle:
                             context.textTheme.titleSmall?.copyWith(
@@ -264,7 +264,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                                       ? Colors.black
                                       : const Color(0xFF8B95A7),
                                   fontWeight: currentGroupName == group.name
-                                      ? FontWeight.w800
+                                      ? FontWeight.w600
                                       : FontWeight.w600,
                                 ),
                               ),

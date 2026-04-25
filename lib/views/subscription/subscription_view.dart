@@ -90,7 +90,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                         Text(
                           '套餐商城',
                           style: context.textTheme.displaySmall?.copyWith(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: -1,
                             color: _cardTextColor,
                           ),
@@ -301,7 +301,7 @@ class _PlanCard extends StatelessWidget {
             Text(
               plan.name,
               style: context.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
                 letterSpacing: -0.8,
                 color: _cardTextColor,
               ),
@@ -345,7 +345,7 @@ class _PlanCard extends StatelessWidget {
                       _periodLabels[item.key] ?? item.key,
                       style: context.textTheme.labelLarge?.copyWith(
                         color: highlighted ? Colors.white : const Color(0xFF5F6775),
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   );
@@ -359,7 +359,7 @@ class _PlanCard extends StatelessWidget {
                   TextSpan(
                     text: '¥${(headline.value / 100).toStringAsFixed(2)}',
                     style: context.textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       color: Colors.black,
                       letterSpacing: -1.2,
                     ),
@@ -436,7 +436,7 @@ class _PlanFilterBar extends StatelessWidget {
               textAlign: TextAlign.center,
               style: context.textTheme.titleMedium?.copyWith(
                 color: selected ? Colors.white : const Color(0xFF6B7280),
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -480,7 +480,7 @@ class _MarketLoginNotice extends StatelessWidget {
           Text(
             '登录后即可查看套餐与购买记录',
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: _cardTextColor,
             ),
           ),
@@ -520,7 +520,7 @@ class _ActivePlanBadge extends StatelessWidget {
             child: Text(
               '当前生效套餐: $planName',
               style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

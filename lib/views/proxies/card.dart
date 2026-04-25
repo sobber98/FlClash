@@ -113,7 +113,7 @@ class ProxyCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: context.textTheme.bodyMedium?.copyWith(
             color: isSelected ? Colors.white : const Color(0xFF111827),
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
           ),
         ),
       );
@@ -126,7 +126,7 @@ class ProxyCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: context.textTheme.bodyMedium?.copyWith(
             color: isSelected ? Colors.white : const Color(0xFF111827),
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
           ),
         ),
       );

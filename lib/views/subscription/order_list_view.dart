@@ -310,7 +310,7 @@ class _OrdersHeader extends StatelessWidget {
           Text(
             '订单中心',
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.8,
               color: _cardTextColor,
             ),
@@ -380,7 +380,7 @@ class _OrdersMetric extends StatelessWidget {
           Text(
             value,
             style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: _cardTextColor,
             ),
           ),
@@ -458,7 +458,7 @@ class _OrderCard extends StatelessWidget {
                     Text(
                       planName?.isNotEmpty == true ? planName! : '订阅服务订单',
                       style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         color: _cardTextColor,
                       ),
                     ),
@@ -482,7 +482,7 @@ class _OrderCard extends StatelessWidget {
                   statusText,
                   style: context.textTheme.labelLarge?.copyWith(
                     color: statusColor,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -646,7 +646,7 @@ class _OrderInfoRow extends StatelessWidget {
                     ? context.textTheme.titleMedium
                     : context.textTheme.bodyLarge)
                 ?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: _cardTextColor,
             ),
           ),

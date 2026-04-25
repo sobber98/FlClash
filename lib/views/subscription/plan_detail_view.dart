@@ -234,7 +234,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                           _periodLabels[entry.key] ?? entry.key,
                           style: context.textTheme.titleSmall?.copyWith(
                             color: selected ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -283,7 +283,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                     child: Text(
                       '支付方式',
                       style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: _cardTextColor,
                       ),
                     ),
@@ -316,7 +316,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                             method.label,
                             style: context.textTheme.titleSmall?.copyWith(
                               color: selected ? Colors.white : const Color(0xFF4B5563),
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -372,7 +372,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                             Text(
                               _priceText(_selectedPrice),
                               style: context.textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w600,
                                 letterSpacing: -0.8,
                                 color: _cardTextColor,
                               ),
@@ -469,7 +469,7 @@ class _DetailHeroCard extends StatelessWidget {
           Text(
             planName,
             style: context.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -1,
               color: _cardTextColor,
             ),
@@ -489,7 +489,7 @@ class _DetailHeroCard extends StatelessWidget {
                   text: priceText,
                   style: context.textTheme.displaySmall?.copyWith(
                     color: Colors.black,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: -1.2,
                   ),
                 ),
@@ -563,7 +563,7 @@ class _SectionCard extends StatelessWidget {
           Text(
             title,
             style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.6,
               color: _cardTextColor,
             ),
@@ -605,7 +605,7 @@ class _SummaryRow extends StatelessWidget {
             value,
             textAlign: TextAlign.right,
             style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: _cardTextColor,
             ),
           ),
