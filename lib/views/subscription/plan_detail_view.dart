@@ -161,10 +161,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
         globalState.showMessage(
           title: appLocalizations.tip,
           message: TextSpan(
-            text: formatPaymentFlowError(
-              error,
-              fallback: '下单或拉起支付失败，请稍后重试。',
-            ),
+            text: formatPaymentFlowError(error, fallback: '下单或拉起支付失败，请稍后重试。'),
           ),
         );
       }
@@ -208,49 +205,57 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
             child: Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: _availablePeriods.entries.map((entry) {
-                final selected = _selectedPeriod == entry.key;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedPeriod = entry.key;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 160),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: selected ? Colors.black : const Color(0xFFF3F5F8),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _periodLabels[entry.key] ?? entry.key,
-                          style: context.textTheme.titleSmall?.copyWith(
-                            color: selected ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.w700,
-                          ),
+              children: _availablePeriods.entries
+                  .map((entry) {
+                    final selected = _selectedPeriod == entry.key;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedPeriod = entry.key;
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 160),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _priceText(entry.value),
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: selected
-                                ? Colors.white70
-                                : const Color(0xFF6B7280),
-                          ),
+                        decoration: BoxDecoration(
+                          color: selected
+                              ? Colors.black
+                              : const Color(0xFFF3F5F8),
+                          borderRadius: BorderRadius.circular(18),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(growable: false),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _periodLabels[entry.key] ?? entry.key,
+                              style: context.fixedTextTheme.titleSmall
+                                  ?.copyWith(
+                                    color: selected
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _priceText(entry.value),
+                              style: context.fixedTextTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: selected
+                                        ? Colors.white70
+                                        : const Color(0xFF6B7280),
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  })
+                  .toList(growable: false),
             ),
           ),
           const SizedBox(height: 18),
@@ -282,7 +287,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       '支付方式',
-                      style: context.textTheme.titleMedium?.copyWith(
+                      style: context.fixedTextTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: _cardTextColor,
                       ),
@@ -292,36 +297,42 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,
-                    children: _paymentMethods.map((method) {
-                      final selected = _selectedPaymentMethodValue == method.value;
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedPaymentMethodValue = method.value;
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 160),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selected
-                                ? const Color(0xFF1F2024)
-                                : const Color(0xFFF3F5F8),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            method.label,
-                            style: context.textTheme.titleSmall?.copyWith(
-                              color: selected ? Colors.white : const Color(0xFF4B5563),
-                              fontWeight: FontWeight.w700,
+                    children: _paymentMethods
+                        .map((method) {
+                          final selected =
+                              _selectedPaymentMethodValue == method.value;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedPaymentMethodValue = method.value;
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 160),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: selected
+                                    ? const Color(0xFF1F2024)
+                                    : const Color(0xFFF3F5F8),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                method.label,
+                                style: context.fixedTextTheme.titleSmall
+                                    ?.copyWith(
+                                      color: selected
+                                          ? Colors.white
+                                          : const Color(0xFF4B5563),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
                             ),
-                          ),
-                        ),
-                      );
-                    }).toList(growable: false),
+                          );
+                        })
+                        .toList(growable: false),
                   ),
                 ],
               ],
@@ -364,18 +375,18 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
                           children: [
                             Text(
                               '应付金额',
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                color: const Color(0xFF9CA3AF),
-                              ),
+                              style: context.fixedTextTheme.bodyMedium
+                                  ?.copyWith(color: const Color(0xFF9CA3AF)),
                             ),
                             const SizedBox(height: 6),
                             Text(
                               _priceText(_selectedPrice),
-                              style: context.textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -0.8,
-                                color: _cardTextColor,
-                              ),
+                              style: context.fixedTextTheme.headlineMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.8,
+                                    color: _cardTextColor,
+                                  ),
                             ),
                           ],
                         ),
@@ -468,7 +479,7 @@ class _DetailHeroCard extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             planName,
-            style: context.textTheme.headlineMedium?.copyWith(
+            style: context.fixedTextTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -1,
               color: _cardTextColor,
@@ -477,7 +488,7 @@ class _DetailHeroCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             trafficText,
-            style: context.textTheme.titleMedium?.copyWith(
+            style: context.fixedTextTheme.titleMedium?.copyWith(
               color: const Color(0xFF7B8492),
             ),
           ),
@@ -487,7 +498,7 @@ class _DetailHeroCard extends StatelessWidget {
               children: [
                 TextSpan(
                   text: priceText,
-                  style: context.textTheme.displaySmall?.copyWith(
+                  style: context.fixedTextTheme.displaySmall?.copyWith(
                     color: Colors.black,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -1.2,
@@ -495,7 +506,7 @@ class _DetailHeroCard extends StatelessWidget {
                 ),
                 TextSpan(
                   text: ' / $periodText',
-                  style: context.textTheme.titleMedium?.copyWith(
+                  style: context.fixedTextTheme.titleMedium?.copyWith(
                     color: const Color(0xFF9CA3AF),
                     fontWeight: FontWeight.w600,
                   ),
@@ -516,7 +527,7 @@ class _DetailHeroCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     feature,
-                    style: context.textTheme.titleMedium?.copyWith(
+                    style: context.fixedTextTheme.titleMedium?.copyWith(
                       color: const Color(0xFF4B5563),
                     ),
                   ),
@@ -562,7 +573,7 @@ class _SectionCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: context.textTheme.headlineSmall?.copyWith(
+            style: context.fixedTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.6,
               color: _cardTextColor,
@@ -571,7 +582,7 @@ class _SectionCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.fixedTextTheme.bodyMedium?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
@@ -595,7 +606,7 @@ class _SummaryRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: context.textTheme.bodyMedium?.copyWith(
+          style: context.fixedTextTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9CA3AF),
           ),
         ),
@@ -604,7 +615,7 @@ class _SummaryRow extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: context.textTheme.titleMedium?.copyWith(
+            style: context.fixedTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
               color: _cardTextColor,
             ),

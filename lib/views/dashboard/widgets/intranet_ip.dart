@@ -33,7 +33,10 @@ class IntranetIP extends StatelessWidget {
                                 localIp.isNotEmpty
                                     ? localIp
                                     : appLocalizations.noNetwork,
-                                style: context.textTheme.bodyMedium?.toLight
+                                style: context
+                                    .fixedTextTheme
+                                    .bodyMedium
+                                    ?.toLight
                                     .adjustSize(1),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

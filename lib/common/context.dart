@@ -47,6 +47,11 @@ extension BuildContextExtension on BuildContext {
 
   TextTheme get textTheme => Theme.of(this).textTheme;
 
+  TextTheme get fixedTextTheme => textTheme.apply(
+        bodyColor: const Color(0xFF0F172A),
+        displayColor: const Color(0xFF0F172A),
+      );
+
   AppLocalizations get appLocalizations => AppLocalizations.of(this);
 
   T? findLastStateOfType<T extends State>() {

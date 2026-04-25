@@ -614,7 +614,7 @@ class _TicketSummaryCard extends StatelessWidget {
         children: [
           Text(
             '工单中心',
-            style: context.textTheme.headlineSmall?.copyWith(
+            style: context.fixedTextTheme.headlineSmall?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w800,
             ),
@@ -622,7 +622,7 @@ class _TicketSummaryCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '统一查看历史工单、继续回复并跟进处理状态。',
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.fixedTextTheme.bodyMedium?.copyWith(
               color: Colors.white70,
             ),
           ),
@@ -667,12 +667,14 @@ class _TicketMetric extends StatelessWidget {
         children: [
           Text(
             label,
-            style: context.textTheme.bodySmall?.copyWith(color: Colors.white70),
+            style: context.fixedTextTheme.bodySmall?.copyWith(
+              color: Colors.white70,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             value,
-            style: context.textTheme.titleLarge?.copyWith(
+            style: context.fixedTextTheme.titleLarge?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w800,
             ),
@@ -725,7 +727,7 @@ class _TicketCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       ticket.subject.isEmpty ? '未命名工单' : ticket.subject,
-                      style: context.textTheme.titleLarge?.copyWith(
+                      style: context.fixedTextTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: _cardTextColor,
                       ),
@@ -775,7 +777,7 @@ class _TicketCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '最近更新: $timeText',
-                      style: context.textTheme.bodyMedium?.copyWith(
+                      style: context.fixedTextTheme.bodyMedium?.copyWith(
                         color: const Color(0xFF6B7280),
                       ),
                     ),
@@ -811,7 +813,7 @@ class _TicketChip extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: context.textTheme.bodySmall?.copyWith(
+        style: context.fixedTextTheme.bodySmall?.copyWith(
           color: color,
           fontWeight: FontWeight.w700,
         ),
@@ -848,7 +850,7 @@ class _TicketDetailHeader extends StatelessWidget {
         children: [
           Text(
             ticket.subject.isEmpty ? '未命名工单' : ticket.subject,
-            style: context.textTheme.headlineSmall?.copyWith(
+            style: context.fixedTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               color: _cardTextColor,
             ),
@@ -896,7 +898,7 @@ class _TicketInfoRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: context.textTheme.bodyMedium?.copyWith(
+          style: context.fixedTextTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9CA3AF),
           ),
         ),
@@ -905,7 +907,7 @@ class _TicketInfoRow extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: context.textTheme.bodyLarge?.copyWith(
+            style: context.fixedTextTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w700,
               color: _cardTextColor,
             ),
@@ -954,7 +956,7 @@ class _TicketMessageBubble extends StatelessWidget {
             children: [
               Text(
                 message.isMe ? '我' : '客服',
-                style: context.textTheme.labelLarge?.copyWith(
+                style: context.fixedTextTheme.labelLarge?.copyWith(
                   color: message.isMe
                       ? Colors.white70
                       : const Color(0xFF6B7280),
@@ -964,14 +966,14 @@ class _TicketMessageBubble extends StatelessWidget {
               const SizedBox(height: 10),
               SelectableText(
                 message.message,
-                style: context.textTheme.bodyLarge?.copyWith(
+                style: context.fixedTextTheme.bodyLarge?.copyWith(
                   color: foregroundColor,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 timeText,
-                style: context.textTheme.bodySmall?.copyWith(
+                style: context.fixedTextTheme.bodySmall?.copyWith(
                   color: message.isMe
                       ? Colors.white60
                       : const Color(0xFF9CA3AF),
@@ -1003,7 +1005,7 @@ class _TicketEmptyState extends StatelessWidget {
         children: [
           Text(
             '当前没有任何工单记录。',
-            style: context.textTheme.titleMedium?.copyWith(
+            style: context.fixedTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
               color: _cardTextColor,
             ),
@@ -1011,7 +1013,7 @@ class _TicketEmptyState extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             '你可以直接在客户端新建工单，后续在这里查看客服回复并继续跟进。',
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.fixedTextTheme.bodyMedium?.copyWith(
               color: const Color(0xFF6B7280),
             ),
           ),
@@ -1040,9 +1042,12 @@ class _TicketErrorState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text(error.toString(), style: context.textTheme.titleMedium?.copyWith(
-        color: _cardTextColor,
-      )),
+      child: Text(
+        error.toString(),
+        style: context.fixedTextTheme.titleMedium?.copyWith(
+          color: _cardTextColor,
+        ),
+      ),
     );
   }
 }
@@ -1058,9 +1063,12 @@ class _TicketEmptyDetailState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text('没有获取到工单详情。', style: context.textTheme.titleMedium?.copyWith(
-        color: _cardTextColor,
-      )),
+      child: Text(
+        '没有获取到工单详情。',
+        style: context.fixedTextTheme.titleMedium?.copyWith(
+          color: _cardTextColor,
+        ),
+      ),
     );
   }
 }

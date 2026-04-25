@@ -45,7 +45,7 @@ class _StartupLoginPage extends ConsumerWidget {
                 children: [
                   Text(
                     appName,
-                    style: context.textTheme.labelLarge?.copyWith(
+                    style: context.fixedTextTheme.labelLarge?.copyWith(
                       color: const Color(0xFF9CA3AF),
                     ),
                   ),
@@ -67,13 +67,16 @@ class _AuthenticatedHomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navigationState = ref.watch(navigationStateProvider);
-    final navigationItems = ref.watch(currentNavigationItemsStateProvider).value;
+    final navigationItems = ref
+        .watch(currentNavigationItemsStateProvider)
+        .value;
     final currentPageLabel = ref.watch(currentPageLabelProvider);
     final currentIndex = navigationState.currentIndex;
     final isMobile = navigationState.viewMode == ViewMode.mobile;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(sideWidthProvider.notifier).value =
-          isMobile ? 0 : desktopSidebarWidth;
+      ref.read(sideWidthProvider.notifier).value = isMobile
+          ? 0
+          : desktopSidebarWidth;
       final containsCurrentPage = navigationItems.any(
         (item) => item.label == currentPageLabel,
       );
@@ -82,7 +85,9 @@ class _AuthenticatedHomePage extends ConsumerWidget {
       }
     });
     final pageView = _HomePageView(
-      key: ValueKey('home-${navigationState.viewMode.name}-${navigationItems.length}'),
+      key: ValueKey(
+        'home-${navigationState.viewMode.name}-${navigationItems.length}',
+      ),
       navigationItems: navigationItems,
       pageBuilder: (_, index) {
         final navigationItem = navigationItems[index];
@@ -224,14 +229,14 @@ class _DesktopShell extends ConsumerWidget {
                             appName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: context.textTheme.titleLarge?.copyWith(
+                            style: context.fixedTextTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Enterprise Client',
-                            style: context.textTheme.bodySmall?.copyWith(
+                            style: context.fixedTextTheme.bodySmall?.copyWith(
                               color: const Color(0xFF9CA3AF),
                             ),
                           ),
@@ -289,18 +294,16 @@ class _DesktopShell extends ConsumerWidget {
                             children: [
                               Text(
                                 '用户中心',
-                                style: context.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                style: context.fixedTextTheme.titleSmall
+                                    ?.copyWith(fontWeight: FontWeight.w700),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 email?.isNotEmpty == true ? email! : '管理您的账户',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: const Color(0xFF9CA3AF),
-                                ),
+                                style: context.fixedTextTheme.bodySmall
+                                    ?.copyWith(color: const Color(0xFF9CA3AF)),
                               ),
                             ],
                           ),
@@ -313,10 +316,7 @@ class _DesktopShell extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: Container(
-              color: _shellBackground,
-              child: child,
-            ),
+            child: Container(color: _shellBackground, child: child),
           ),
         ],
       ),
@@ -372,7 +372,7 @@ class _MobileNavItem extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 label,
-                style: context.textTheme.labelLarge?.copyWith(
+                style: context.fixedTextTheme.labelLarge?.copyWith(
                   color: selected ? activeColor : const Color(0xFF4B5563),
                   fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
                 ),
@@ -433,7 +433,7 @@ class _DesktopNavItem extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.titleSmall?.copyWith(
+                  style: context.fixedTextTheme.titleSmall?.copyWith(
                     color: selected ? Colors.white : const Color(0xFF4B5563),
                     fontWeight: FontWeight.w700,
                   ),
@@ -488,7 +488,10 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
     return widget.navigationItems.indexWhere((item) => item.label == pageLabel);
   }
 
-  Future<void> _toPage(PageLabel pageLabel, [bool ignoreAnimateTo = false]) async {
+  Future<void> _toPage(
+    PageLabel pageLabel, [
+    bool ignoreAnimateTo = false,
+  ]) async {
     if (!mounted) {
       return;
     }
@@ -548,7 +551,8 @@ class HomeBackScopeContainer extends ConsumerWidget {
     return CommonPopScope(
       onPop: (context) async {
         final pageLabel = ref.read(currentPageLabelProvider);
-        final realContext = GlobalObjectKey(pageLabel).currentContext ?? context;
+        final realContext =
+            GlobalObjectKey(pageLabel).currentContext ?? context;
         final canPop = Navigator.canPop(realContext);
         if (canPop) {
           Navigator.of(realContext).pop();

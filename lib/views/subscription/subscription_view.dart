@@ -51,13 +51,15 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
   }
 
   List<V2BoardPlan> _filterPlans(List<V2BoardPlan> plans) {
-    return plans.where((plan) {
-      return switch (_filter) {
-        _PlanFilter.all => true,
-        _PlanFilter.recurring => _hasRecurringPrice(plan),
-        _PlanFilter.onetime => (plan.onetimePrice ?? 0) > 0,
-      };
-    }).toList(growable: false);
+    return plans
+        .where((plan) {
+          return switch (_filter) {
+            _PlanFilter.all => true,
+            _PlanFilter.recurring => _hasRecurringPrice(plan),
+            _PlanFilter.onetime => (plan.onetimePrice ?? 0) > 0,
+          };
+        })
+        .toList(growable: false);
   }
 
   @override
@@ -89,7 +91,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                       children: [
                         Text(
                           '套餐商城',
-                          style: context.textTheme.displaySmall?.copyWith(
+                          style: context.fixedTextTheme.displaySmall?.copyWith(
                             fontWeight: FontWeight.w800,
                             letterSpacing: -1,
                             color: _cardTextColor,
@@ -98,7 +100,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                         const SizedBox(height: 8),
                         Text(
                           '选择适合你的订阅方案',
-                          style: context.textTheme.bodyLarge?.copyWith(
+                          style: context.fixedTextTheme.bodyLarge?.copyWith(
                             color: const Color(0xFF9CA3AF),
                           ),
                         ),
@@ -149,10 +151,7 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                             .map(
                               (plan) => Padding(
                                 padding: const EdgeInsets.only(bottom: 16),
-                                child: _PlanCard(
-                                  plan: plan,
-                                  filter: _filter,
-                                ),
+                                child: _PlanCard(plan: plan, filter: _filter),
                               ),
                             )
                             .toList(growable: false),
@@ -223,12 +222,16 @@ class _PlanCard extends StatelessWidget {
   ({String label, int value}) _headlinePrice() {
     final periods = _periods();
     if (filter == _PlanFilter.onetime) {
-      final onetime = periods.where((item) => item.key == 'onetime').firstOrNull;
+      final onetime = periods
+          .where((item) => item.key == 'onetime')
+          .firstOrNull;
       if (onetime != null) {
         return (label: _periodLabels[onetime.key]!, value: onetime.value);
       }
     }
-    final recurring = periods.where((item) => item.key != 'onetime').firstOrNull;
+    final recurring = periods
+        .where((item) => item.key != 'onetime')
+        .firstOrNull;
     if (recurring != null) {
       return (label: _periodLabels[recurring.key]!, value: recurring.value);
     }
@@ -245,7 +248,9 @@ class _PlanCard extends StatelessWidget {
       return '不限流量';
     }
     final gb = transfer / 1024 / 1024 / 1024;
-    final value = gb.truncateToDouble() == gb ? gb.toStringAsFixed(0) : gb.toStringAsFixed(1);
+    final value = gb.truncateToDouble() == gb
+        ? gb.toStringAsFixed(0)
+        : gb.toStringAsFixed(1);
     return '$value GB 流量';
   }
 
@@ -300,7 +305,7 @@ class _PlanCard extends StatelessWidget {
             const SizedBox(height: 22),
             Text(
               plan.name,
-              style: context.textTheme.headlineSmall?.copyWith(
+              style: context.fixedTextTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.8,
                 color: _cardTextColor,
@@ -309,14 +314,14 @@ class _PlanCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               '订阅方案',
-              style: context.textTheme.bodyLarge?.copyWith(
+              style: context.fixedTextTheme.bodyLarge?.copyWith(
                 color: const Color(0xFFB0B6C0),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               _trafficText(),
-              style: context.textTheme.titleMedium?.copyWith(
+              style: context.fixedTextTheme.titleMedium?.copyWith(
                 color: const Color(0xFF737B88),
               ),
             ),
@@ -324,7 +329,7 @@ class _PlanCard extends StatelessWidget {
               const SizedBox(height: 18),
               Text(
                 '选择规格',
-                style: context.textTheme.bodyMedium?.copyWith(
+                style: context.fixedTextTheme.bodyMedium?.copyWith(
                   color: const Color(0xFFB0B6C0),
                 ),
               ),
@@ -332,24 +337,36 @@ class _PlanCard extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: periods.take(3).map((item) {
-                  final highlighted = item.key == 'month' ||
-                      (filter == _PlanFilter.onetime && item.key == 'onetime');
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: highlighted ? Colors.black : const Color(0xFFF3F5F8),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      _periodLabels[item.key] ?? item.key,
-                      style: context.textTheme.labelLarge?.copyWith(
-                        color: highlighted ? Colors.white : const Color(0xFF5F6775),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  );
-                }).toList(growable: false),
+                children: periods
+                    .take(3)
+                    .map((item) {
+                      final highlighted =
+                          item.key == 'month' ||
+                          (filter == _PlanFilter.onetime &&
+                              item.key == 'onetime');
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: highlighted
+                              ? Colors.black
+                              : const Color(0xFFF3F5F8),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          _periodLabels[item.key] ?? item.key,
+                          style: context.fixedTextTheme.labelLarge?.copyWith(
+                            color: highlighted
+                                ? Colors.white
+                                : const Color(0xFF5F6775),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      );
+                    })
+                    .toList(growable: false),
               ),
             ],
             const SizedBox(height: 18),
@@ -358,7 +375,7 @@ class _PlanCard extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '¥${(headline.value / 100).toStringAsFixed(2)}',
-                    style: context.textTheme.displaySmall?.copyWith(
+                    style: context.fixedTextTheme.displaySmall?.copyWith(
                       fontWeight: FontWeight.w800,
                       color: Colors.black,
                       letterSpacing: -1.2,
@@ -368,7 +385,7 @@ class _PlanCard extends StatelessWidget {
                     text: headline.label == '一次性'
                         ? '/次'
                         : '/${headline.label.replaceAll('付', '')}',
-                    style: context.textTheme.titleMedium?.copyWith(
+                    style: context.fixedTextTheme.titleMedium?.copyWith(
                       color: const Color(0xFF9CA3AF),
                       fontWeight: FontWeight.w600,
                     ),
@@ -382,7 +399,7 @@ class _PlanCard extends StatelessWidget {
                 feature,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: context.textTheme.titleMedium?.copyWith(
+                style: context.fixedTextTheme.titleMedium?.copyWith(
                   color: const Color(0xFF47505E),
                 ),
               ),
@@ -434,7 +451,7 @@ class _PlanFilterBar extends StatelessWidget {
             child: Text(
               label,
               textAlign: TextAlign.center,
-              style: context.textTheme.titleMedium?.copyWith(
+              style: context.fixedTextTheme.titleMedium?.copyWith(
                 color: selected ? Colors.white : const Color(0xFF6B7280),
                 fontWeight: FontWeight.w700,
               ),
@@ -479,7 +496,7 @@ class _MarketLoginNotice extends StatelessWidget {
         children: [
           Text(
             '登录后即可查看套餐与购买记录',
-            style: context.textTheme.headlineSmall?.copyWith(
+            style: context.fixedTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               color: _cardTextColor,
             ),
@@ -487,7 +504,7 @@ class _MarketLoginNotice extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '套餐购买、续费和订单追踪统一在这里完成。',
-            style: context.textTheme.bodyLarge?.copyWith(
+            style: context.fixedTextTheme.bodyLarge?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
@@ -519,7 +536,7 @@ class _ActivePlanBadge extends StatelessWidget {
           Expanded(
             child: Text(
               '当前生效套餐: $planName',
-              style: context.textTheme.titleMedium?.copyWith(
+              style: context.fixedTextTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -541,9 +558,12 @@ class _EmptyMarketState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text('当前分类下暂无可购买套餐。',
-          style: context.textTheme.titleMedium
-              ?.copyWith(color: _cardSubtitleColor)),
+      child: Text(
+        '当前分类下暂无可购买套餐。',
+        style: context.fixedTextTheme.titleMedium?.copyWith(
+          color: _cardSubtitleColor,
+        ),
+      ),
     );
   }
 }
@@ -561,9 +581,12 @@ class _MarketErrorState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text(error.toString(),
-          style: context.textTheme.titleMedium
-              ?.copyWith(color: _cardTextColor)),
+      child: Text(
+        error.toString(),
+        style: context.fixedTextTheme.titleMedium?.copyWith(
+          color: _cardTextColor,
+        ),
+      ),
     );
   }
 }

@@ -29,11 +29,11 @@ class _NetworkDetectionState extends ConsumerState<NetworkDetection> {
     final networkDetection = ref.watch(networkDetectionProvider);
     final ipInfo = networkDetection.ipInfo;
     final isLoading = networkDetection.isLoading;
-    final emojiTextStyle = context.textTheme.titleMedium?.toLight.copyWith(
+    final emojiTextStyle = context.fixedTextTheme.titleMedium?.toLight.copyWith(
       fontFamily: FontFamily.twEmoji.value,
     );
     final titleTextStyle = context.colorScheme.onSurfaceVariant;
-    final descTextStyle = context.textTheme.titleSmall?.copyWith(
+    final descTextStyle = context.fixedTextTheme.titleSmall?.copyWith(
       color: context.colorScheme.onSurfaceVariant,
     );
     return SizedBox(
@@ -100,7 +100,7 @@ class _NetworkDetectionState extends ConsumerState<NetworkDetection> {
                       ? TooltipText(
                           text: Text(
                             ipInfo.ip,
-                            style: context.textTheme.bodyMedium?.toLight
+                            style: context.fixedTextTheme.bodyMedium?.toLight
                                 .adjustSize(1),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -109,7 +109,7 @@ class _NetworkDetectionState extends ConsumerState<NetworkDetection> {
                       : isLoading == false && ipInfo == null
                       ? Text(
                           'timeout',
-                          style: context.textTheme.bodyMedium
+                          style: context.fixedTextTheme.bodyMedium
                               ?.copyWith(color: Colors.red)
                               .adjustSize(1),
                           maxLines: 1,

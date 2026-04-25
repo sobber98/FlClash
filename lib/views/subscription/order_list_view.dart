@@ -104,10 +104,7 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
       globalState.showMessage(
         title: appLocalizations.tip,
         message: TextSpan(
-          text: formatPaymentFlowError(
-            error,
-            fallback: '取消订单失败，请稍后重试。',
-          ),
+          text: formatPaymentFlowError(error, fallback: '取消订单失败，请稍后重试。'),
         ),
       );
     }
@@ -163,10 +160,7 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
       globalState.showMessage(
         title: appLocalizations.tip,
         message: TextSpan(
-          text: formatPaymentFlowError(
-            error,
-            fallback: '恢复订单支付失败，请稍后重试。',
-          ),
+          text: formatPaymentFlowError(error, fallback: '恢复订单支付失败，请稍后重试。'),
         ),
       );
     }
@@ -191,7 +185,9 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
         onRefresh: _refresh,
         child: ordersState.when(
           data: (orders) {
-            final pendingCount = orders.where((order) => order.status == 0).length;
+            final pendingCount = orders
+                .where((order) => order.status == 0)
+                .length;
             final completedCount = orders
                 .where((order) => order.status == 3)
                 .length;
@@ -253,7 +249,9 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
                     onContinuePay: order.status == 0
                         ? () => _continuePayment(order, planName)
                         : null,
-                    onCancel: order.status == 0 ? () => _cancelOrder(order) : null,
+                    onCancel: order.status == 0
+                        ? () => _cancelOrder(order)
+                        : null,
                   ),
                 );
               },
@@ -309,7 +307,7 @@ class _OrdersHeader extends StatelessWidget {
         children: [
           Text(
             '订单中心',
-            style: context.textTheme.headlineSmall?.copyWith(
+            style: context.fixedTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.8,
               color: _cardTextColor,
@@ -318,7 +316,7 @@ class _OrdersHeader extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '查看购买、续费和支付状态',
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.fixedTextTheme.bodyMedium?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
@@ -326,24 +324,15 @@ class _OrdersHeader extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _OrdersMetric(
-                  label: '待支付',
-                  value: '$pendingCount',
-                ),
+                child: _OrdersMetric(label: '待支付', value: '$pendingCount'),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _OrdersMetric(
-                  label: '已完成',
-                  value: '$completedCount',
-                ),
+                child: _OrdersMetric(label: '已完成', value: '$completedCount'),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _OrdersMetric(
-                  label: '累计支付',
-                  value: totalCompleted,
-                ),
+                child: _OrdersMetric(label: '累计支付', value: totalCompleted),
               ),
             ],
           ),
@@ -372,14 +361,14 @@ class _OrdersMetric extends StatelessWidget {
         children: [
           Text(
             label,
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.fixedTextTheme.bodyMedium?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: context.textTheme.titleLarge?.copyWith(
+            style: context.fixedTextTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
               color: _cardTextColor,
             ),
@@ -457,7 +446,7 @@ class _OrderCard extends StatelessWidget {
                   children: [
                     Text(
                       planName?.isNotEmpty == true ? planName! : '订阅服务订单',
-                      style: context.textTheme.titleLarge?.copyWith(
+                      style: context.fixedTextTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: _cardTextColor,
                       ),
@@ -465,7 +454,7 @@ class _OrderCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       typeText,
-                      style: context.textTheme.bodyMedium?.copyWith(
+                      style: context.fixedTextTheme.bodyMedium?.copyWith(
                         color: const Color(0xFF9CA3AF),
                       ),
                     ),
@@ -473,14 +462,17 @@ class _OrderCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: statusBackground,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   statusText,
-                  style: context.textTheme.labelLarge?.copyWith(
+                  style: context.fixedTextTheme.labelLarge?.copyWith(
                     color: statusColor,
                     fontWeight: FontWeight.w700,
                   ),
@@ -589,27 +581,31 @@ class _PaymentMethodDialogState extends State<_PaymentMethodDialog> {
         width: 320,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: widget.options.map((option) {
-            final selected = _selected?.value == option.value;
-            return ListTile(
-              onTap: () {
-                setState(() {
-                  _selected = option;
-                });
-              },
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                selected
-                    ? Icons.radio_button_checked_rounded
-                    : Icons.radio_button_off_rounded,
-                color: selected ? Theme.of(context).colorScheme.primary : null,
-              ),
-              title: Text(option.label),
-              subtitle: option.value == option.label
-                  ? null
-                  : Text(option.value),
-            );
-          }).toList(growable: false),
+          children: widget.options
+              .map((option) {
+                final selected = _selected?.value == option.value;
+                return ListTile(
+                  onTap: () {
+                    setState(() {
+                      _selected = option;
+                    });
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    selected
+                        ? Icons.radio_button_checked_rounded
+                        : Icons.radio_button_off_rounded,
+                    color: selected
+                        ? Theme.of(context).colorScheme.primary
+                        : null,
+                  ),
+                  title: Text(option.label),
+                  subtitle: option.value == option.label
+                      ? null
+                      : Text(option.value),
+                );
+              })
+              .toList(growable: false),
         ),
       ),
     );
@@ -633,7 +629,7 @@ class _OrderInfoRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: context.textTheme.bodyMedium?.copyWith(
+          style: context.fixedTextTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9CA3AF),
           ),
         ),
@@ -642,13 +638,14 @@ class _OrderInfoRow extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: (emphasize
-                    ? context.textTheme.titleMedium
-                    : context.textTheme.bodyLarge)
-                ?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: _cardTextColor,
-            ),
+            style:
+                (emphasize
+                        ? context.fixedTextTheme.titleMedium
+                        : context.fixedTextTheme.bodyLarge)
+                    ?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: _cardTextColor,
+                    ),
           ),
         ),
       ],
@@ -669,7 +666,7 @@ class _OrdersEmptyState extends StatelessWidget {
       ),
       child: Text(
         '当前没有任何订单记录，下拉可以重新获取最新结果。',
-        style: context.textTheme.titleMedium?.copyWith(
+        style: context.fixedTextTheme.titleMedium?.copyWith(
           color: _cardTextColor,
         ),
       ),
@@ -690,10 +687,12 @@ class _OrdersErrorState extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Text(error.toString(),
-          style: context.textTheme.titleMedium?.copyWith(
-            color: _cardTextColor,
-          )),
+      child: Text(
+        error.toString(),
+        style: context.fixedTextTheme.titleMedium?.copyWith(
+          color: _cardTextColor,
+        ),
+      ),
     );
   }
 }

@@ -66,7 +66,7 @@ class _NetworkSpeedState extends State<NetworkSpeed> {
                         SizedBox(width: 8),
                         Text(
                           _getLastTraffic(traffics).speedText,
-                          style: context.textTheme.bodySmall?.copyWith(
+                          style: context.fixedTextTheme.bodySmall?.copyWith(
                             color: color,
                           ),
                         ),

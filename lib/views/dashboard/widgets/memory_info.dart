@@ -72,13 +72,13 @@ class _MemoryInfoState extends State<MemoryInfo> {
                       children: [
                         Text(
                           traffic.value,
-                          style: context.textTheme.bodyMedium?.toLight
+                          style: context.fixedTextTheme.bodyMedium?.toLight
                               .adjustSize(1),
                         ),
                         SizedBox(width: 8),
                         Text(
                           traffic.unit,
-                          style: context.textTheme.bodyMedium?.toLight
+                          style: context.fixedTextTheme.bodyMedium?.toLight
                               .adjustSize(1),
                         ),
                       ],

@@ -293,7 +293,7 @@ class _AnnouncementBar extends StatelessWidget {
                     children: [
                       Text(
                         '最新公告',
-                        style: context.textTheme.labelLarge?.copyWith(
+                        style: context.fixedTextTheme.labelLarge?.copyWith(
                           color: const Color(0xFF9CA3AF),
                           fontWeight: FontWeight.w700,
                         ),
@@ -301,7 +301,7 @@ class _AnnouncementBar extends StatelessWidget {
                       const SizedBox(height: 4),
                       _MarqueeText(
                         text: preview,
-                        style: context.textTheme.titleSmall?.copyWith(
+                        style: context.fixedTextTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -352,8 +352,8 @@ class _HeroStatusSection extends ConsumerWidget {
           title,
           style:
               (compact
-                      ? context.textTheme.headlineMedium
-                      : context.textTheme.displaySmall)
+                      ? context.fixedTextTheme.headlineMedium
+                      : context.fixedTextTheme.displaySmall)
                   ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: -1),
         ),
         SizedBox(height: compact ? 6 : 8),
@@ -364,8 +364,8 @@ class _HeroStatusSection extends ConsumerWidget {
             textAlign: TextAlign.center,
             style:
                 (compact
-                        ? context.textTheme.bodySmall
-                        : context.textTheme.bodyMedium)
+                        ? context.fixedTextTheme.bodySmall
+                        : context.fixedTextTheme.bodyMedium)
                     ?.copyWith(color: const Color(0xFFA0A6B1)),
           ),
         ),
@@ -378,8 +378,8 @@ class _HeroStatusSection extends ConsumerWidget {
             overflow: TextOverflow.ellipsis,
             style:
                 (compact
-                        ? context.textTheme.bodySmall
-                        : context.textTheme.bodyMedium)
+                        ? context.fixedTextTheme.bodySmall
+                        : context.fixedTextTheme.bodyMedium)
                     ?.copyWith(
                       color: const Color(0xFF6B7280),
                       fontWeight: FontWeight.w600,
@@ -420,14 +420,14 @@ class _TunModeCard extends ConsumerWidget {
                   children: [
                     Text(
                       title,
-                      style: context.textTheme.titleLarge?.copyWith(
+                      style: context.fixedTextTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: context.textTheme.bodyMedium?.copyWith(
+                      style: context.fixedTextTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA0A6B1),
                       ),
                     ),
@@ -453,7 +453,7 @@ class _TunModeCard extends ConsumerWidget {
           const SizedBox(height: 14),
           Text(
             enabled ? '当前已启用' : '当前未启用',
-            style: context.textTheme.titleMedium?.copyWith(
+            style: context.fixedTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
               color: enabled
                   ? const Color(0xFF047857)
@@ -463,7 +463,7 @@ class _TunModeCard extends ConsumerWidget {
           const SizedBox(height: 6),
           Text(
             enabled ? '所有流量将按当前代理策略接管。' : '启用后可通过系统网络层统一接管流量。',
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.fixedTextTheme.bodyMedium?.copyWith(
               color: const Color(0xFF9CA3AF),
             ),
           ),
@@ -628,8 +628,8 @@ class _OutboundModeCard extends ConsumerWidget {
                     '出站规则',
                     style:
                         (compact
-                                ? context.textTheme.titleMedium
-                                : context.textTheme.titleLarge)
+                                ? context.fixedTextTheme.titleMedium
+                                : context.fixedTextTheme.titleLarge)
                             ?.copyWith(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 4),
@@ -637,8 +637,8 @@ class _OutboundModeCard extends ConsumerWidget {
                     '分流策略',
                     style:
                         (compact
-                                ? context.textTheme.bodySmall
-                                : context.textTheme.bodyMedium)
+                                ? context.fixedTextTheme.bodySmall
+                                : context.fixedTextTheme.bodyMedium)
                             ?.copyWith(color: const Color(0xFFA0A6B1)),
                   ),
                 ],
@@ -683,8 +683,8 @@ class _OutboundModeCard extends ConsumerWidget {
                           textAlign: TextAlign.center,
                           style:
                               (compact
-                                      ? context.textTheme.labelLarge
-                                      : context.textTheme.titleSmall)
+                                      ? context.fixedTextTheme.labelLarge
+                                      : context.fixedTextTheme.titleSmall)
                                   ?.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: mode == item
@@ -744,8 +744,8 @@ class _NodeCard extends ConsumerWidget {
                   '当前加速节点',
                   style:
                       (compact
-                              ? context.textTheme.bodySmall
-                              : context.textTheme.bodyMedium)
+                              ? context.fixedTextTheme.bodySmall
+                              : context.fixedTextTheme.bodyMedium)
                           ?.copyWith(color: const Color(0xFFA0A6B1)),
                 ),
                 const SizedBox(height: 6),
@@ -757,8 +757,8 @@ class _NodeCard extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style:
                       (compact
-                              ? context.textTheme.titleLarge
-                              : context.textTheme.headlineSmall)
+                              ? context.fixedTextTheme.titleLarge
+                              : context.fixedTextTheme.headlineSmall)
                           ?.copyWith(fontWeight: FontWeight.w800),
                 ),
               ],
@@ -767,7 +767,7 @@ class _NodeCard extends ConsumerWidget {
           if (!compact)
             Text(
               '切换',
-              style: context.textTheme.titleSmall?.copyWith(
+              style: context.fixedTextTheme.titleSmall?.copyWith(
                 color: const Color(0xFFB1B7C2),
                 fontWeight: FontWeight.w700,
               ),
@@ -835,8 +835,8 @@ class _SummaryText extends StatelessWidget {
           text,
           style:
               (compact
-                      ? context.textTheme.bodySmall
-                      : context.textTheme.bodyMedium)
+                      ? context.fixedTextTheme.bodySmall
+                      : context.fixedTextTheme.bodyMedium)
                   ?.copyWith(
                     color: const Color(0xFFA0A6B1),
                     fontWeight: FontWeight.w600,
