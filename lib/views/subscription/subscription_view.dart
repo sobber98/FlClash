@@ -345,7 +345,7 @@ class _PlanCard extends StatelessWidget {
                       _periodLabels[item.key] ?? item.key,
                       style: context.textTheme.labelLarge?.copyWith(
                         color: highlighted ? Colors.white : const Color(0xFF5F6775),
-                        fontWeight: FontWeight.w600,
+                        fontWeight: highlighted ? FontWeight.w700 : FontWeight.w400,
                       ),
                     ),
                   );
@@ -436,7 +436,7 @@ class _PlanFilterBar extends StatelessWidget {
               textAlign: TextAlign.center,
               style: context.textTheme.titleMedium?.copyWith(
                 color: selected ? Colors.white : const Color(0xFF6B7280),
-                fontWeight: FontWeight.w600,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
               ),
             ),
           ),

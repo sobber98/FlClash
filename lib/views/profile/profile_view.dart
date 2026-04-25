@@ -153,6 +153,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 style: context.textTheme.displaySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   letterSpacing: -1,
+                  color: const Color(0xFF0F172A),
                 ),
               ),
               const SizedBox(height: 8),
