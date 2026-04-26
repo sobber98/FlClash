@@ -78,7 +78,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6F8),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _refresh,
@@ -181,7 +181,7 @@ class _AnnouncementBar extends StatelessWidget {
                   Text(
                     '点击公告栏即可查看完整公告内容',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF9CA3AF),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -197,7 +197,7 @@ class _AnnouncementBar extends StatelessWidget {
                         return Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF7F8FB),
+                            color: Theme.of(context).colorScheme.surfaceContainerLow,
                             borderRadius: BorderRadius.circular(18),
                           ),
                           child: Column(
@@ -218,7 +218,7 @@ class _AnnouncementBar extends StatelessWidget {
                                   ),
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
-                                        color: const Color(0xFF9CA3AF),
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                                       ),
                                 ),
                               ],
@@ -229,7 +229,7 @@ class _AnnouncementBar extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
                                         height: 1.55,
-                                        color: const Color(0xFF4B5563),
+                                        color: Theme.of(context).colorScheme.onSurface,
                                       ),
                                 ),
                               ],
@@ -253,7 +253,7 @@ class _AnnouncementBar extends StatelessWidget {
     final preview = v2boardNoticePreview(notices);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(18),
         boxShadow: const [
           BoxShadow(
@@ -276,12 +276,12 @@ class _AnnouncementBar extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.campaign_outlined,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     size: 18,
                   ),
                 ),
@@ -294,7 +294,7 @@ class _AnnouncementBar extends StatelessWidget {
                       Text(
                         '最新公告',
                         style: context.textTheme.labelLarge?.copyWith(
-                          color: const Color(0xFF9CA3AF),
+                          color: context.colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -309,9 +309,9 @@ class _AnnouncementBar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: Color(0xFF9CA3AF),
+                  color: context.colorScheme.onSurfaceVariant,
                 ),
               ],
             ),
@@ -357,7 +357,7 @@ class _HeroStatusSection extends ConsumerWidget {
                   ?.copyWith(
                     fontWeight: FontWeight.w600,
                     letterSpacing: -1,
-                    color: const Color(0xFF1F2937),
+                    color: context.colorScheme.onSurface,
                   ),
         ),
         SizedBox(height: compact ? 6 : 8),
@@ -370,7 +370,7 @@ class _HeroStatusSection extends ConsumerWidget {
                 (compact
                         ? context.textTheme.bodySmall
                         : context.textTheme.bodyMedium)
-                    ?.copyWith(color: const Color(0xFFA0A6B1)),
+                    ?.copyWith(color: context.colorScheme.onSurfaceVariant),
           ),
         ),
         if (nodeName?.isNotEmpty == true) ...[
@@ -385,7 +385,7 @@ class _HeroStatusSection extends ConsumerWidget {
                         ? context.textTheme.bodySmall
                         : context.textTheme.bodyMedium)
                     ?.copyWith(
-                      color: const Color(0xFF6B7280),
+                      color: context.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
           ),
@@ -432,7 +432,7 @@ class _TunModeCard extends ConsumerWidget {
                     Text(
                       subtitle,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFA0A6B1),
+                        color: context.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -461,14 +461,14 @@ class _TunModeCard extends ConsumerWidget {
               fontWeight: FontWeight.w600,
               color: enabled
                   ? const Color(0xFF047857)
-                  : const Color(0xFF6B7280),
+                  : context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             enabled ? '所有流量将按当前代理策略接管。' : '启用后可通过系统网络层统一接管流量。',
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -643,17 +643,17 @@ class _OutboundModeCard extends ConsumerWidget {
                         (compact
                                 ? context.textTheme.bodySmall
                                 : context.textTheme.bodyMedium)
-                            ?.copyWith(color: const Color(0xFFA0A6B1)),
-                  ),
-                ],
-              ),
-            ],
+                            ?.copyWith(color: context.colorScheme.onSurfaceVariant),
+                  ],
+                ),
+              ],
+            ),
           ),
           SizedBox(height: compact ? 14 : 18),
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F5F8),
+              color: context.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(18),
             ),
             child: Row(
@@ -669,7 +669,7 @@ class _OutboundModeCard extends ConsumerWidget {
                         ),
                         decoration: BoxDecoration(
                           color: mode == item
-                              ? Colors.white
+                              ? context.colorScheme.surfaceContainerLow
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: mode == item
@@ -692,8 +692,8 @@ class _OutboundModeCard extends ConsumerWidget {
                                   ?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: mode == item
-                                        ? Colors.black
-                                        : const Color(0xFF8D94A1),
+                                        ? context.colorScheme.onSurface
+                                        : context.colorScheme.onSurfaceVariant,
                                   ),
                         ),
                       ),
@@ -750,7 +750,7 @@ class _NodeCard extends ConsumerWidget {
                       (compact
                               ? context.textTheme.bodySmall
                               : context.textTheme.bodyMedium)
-                          ?.copyWith(color: const Color(0xFFA0A6B1)),
+                          ?.copyWith(color: context.colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -772,12 +772,12 @@ class _NodeCard extends ConsumerWidget {
             Text(
               '切换',
               style: context.textTheme.titleSmall?.copyWith(
-                color: const Color(0xFFB1B7C2),
+                color: context.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
           SizedBox(width: compact ? 4 : 8),
-          const Icon(Icons.chevron_right_rounded, color: Color(0xFFB1B7C2)),
+          Icon(Icons.chevron_right_rounded, color: context.colorScheme.onSurfaceVariant),
         ],
       ),
     );
@@ -833,7 +833,7 @@ class _SummaryText extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: compact ? 14 : 16, color: const Color(0xFFA0A6B1)),
+        Icon(icon, size: compact ? 14 : 16, color: context.colorScheme.onSurfaceVariant),
         const SizedBox(width: 6),
         Text(
           text,
@@ -842,7 +842,7 @@ class _SummaryText extends StatelessWidget {
                       ? context.textTheme.bodySmall
                       : context.textTheme.bodyMedium)
                   ?.copyWith(
-                    color: const Color(0xFFA0A6B1),
+                    color: context.colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                   ),
         ),
@@ -880,10 +880,10 @@ class _FeatureIcon extends StatelessWidget {
       width: compact ? 46 : 54,
       height: compact ? 46 : 54,
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FB),
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(compact ? 16 : 18),
       ),
-      child: Icon(icon, color: Colors.black, size: compact ? 22 : 26),
+      child: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: compact ? 22 : 26),
     );
   }
 }

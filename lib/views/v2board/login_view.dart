@@ -219,7 +219,7 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
               child: TextButton(
                 onPressed: hasServerUrl ? _showForgotPasswordTip : null,
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF9AA0AA),
+                  foregroundColor: context.colorScheme.onSurfaceVariant,
                 ),
                 child: const Text('忘记密码?'),
               ),
@@ -415,7 +415,7 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
         configuredServer.isNotEmpty ||
         ((storedProps?.serverUrl.trim().isNotEmpty) ?? false);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Align(
           alignment: Alignment.topCenter,
@@ -613,7 +613,7 @@ class _AuthBrandIcon extends StatelessWidget {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: context.colorScheme.onSurface,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(
@@ -623,9 +623,9 @@ class _AuthBrandIcon extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(
+        child: Icon(
           Icons.shield_outlined,
-          color: Colors.white,
+          color: context.colorScheme.surface,
           size: 30,
         ),
       ),
@@ -671,7 +671,7 @@ class _AuthDivider extends StatelessWidget {
           child: Text(
             text,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFFB4BAC5),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -755,20 +755,20 @@ class _AuthPrimaryButton extends StatelessWidget {
       child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: _authTextColor,
-          foregroundColor: Colors.white,
+          backgroundColor: context.colorScheme.onSurface,
+          foregroundColor: context.colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
           elevation: 0,
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: context.colorScheme.surface,
                 ),
               )
             : Row(
@@ -777,7 +777,7 @@ class _AuthPrimaryButton extends StatelessWidget {
                   Text(
                     label,
                     style: context.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
+                      color: context.colorScheme.surface,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -838,8 +838,8 @@ class _AuthCompactButton extends StatelessWidget {
     return FilledButton(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
-        backgroundColor: _authTextColor,
-        foregroundColor: Colors.white,
+        backgroundColor: context.colorScheme.onSurface,
+        foregroundColor: context.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       child: Text(label),

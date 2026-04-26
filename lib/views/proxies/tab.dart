@@ -214,7 +214,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F6FA),
+                        color: context.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: TabBar(
@@ -228,7 +228,7 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                         dividerColor: Colors.transparent,
                         indicatorSize: TabBarIndicatorSize.tab,
                         indicator: BoxDecoration(
-                          color: Colors.white,
+                          color: context.colorScheme.surfaceContainerLow,
                           borderRadius: BorderRadius.circular(18),
                           boxShadow: const [
                             BoxShadow(
@@ -238,8 +238,8 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                             ),
                           ],
                         ),
-                        labelColor: Colors.black,
-                        unselectedLabelColor: const Color(0xFF8B95A7),
+                        labelColor: context.colorScheme.onSurface,
+                        unselectedLabelColor: context.colorScheme.onSurfaceVariant,
                         labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                         labelStyle: context.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
@@ -261,8 +261,8 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                                 group.name,
                                 style: context.textTheme.titleSmall?.copyWith(
                                   color: currentGroupName == group.name
-                                      ? Colors.black
-                                      : const Color(0xFF8B95A7),
+                                      ? context.colorScheme.onSurface
+                                      : context.colorScheme.onSurfaceVariant,
                                   fontWeight: currentGroupName == group.name
                                       ? FontWeight.w600
                                       : FontWeight.w600,
@@ -280,11 +280,11 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: context.colorScheme.onSurface,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: IconTheme(
-                  data: const IconThemeData(color: Colors.white),
+                  data: IconThemeData(color: context.colorScheme.surface),
                   child: _buildMoreButton(),
                 ),
               ),

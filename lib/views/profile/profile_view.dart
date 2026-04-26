@@ -153,14 +153,14 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 style: context.textTheme.displaySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   letterSpacing: -1,
-                  color: const Color(0xFF0F172A),
+                  color: context.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 '管理您的账户与服务',
                 style: context.textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFF9CA3AF),
+                  color: context.colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 18),
@@ -209,7 +209,7 @@ class _ProfileHeaderCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
@@ -225,10 +225,10 @@ class _ProfileHeaderCard extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: context.colorScheme.onSurface,
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Icon(Icons.person_rounded, color: Colors.white),
+            child: Icon(Icons.person_rounded, color: context.colorScheme.surface),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -275,7 +275,7 @@ class _ProfileHeaderCard extends StatelessWidget {
               Text(
                 '到期时间',
                 style: context.textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF9CA3AF),
+                  color: context.colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 8),
@@ -285,13 +285,13 @@ class _ProfileHeaderCard extends StatelessWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1F2024),
+                  color: context.colorScheme.onSurface,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
                   _expireText(),
                   style: context.textTheme.titleSmall?.copyWith(
-                    color: Colors.white,
+                    color: context.colorScheme.surface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -344,7 +344,7 @@ class _UsageCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
@@ -359,7 +359,7 @@ class _UsageCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.donut_large_rounded, color: Color(0xFF6B7280)),
+              Icon(Icons.donut_large_rounded, color: context.colorScheme.onSurfaceVariant),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -383,15 +383,15 @@ class _UsageCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 10,
-              backgroundColor: const Color(0xFFF1F4F8),
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.black),
+              backgroundColor: context.colorScheme.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation<Color>(context.colorScheme.primary),
             ),
           ),
           const SizedBox(height: 18),
           Text(
             _resetText(),
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 18),
@@ -400,8 +400,8 @@ class _UsageCard extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: () => appController.toPage(PageLabel.subscription),
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF1F2024),
-                foregroundColor: Colors.white,
+                backgroundColor: context.colorScheme.onSurface,
+                foregroundColor: context.colorScheme.surface,
                 minimumSize: const Size.fromHeight(56),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
@@ -512,7 +512,7 @@ class _SupportSection extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
@@ -527,7 +527,7 @@ class _SupportSection extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.headset_mic_outlined, color: Color(0xFF6B7280)),
+              Icon(Icons.headset_mic_outlined, color: context.colorScheme.onSurfaceVariant),
               const SizedBox(width: 10),
               Text(
                 '帮助与支持',
@@ -659,12 +659,12 @@ class _ActionTile extends StatelessWidget {
       child: Ink(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F6F8),
+          color: context.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF4B5563)),
+            Icon(icon, color: context.colorScheme.onSurface),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -674,7 +674,7 @@ class _ActionTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF)),
+            Icon(Icons.chevron_right_rounded, color: context.colorScheme.onSurfaceVariant),
           ],
         ),
       ),
@@ -697,7 +697,7 @@ class _SupportListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveColor = color ?? const Color(0xFF4B5563);
+    final effectiveColor = color ?? context.colorScheme.onSurface;
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 4),
       leading: Icon(icon, color: effectiveColor),
@@ -708,9 +708,9 @@ class _SupportListTile extends StatelessWidget {
           color: color,
         ),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right_rounded,
-        color: Color(0xFF9CA3AF),
+        color: context.colorScheme.onSurfaceVariant,
       ),
       onTap: onTap,
     );

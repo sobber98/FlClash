@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-const _applicationSettingsBackground = Color(0xFFF5F6F8);
-
 class CloseConnectionsItem extends ConsumerWidget {
   const CloseConnectionsItem({super.key});
 
@@ -276,7 +274,7 @@ class ApplicationSettingView extends ConsumerWidget {
     );
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       showDragHandle: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -304,7 +302,7 @@ class ApplicationSettingView extends ConsumerWidget {
                 Text(
                   '切换应用显示语言',
                   style: context.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF9CA3AF),
+                    color: context.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 18),
@@ -335,8 +333,8 @@ class ApplicationSettingView extends ConsumerWidget {
                             ),
                             decoration: BoxDecoration(
                               color: selected
-                                  ? Colors.black
-                                  : const Color(0xFFF6F7FB),
+                                  ? context.colorScheme.onSurface
+                                  : context.colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(18),
                             ),
                             child: Row(
@@ -349,16 +347,16 @@ class ApplicationSettingView extends ConsumerWidget {
                                     style: context.textTheme.titleMedium
                                         ?.copyWith(
                                           color: selected
-                                              ? Colors.white
-                                              : Colors.black,
+                                              ? context.colorScheme.surface
+                                              : context.colorScheme.onSurface,
                                           fontWeight: FontWeight.w600,
                                         ),
                                   ),
                                 ),
                                 if (selected)
-                                  const Icon(
+                                  Icon(
                                     Icons.check_rounded,
-                                    color: Colors.white,
+                                    color: context.colorScheme.surface,
                                   ),
                               ],
                             ),
@@ -397,9 +395,9 @@ class ApplicationSettingView extends ConsumerWidget {
       ThemeMode.dark => appLocalizations.dark,
     };
     return Scaffold(
-      backgroundColor: _applicationSettingsBackground,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       appBar: AppBar(
-        backgroundColor: _applicationSettingsBackground,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
         elevation: 0,
         centerTitle: false,
         title: Text(appLocalizations.application),
@@ -447,7 +445,7 @@ class _ApplicationSettingsHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(28),
         boxShadow: const [
           BoxShadow(
@@ -471,7 +469,7 @@ class _ApplicationSettingsHeader extends StatelessWidget {
           Text(
             '统一管理语言和主题显示偏好',
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 18),
@@ -519,7 +517,7 @@ class _ApplicationSettingsMetric extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F7FB),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -528,7 +526,7 @@ class _ApplicationSettingsMetric extends StatelessWidget {
           Text(
             label,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
@@ -571,7 +569,7 @@ class _ApplicationSettingsActionCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(26),
             boxShadow: const [
               BoxShadow(
@@ -587,10 +585,10 @@ class _ApplicationSettingsActionCard extends StatelessWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: context.colorScheme.onSurface,
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(icon, color: Colors.white),
+                child: Icon(icon, color: context.colorScheme.surface),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -607,7 +605,7 @@ class _ApplicationSettingsActionCard extends StatelessWidget {
                     Text(
                       subtitle,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF9CA3AF),
+                        color: context.colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -617,13 +615,13 @@ class _ApplicationSettingsActionCard extends StatelessWidget {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF6F7FB),
+                        color: context.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
                         value,
                         style: context.textTheme.labelLarge?.copyWith(
-                          color: const Color(0xFF374151),
+                          color: context.colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -632,9 +630,9 @@ class _ApplicationSettingsActionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
-                color: Color(0xFF9CA3AF),
+                color: context.colorScheme.onSurfaceVariant,
                 size: 28,
               ),
             ],

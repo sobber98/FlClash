@@ -31,7 +31,13 @@ class ProxyCard extends StatelessWidget {
     proxyDelayTest(proxy, testUrl);
   }
 
-  Widget _buildDelayText({required bool isSelected}) {
+  Widget _buildDelayText({required bool isSelected, required BuildContext context}) {
+    final onCardColor = isSelected
+        ? context.colorScheme.surface
+        : context.colorScheme.onSurface;
+    final onCardVariantColor = isSelected
+        ? context.colorScheme.surface.opacity80
+        : context.colorScheme.onSurfaceVariant;
     return SizedBox(
       height: measure.labelSmallHeight,
       child: Consumer(
@@ -55,9 +61,7 @@ class ProxyCard extends StatelessWidget {
                   Text(
                     updatedText,
                     style: context.textTheme.labelSmall?.copyWith(
-                      color: isSelected
-                          ? Colors.white70
-                          : context.colorScheme.onSurfaceVariant,
+                      color: onCardVariantColor,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -69,14 +73,12 @@ class ProxyCard extends StatelessWidget {
                         child: delay == 0
                             ? CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: isSelected ? Colors.white : null,
+                                color: onCardColor,
                               )
                             : IconButton(
                                 icon: Icon(
                                   Icons.bolt_rounded,
-                                  color: isSelected
-                                      ? Colors.white
-                                      : const Color(0xFF111827),
+                                  color: onCardColor,
                                 ),
                                 iconSize: globalState.measure.labelSmallHeight,
                                 padding: EdgeInsets.zero,
@@ -90,7 +92,7 @@ class ProxyCard extends StatelessWidget {
                           style: context.textTheme.labelSmall?.copyWith(
                             overflow: TextOverflow.ellipsis,
                             color: isSelected
-                                ? Colors.white
+                                ? onCardColor
                                 : utils.getDelayColor(delay),
                           ),
                         ),
@@ -104,6 +106,9 @@ class ProxyCard extends StatelessWidget {
   }
 
   Widget _buildProxyNameText(BuildContext context, {required bool isSelected}) {
+    final onCardColor = isSelected
+        ? context.colorScheme.surface
+        : context.colorScheme.onSurface;
     if (type == ProxyCardType.min) {
       return SizedBox(
         height: measure.bodyMediumHeight * 1,
@@ -112,7 +117,7 @@ class ProxyCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: context.textTheme.bodyMedium?.copyWith(
-            color: isSelected ? Colors.white : const Color(0xFF111827),
+            color: onCardColor,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -125,7 +130,7 @@ class ProxyCard extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: context.textTheme.bodyMedium?.copyWith(
-            color: isSelected ? Colors.white : const Color(0xFF111827),
+            color: onCardColor,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -160,7 +165,7 @@ class ProxyCard extends StatelessWidget {
               getSelectedProxyNameProvider(groupName),
             );
             final isSelected = selectedProxyName == proxy.name;
-            final delayText = _buildDelayText(isSelected: isSelected);
+            final delayText = _buildDelayText(isSelected: isSelected, context: context);
             final proxyNameText = _buildProxyNameText(
               context,
               isSelected: isSelected,
@@ -181,12 +186,14 @@ class ProxyCard extends StatelessWidget {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected ? Colors.black : Colors.white,
+                    color: isSelected
+                        ? context.colorScheme.onSurface
+                        : context.colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isSelected
-                          ? Colors.black
-                          : const Color(0xFFE8ECF2),
+                          ? context.colorScheme.onSurface
+                          : context.colorScheme.outlineVariant,
                     ),
                     boxShadow: const [
                       BoxShadow(
@@ -227,8 +234,8 @@ class ProxyCard extends StatelessWidget {
                                     style: context.textTheme.bodySmall?.copyWith(
                                       overflow: TextOverflow.ellipsis,
                                       color: isSelected
-                                          ? Colors.white70
-                                          : const Color(0xFF7B8492),
+                                          ? context.colorScheme.surface.opacity80
+                                          : context.colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                 ),
@@ -268,7 +275,9 @@ class _ProxyDesc extends ConsumerWidget {
       desc,
       overflow: TextOverflow.ellipsis,
       style: context.textTheme.bodySmall?.copyWith(
-        color: isSelected ? Colors.white70 : const Color(0xFF7B8492),
+        color: isSelected
+            ? context.colorScheme.surface.opacity80
+            : context.colorScheme.onSurfaceVariant,
       ),
     );
   }

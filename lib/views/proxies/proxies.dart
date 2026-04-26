@@ -12,8 +12,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'setting.dart';
 import 'tab.dart';
 
-const _proxiesBackground = Color(0xFFF5F6F8);
-
 class ProxiesView extends ConsumerStatefulWidget {
   const ProxiesView({super.key});
 
@@ -175,7 +173,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       title: appLocalizations.proxies,
       searchState: AppBarSearchState(onSearch: _onSearch),
       body: Container(
-        color: _proxiesBackground,
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -205,7 +203,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(30),
                     ),
@@ -253,7 +251,7 @@ class _ProxyOverviewCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(30),
         boxShadow: const [
           BoxShadow(
@@ -277,7 +275,7 @@ class _ProxyOverviewCard extends StatelessWidget {
           Text(
             '快速切换分组、查看节点状态并执行延迟测试',
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 18),
@@ -320,20 +318,20 @@ class _ProxyOverviewCard extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: onRunAutoTest,
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
+                backgroundColor: context.colorScheme.onSurface,
+                foregroundColor: context.colorScheme.surface,
                 minimumSize: const Size.fromHeight(56),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                 ),
               ),
               icon: isTesting
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: context.colorScheme.surface,
                       ),
                     )
                   : const Icon(Icons.bolt_rounded),
@@ -357,7 +355,7 @@ class _ProxyMetric extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F7FB),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -366,7 +364,7 @@ class _ProxyMetric extends StatelessWidget {
           Text(
             label,
             style: context.textTheme.bodySmall?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),

@@ -24,8 +24,6 @@ import 'config/advanced.dart';
 import 'developer.dart';
 import 'theme.dart';
 
-const _toolsBackground = Color(0xFFF5F6F8);
-
 typedef _ToolActionCallback = Future<void> Function(
   BuildContext context,
   WidgetRef ref,
@@ -84,7 +82,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       showDragHandle: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -112,7 +110,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
                 Text(
                   '切换应用显示语言',
                   style: context.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF9CA3AF),
+                    color: context.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 18),
@@ -142,8 +140,8 @@ class _ToolViewState extends ConsumerState<ToolsView> {
                             ),
                             decoration: BoxDecoration(
                               color: selected
-                                  ? Colors.black
-                                  : const Color(0xFFF6F7FB),
+                                  ? context.colorScheme.onSurface
+                                  : context.colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(18),
                             ),
                             child: Row(
@@ -155,16 +153,16 @@ class _ToolViewState extends ConsumerState<ToolsView> {
                                         : Intl.message(locale.toString()),
                                     style: context.textTheme.titleMedium?.copyWith(
                                       color: selected
-                                          ? Colors.white
-                                          : Colors.black,
+                                          ? context.colorScheme.surface
+                                          : context.colorScheme.onSurface,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
                                 if (selected)
-                                  const Icon(
+                                  Icon(
                                     Icons.check_rounded,
-                                    color: Colors.white,
+                                    color: context.colorScheme.surface,
                                   ),
                               ],
                             ),
@@ -332,7 +330,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
     final sections = _buildSections(vm2.b, vm2.a);
     return Scaffold(
-      backgroundColor: _toolsBackground,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: SafeArea(
         child: ListView(
           key: toolsStoreKey,
@@ -382,7 +380,7 @@ class _ToolsHeroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(30),
         boxShadow: const [
           BoxShadow(
@@ -406,7 +404,7 @@ class _ToolsHeroCard extends StatelessWidget {
           Text(
             '管理应用设置、网络诊断和数据能力',
             style: context.textTheme.bodyLarge?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 18),
@@ -469,7 +467,7 @@ class _ToolsMetric extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F7FB),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -478,7 +476,7 @@ class _ToolsMetric extends StatelessWidget {
           Text(
             label,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
@@ -517,17 +515,17 @@ class _ToolsQuickAction extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF1F2024),
+            color: context.colorScheme.onSurface,
             borderRadius: BorderRadius.circular(18),
           ),
           child: Column(
             children: [
-              Icon(icon, color: Colors.white, size: 20),
+              Icon(icon, color: context.colorScheme.surface, size: 20),
               const SizedBox(height: 8),
               Text(
                 label,
                 style: context.textTheme.labelLarge?.copyWith(
-                  color: Colors.white,
+                  color: context.colorScheme.surface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -549,7 +547,7 @@ class _ToolSectionCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(28),
         boxShadow: const [
           BoxShadow(
@@ -573,7 +571,7 @@ class _ToolSectionCard extends ConsumerWidget {
           Text(
             section.subtitle,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 18),
@@ -602,7 +600,7 @@ class _ToolTile extends ConsumerWidget {
         child: Ink(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFF6F7FB),
+            color: context.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(22),
           ),
           child: Row(
@@ -611,10 +609,10 @@ class _ToolTile extends ConsumerWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colorScheme.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(action.icon, color: const Color(0xFF1F2937)),
+                child: Icon(action.icon, color: context.colorScheme.onSurface),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -633,7 +631,7 @@ class _ToolTile extends ConsumerWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF8C95A3),
+                        color: context.colorScheme.onSurfaceVariant,
                         height: 1.45,
                       ),
                     ),
@@ -641,9 +639,9 @@ class _ToolTile extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
-                color: Color(0xFF9CA3AF),
+                color: context.colorScheme.onSurfaceVariant,
               ),
             ],
           ),
