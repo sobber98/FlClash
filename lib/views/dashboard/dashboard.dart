@@ -645,7 +645,8 @@ class _OutboundModeCard extends ConsumerWidget {
                                 : context.textTheme.bodyMedium)
                             ?.copyWith(color: context.colorScheme.onSurfaceVariant),
                   ),
-                ),
+                ],
+              ),
               ],
             ),
           ),
