@@ -647,8 +647,7 @@ class _OutboundModeCard extends ConsumerWidget {
                   ),
                 ],
               ),
-              ],
-            ),
+            ],
           ),
           SizedBox(height: compact ? 14 : 18),
           Container(
