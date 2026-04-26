@@ -343,9 +343,10 @@ class _PlanCard extends StatelessWidget {
                     ),
                     child: Text(
                       _periodLabels[item.key] ?? item.key,
+                      locale: const Locale('zh', 'CN'),
                       style: context.textTheme.labelLarge?.copyWith(
-                        color: highlighted ? Colors.white : const Color(0xFF5F6775),
-                        fontWeight: highlighted ? FontWeight.w700 : FontWeight.w400,
+                        color: highlighted ? Colors.white : const Color(0xFF374151),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   );
@@ -433,10 +434,11 @@ class _PlanFilterBar extends StatelessWidget {
             ),
             child: Text(
               label,
+              locale: const Locale('zh', 'CN'),
               textAlign: TextAlign.center,
               style: context.textTheme.titleMedium?.copyWith(
-                color: selected ? Colors.white : const Color(0xFF6B7280),
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                color: selected ? Colors.white : const Color(0xFF374151),
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
           ),

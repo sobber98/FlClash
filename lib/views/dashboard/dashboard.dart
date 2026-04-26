@@ -354,7 +354,11 @@ class _HeroStatusSection extends ConsumerWidget {
               (compact
                       ? context.textTheme.headlineMedium
                       : context.textTheme.displaySmall)
-                  ?.copyWith(fontWeight: FontWeight.w600, letterSpacing: -1),
+                  ?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -1,
+                    color: const Color(0xFF1F2937),
+                  ),
         ),
         SizedBox(height: compact ? 6 : 8),
         Padding(
