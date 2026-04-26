@@ -152,6 +152,7 @@ class ApplicationState extends ConsumerState<Application> {
           themeMode: themeProps.themeMode,
           theme: ThemeData(
             useMaterial3: true,
+            fontFamily: 'HarmonyOS Sans SC',
             pageTransitionsTheme: _pageTransitionsTheme,
             colorScheme: _getAppColorScheme(
               brightness: Brightness.light,
@@ -160,6 +161,7 @@ class ApplicationState extends ConsumerState<Application> {
           ),
           darkTheme: ThemeData(
             useMaterial3: true,
+            fontFamily: 'HarmonyOS Sans SC',
             pageTransitionsTheme: _pageTransitionsTheme,
             colorScheme: _getAppColorScheme(
               brightness: Brightness.dark,

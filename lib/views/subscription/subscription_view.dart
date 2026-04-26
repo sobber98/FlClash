@@ -429,7 +429,9 @@ class _PlanFilterBar extends StatelessWidget {
             duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.symmetric(vertical: 14),
             decoration: BoxDecoration(
-              color: selected ? const Color(0xFF1F2024) : Colors.transparent,
+              color: selected
+                  ? context.colorScheme.onSurface
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
@@ -437,8 +439,10 @@ class _PlanFilterBar extends StatelessWidget {
               locale: const Locale('zh', 'CN'),
               textAlign: TextAlign.center,
               style: context.textTheme.titleMedium?.copyWith(
-                color: selected ? Colors.white : const Color(0xFF374151),
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: selected
+                    ? context.colorScheme.surface
+                    : context.colorScheme.onSurfaceVariant,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
           ),
@@ -449,7 +453,7 @@ class _PlanFilterBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: const Color(0xFFE6EAF0),
+        color: context.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(22),
       ),
       child: Row(
