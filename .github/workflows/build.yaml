@@ -3,83 +3,32 @@ name: build
 on:
   push:
     tags:
-      - 'v*'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
-  IS_STABLE: ${{ !contains(github.ref, '-') }}
   FLUTTER_VERSION: '3.41.5'
   GO_VERSION: '1.24.0'
   JAVA_VERSION: '17'
   NDK_VERSION: '28.0.13004108'
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - platform: android
-            os: ubuntu-latest
-          - platform: windows
-            os: Windows-2022
-            arch: amd64
-          - platform: linux
-            os: ubuntu-22.04
-            arch: amd64
-          - platform: macos
-            os: macos-15-intel
-            arch: amd64
-          - platform: macos
-            os: macos-latest
-            arch: arm64
-          #          - platform: windows
-          #            os: windows-11-arm
-          #            arch: arm64
-          - platform: linux
-            os: ubuntu-24.04-arm
-            arch: arm64
-
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
     steps:
-      - name: Setup rust
-        if: startsWith(matrix.os, 'windows-11-arm')
-        run: |
-          Invoke-WebRequest -Uri "https://win.rustup.rs/aarch64" -OutFile rustup-init.exe
-          .\rustup-init.exe -y --default-toolchain stable
-          $cargoPath = "$env:USERPROFILE\.cargo\bin"
-          Add-Content $env:GITHUB_PATH $cargoPath
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: Setup Java
-        if: startsWith(matrix.platform, 'android')
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: ${{ env.JAVA_VERSION }}
-
-      - name: Setup Android SDK
-        if: startsWith(matrix.platform, 'android')
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android NDK
-        if: startsWith(matrix.platform, 'android')
-        run: |
-          yes | sdkmanager --licenses > /dev/null
-          sdkmanager "ndk;${{ env.NDK_VERSION }}"
-          echo "ANDROID_NDK=${ANDROID_SDK_ROOT}/ndk/${{ env.NDK_VERSION }}" >> "$GITHUB_ENV"
-          echo "ANDROID_NDK_HOME=${ANDROID_SDK_ROOT}/ndk/${{ env.NDK_VERSION }}" >> "$GITHUB_ENV"
-
-      - name: Setup Android Signing
-        if: startsWith(matrix.platform,'android')
-        run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
-          echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/local.properties
-          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/local.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/local.properties
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -89,211 +38,298 @@ jobs:
             core/go.sum
 
       - name: Setup Flutter
-        if: ${{ !(startsWith(matrix.os, 'windows-11-arm') || startsWith(matrix.os, 'ubuntu-24.04-arm')) }}
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - name: Setup Flutter With Other
-        if: startsWith(matrix.os, 'windows-11-arm') || startsWith(matrix.os, 'ubuntu-24.04-arm')
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Regenerate source files
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze project
+        run: flutter analyze --no-fatal-infos lib setup.dart
+
+      - name: Validate release automation scripts
+        run: python -m py_compile release_telegram.py generate_update_manifest.py
+
+      - name: Verify generated files are committed
+        run: git diff --exit-code
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: analyze
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null
+          sdkmanager "ndk;${NDK_VERSION}"
+          echo "ANDROID_NDK=${ANDROID_SDK_ROOT}/ndk/${NDK_VERSION}" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_HOME=${ANDROID_SDK_ROOT}/ndk/${NDK_VERSION}" >> "$GITHUB_ENV"
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: |
+            core/go.sum
+
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: master
+          channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - name: Get Flutter Dependency
-        run: |
-          flutter --version
-          flutter pub get
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
-      - name: Setup
-        run: dart setup.dart ${{ matrix.platform }} ${{ matrix.arch && format('--arch {0}', matrix.arch) }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }}
+      - name: Build Android APK
+        run: dart setup.dart android --env stable
 
-      - name: Upload
+      - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: artifact-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) }}
-          path: ./dist
-          overwrite: true
+          name: android-apk-dist
+          path: dist
+          if-no-files-found: error
 
-  changelog:
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        if: ${{ env.IS_STABLE == 'true' }}
-        with:
-          fetch-depth: 0
-          ref: refs/heads/main
-      - name: Generate
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          last_ver=$(grep -m1 '^## ' CHANGELOG.md 2>/dev/null | sed 's/^## //')
-          
-          tags=($(git tag --merged HEAD --sort=-creatordate))
-          
-          temp="NEW_CHANGELOG.md" > "$temp"
-          
-          for i in "${!tags[@]}"; do
-              curr="${tags[i]}"
-              [[ "$curr" == "$last_ver" ]] && break
-          
-              prev="${tags[i+1]}"
-              range="${prev:+$prev..}$curr"
-          
-              echo -e "## $curr\n" >> "$temp"
-              git log --no-merges --pretty=format:"%B" "$range" | \
-              awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$temp"
-          done
-          [ -f CHANGELOG.md ] && cat CHANGELOG.md >> "$temp"
-          
-          mv "$temp" CHANGELOG.md
-
-      - name: Commit
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          git add CHANGELOG.md
-          if ! git diff --cached --quiet; then
-            echo "Commit pushing"
-            git config --local user.email "chen08209@gmail.com"
-            git config --local user.name "chen08209"
-            git commit -m "Update changelog"
-            git push
-            if [ $? -eq 0 ]; then
-              echo "Push succeeded"
-            else
-              echo "Push failed"
-              exit 1
-            fi
-          fi
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  upload:
-    permissions: write-all
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    services:
-      telegram-bot-api:
-        image: aiogram/telegram-bot-api:latest
-        env:
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-        ports:
-          - 8081:8081
+  build-windows:
+    name: Build Windows ${{ matrix.arch }}
+    runs-on: windows-2022
+    needs: analyze
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+          - arch: arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          submodules: recursive
 
-      - name: Download
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: |
+            core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Windows package
+        run: dart setup.dart windows --arch ${{ matrix.arch }} --env stable
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.arch }}-dist
+          path: dist
+          if-no-files-found: error
+
+  build-linux:
+    name: Build Linux amd64
+    runs-on: ubuntu-22.04
+    needs: analyze
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: |
+            core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Linux package
+        run: dart setup.dart linux --arch amd64 --env stable
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-amd64-dist
+          path: dist
+          if-no-files-found: error
+
+  build-macos:
+    name: Build macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    needs: analyze
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15-intel
+            arch: amd64
+          - os: macos-latest
+            arch: arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: |
+            core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build macOS package
+        run: dart setup.dart macos --arch ${{ matrix.arch }} --env stable
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}-dist
+          path: dist
+          if-no-files-found: error
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs:
+      - build-android
+      - build-windows
+      - build-linux
+      - build-macos
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./dist/
-          pattern: artifact-*
-          merge-multiple: true
+          path: dist-all
+          merge-multiple: false
 
-      - name: Generate release.md
+      - name: Merge artifacts into dist/
         run: |
-          tags=($(git tag --merged HEAD --sort=-creatordate))
-          preTag=$(curl -s "https://api.github.com/repos/chen08209/FlClash/releases/latest" | \
-          sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p')
-          
-          [ -z "$preTag" ] && preTag=""
-          
-          out="release.md" > "$out"
-          
-          for i in "${!tags[@]}"; do
-            curr="${tags[i]}"
-            [[ "$curr" == "$preTag" ]] && break
-          
-            prev="${tags[i+1]}"
-            range="${prev:+$prev..}$curr"
-          
-            git log --no-merges --pretty=format:"%B" "$range" | \
-            awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$out"
+          mkdir -p dist
+          find dist-all -type f | while read -r f; do
+            cp "$f" dist/
           done
-      - name: Push to telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TAG: ${{ github.ref_name }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-          python release_telegram.py
+          echo "Files in dist/:"
+          ls -lh dist/
 
-      - name: Patch release.md
-        run: |
-          version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
-          sed "s|VERSION|$version|g" ./.github/release_template.md >> release.md
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-      - name: Generate update manifest and sha256
-        if: env.IS_STABLE == 'true'
+      - name: Generate update manifest and SHA256 checksums
         env:
           TAG: ${{ github.ref_name }}
           DIST_DIR: dist
           RELEASE_NOTES_FILE: release.md
           UPDATE_ASSET_BASE_URL: ${{ secrets.UPDATE_ASSET_BASE_URL }}
-          UPDATE_FORCE: ${{ secrets.UPDATE_FORCE }}
-          S3_BUCKET: ${{ secrets.S3_BUCKET }}
           S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
-        run: |
-          python generate_update_manifest.py
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          UPDATE_FORCE: ${{ secrets.UPDATE_FORCE }}
+        run: python generate_update_manifest.py
 
       - name: Install AWS CLI
-        if: env.IS_STABLE == 'true'
-        run: |
-          python -m pip install --upgrade pip
-          pip install awscli
+        run: pip install awscli
 
-      - name: Upload release assets to compatible S3
-        if: env.IS_STABLE == 'true'
+      - name: Sync dist to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_EC2_METADATA_DISABLED: true
-          S3_BUCKET: ${{ secrets.S3_BUCKET }}
           S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
         run: |
-          aws configure set default.s3.addressing_style path
-          aws s3 sync ./dist "s3://${S3_BUCKET}/" \
+          if [[ -z "$S3_ENDPOINT" || -z "$S3_BUCKET" ]]; then
+            echo "S3 not configured, skipping upload."
+            exit 0
+          fi
+          aws s3 sync dist/ "s3://${S3_BUCKET}/" \
             --endpoint-url "${S3_ENDPOINT}" \
-            --only-show-errors
+            --no-progress
 
-      - name: Release
-        if: ${{ env.IS_STABLE == 'true' }}
+      - name: Build release body
+        id: release_body
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          sed "s/VERSION/${VERSION}/g" .github/release_template.md > release_body.md
+          if [[ -f release.md ]]; then
+            printf '\n' >> release_body.md
+            cat release.md >> release_body.md
+          fi
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./dist/*
-          body_path: './release.md'
-
-      - name: Create Fdroid Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          mkdir -p ./tmp
-          cp ./dist/*android-arm64-v8a* ./tmp/ || true
-          echo "Files copied successfully"
-
-      - name: Push to fdroid repo
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
+          tag_name: ${{ github.ref_name }}
+          body_path: release_body.md
+          files: |
+            dist/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
         env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./tmp/
-          destination-github-username: chen08209
-          destination-repository-name: FlClash-fdroid-repo
-          user-name: 'github-actions[bot]'
-          user-email: 'github-actions[bot]@users.noreply.github.com'
-          target-branch: main
-          commit-message: Update from ${{ github.ref_name }}
-          target-directory: /tmp/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Telegram dependencies
+        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' }}
+        run: pip install requests
+
+      - name: Send Telegram notification
+        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          RUN_ID: ${{ github.run_id }}
+          DIST_DIR: dist
+        run: python release_telegram.py

@@ -118,7 +118,9 @@ extension InitControllerExt on AppController {
 
   Future<void> autoCheckUpdate() async {
     if (!_ref.read(appSettingProvider).autoCheckUpdate) return;
-    final manifestUrl = _ref.read(appSettingProvider).updateManifestUrl;
+    final userUrl = _ref.read(appSettingProvider).updateManifestUrl;
+    final configUrl = _ref.read(appUpdateManifestUrlProvider);
+    final manifestUrl = userUrl.trim().isNotEmpty ? userUrl : configUrl;
     final res = await request.checkForUpdate(manifestUrl);
     await checkUpdateResultHandle(data: res);
   }

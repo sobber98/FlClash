@@ -10,9 +10,7 @@ from urllib.parse import quote
 
 
 ASSET_SUFFIX_TO_KEY = {
-    '-android-arm64-v8a.apk': 'android-arm64-v8a',
-    '-android-armeabi-v7a.apk': 'android-armeabi-v7a',
-    '-android-x86_64.apk': 'android-x86_64',
+    '-android.apk': 'android',
     '-windows-amd64-setup.exe': 'windows-amd64',
     '-windows-arm64-setup.exe': 'windows-arm64',
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/app_config.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/list.dart';
@@ -27,7 +28,9 @@ class AboutView extends ConsumerWidget {
   const AboutView({super.key});
 
   Future<void> _checkUpdate(BuildContext context, WidgetRef ref) async {
-    final manifestUrl = ref.read(appSettingProvider).updateManifestUrl;
+    final userUrl = ref.read(appSettingProvider).updateManifestUrl;
+    final configUrl = ref.read(appUpdateManifestUrlProvider);
+    final manifestUrl = userUrl.trim().isNotEmpty ? userUrl : configUrl;
     final data = await appController.safeRun<UpdateManifest?>(
       () => request.checkForUpdate(manifestUrl),
       title: appLocalizations.checkUpdate,

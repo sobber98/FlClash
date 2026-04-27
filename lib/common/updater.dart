@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/plugins/app.dart';
@@ -28,21 +27,7 @@ class AppUpdater {
 
   static Future<String?> getCurrentPlatformKey() async {
     if (system.isAndroid) {
-      final info = await DeviceInfoPlugin().androidInfo;
-      final abi = info.supportedAbis.firstWhere(
-        (value) => value.isNotEmpty,
-        orElse: () => '',
-      );
-      if (abi.contains('arm64')) {
-        return 'android-arm64-v8a';
-      }
-      if (abi.contains('x86_64')) {
-        return 'android-x86_64';
-      }
-      if (abi.contains('armeabi') || abi.contains('arm')) {
-        return 'android-armeabi-v7a';
-      }
-      return null;
+      return 'android';
     }
     if (system.isWindows) {
       final arch = (Platform.environment['PROCESSOR_ARCHITEW6432'] ??

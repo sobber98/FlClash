@@ -11,6 +11,7 @@ class AppConfig {
   final String officialWebsite;
   final String telegramGroup;
   final List<String> blockedNodeKeywords;
+  final String updateManifestUrl;
   final Map<String, dynamic> extras;
 
   const AppConfig({
@@ -23,6 +24,7 @@ class AppConfig {
     this.officialWebsite = '',
     this.telegramGroup = '',
     this.blockedNodeKeywords = const [],
+    this.updateManifestUrl = '',
     this.extras = const {},
   });
 
@@ -54,6 +56,9 @@ class AppConfig {
       blockedNodeKeywords: _readStringList(
         json['blockedNodeKeywords'] ?? json['blocked_node_keywords'],
       ),
+      updateManifestUrl: _readString(
+        json['updateManifestUrl'] ?? json['update_manifest_url'],
+      ),
       extras: extras,
     );
   }
@@ -69,6 +74,7 @@ class AppConfig {
     String? officialWebsite,
     String? telegramGroup,
     List<String>? blockedNodeKeywords,
+    String? updateManifestUrl,
     Map<String, dynamic>? extras,
   }) {
     return AppConfig(
@@ -83,6 +89,7 @@ class AppConfig {
       officialWebsite: officialWebsite ?? this.officialWebsite,
       telegramGroup: telegramGroup ?? this.telegramGroup,
       blockedNodeKeywords: blockedNodeKeywords ?? this.blockedNodeKeywords,
+      updateManifestUrl: updateManifestUrl ?? this.updateManifestUrl,
       extras: extras ?? this.extras,
     );
   }
@@ -108,6 +115,9 @@ class AppConfig {
       blockedNodeKeywords: other.blockedNodeKeywords.isNotEmpty
           ? other.blockedNodeKeywords
           : blockedNodeKeywords,
+      updateManifestUrl: other.updateManifestUrl.trim().isNotEmpty
+          ? other.updateManifestUrl
+          : updateManifestUrl,
       extras: {...extras, ...other.extras},
     );
   }
@@ -123,6 +133,7 @@ class AppConfig {
       'officialWebsite': officialWebsite,
       'telegramGroup': telegramGroup,
       'blockedNodeKeywords': blockedNodeKeywords,
+      'updateManifestUrl': updateManifestUrl,
       ...extras,
     };
   }
@@ -159,6 +170,8 @@ class AppConfig {
     'telegram_group',
     'blockedNodeKeywords',
     'blocked_node_keywords',
+    'updateManifestUrl',
+    'update_manifest_url',
   };
 }
 

@@ -572,8 +572,7 @@ class BuildCommand extends Command {
         await _buildDistributor(
           target: target,
           targets: 'apk',
-          flutterBuildArgs:
-              'verbose,dart-define-from-file=env.json,split-per-abi',
+          flutterBuildArgs: 'verbose,dart-define-from-file=env.json',
           extraArgs: [
             '--build-target-platform',
             defaultTargets.join(','),

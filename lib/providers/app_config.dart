@@ -62,3 +62,12 @@ final blockedNodeKeywordsProvider = Provider<List<String>>((ref) {
         orElse: () => const [],
       );
 });
+
+final appUpdateManifestUrlProvider = Provider<String>((ref) {
+  return ref
+      .watch(appConfigProvider)
+      .maybeWhen(
+        data: (config) => config.updateManifestUrl,
+        orElse: () => '',
+      );
+});
