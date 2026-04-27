@@ -296,6 +296,10 @@ jobs:
             echo "S3 not configured, skipping upload."
             exit 0
           fi
+          # Ensure endpoint has a scheme
+          if [[ "$S3_ENDPOINT" != http://* && "$S3_ENDPOINT" != https://* ]]; then
+            S3_ENDPOINT="https://${S3_ENDPOINT}"
+          fi
           aws s3 sync dist/ "s3://${S3_BUCKET}/" \
             --endpoint-url "${S3_ENDPOINT}" \
             --no-progress
