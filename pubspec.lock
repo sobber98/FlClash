@@ -1787,11 +1787,9 @@ packages:
   yaml_writer:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: "2a38859d8b9707f99a55433974a799c413477a5b"
-      url: "https://github.com/chen08209/yaml_writer"
-    source: git
+      path: "packages/yaml_writer"
+      relative: true
+    source: path
     version: "2.1.0"
 sdks:
   dart: ">=3.9.0 <4.0.0"
