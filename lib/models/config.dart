@@ -35,7 +35,7 @@ const defaultNetworkProps = NetworkProps();
 const defaultProxiesStyleProps = ProxiesStyleProps();
 const defaultWindowProps = WindowProps();
 const defaultAccessControlProps = AccessControlProps();
-final defaultThemeProps = ThemeProps(primaryColor: defaultPrimaryColor);
+final defaultThemeProps = ThemeProps(themeMode: ThemeMode.light);
 
 const List<DashboardWidget> defaultDashboardWidgets = [
   DashboardWidget.networkSpeed,

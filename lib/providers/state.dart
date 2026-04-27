@@ -589,7 +589,15 @@ ColorScheme genColorScheme(
       (state) => VM2(state.primaryColor, state.schemeVariant),
     ),
   );
-  if (color == null && (ignoreConfig == true || vm2.a == null)) {
+
+  // Treat the default indigo primary as "no custom color" so the exact
+  // hand-crafted light scheme is always used for the default light theme.
+  final effectiveColor = color ?? (vm2.a != null ? Color(vm2.a!) : null);
+  final isDefaultColor =
+      effectiveColor == null ||
+      effectiveColor.toARGB32() == defaultPrimaryColor;
+
+  if (isDefaultColor || ignoreConfig) {
     final dynamicColorScheme = brightness == Brightness.dark
         ? globalState.dynamicDarkColorScheme
         : globalState.dynamicLightColorScheme;
@@ -600,19 +608,20 @@ ColorScheme genColorScheme(
         dynamicSchemeVariant: vm2.b,
       );
     }
-    // Use the custom indigo default light scheme when no dynamic color or
-    // user-defined color is set.
+    // Return the exact indigo design palette for light mode.
     if (brightness == Brightness.light) {
       return defaultLightColorScheme;
     }
+    // For dark mode, derive from the indigo seed for a matching dark theme.
     return ColorScheme.fromSeed(
-      seedColor: globalState.accentColor,
+      seedColor: const Color(defaultPrimaryColor),
       brightness: brightness,
       dynamicSchemeVariant: vm2.b,
     );
   }
+
   return ColorScheme.fromSeed(
-    seedColor: color ?? Color(vm2.a!),
+    seedColor: effectiveColor,
     brightness: brightness,
     dynamicSchemeVariant: vm2.b,
   );
