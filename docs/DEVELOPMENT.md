@@ -205,6 +205,9 @@ FlClash 支持通过自定义 HTTPS 更新清单为 Android 和 Windows 提供�
 - 安全约束：清单 URL 与所有资源 URL 都必须是 HTTPS，且资源必须与清单使用相同 host
 - 完整性校验：安装包下载完成后会执行 SHA256 校验，失败时会删除缓存文件并提示重试
 - Android 安装：通过 `installApk` MethodChannel + `FileProvider` 拉起系统安装
+- CI 发布：稳定版标签工作流会调用 `generate_update_manifest.py` 自动生成 `dist/latest.json` 与所有发布文件的 `.sha256`
+- S3 上传：稳定版标签工作流会使用 `AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`S3_BUCKET`、`S3_ENDPOINT` 将 `dist/` 自动上传到兼容 S3，不依赖 `S3_REGION`
+- 发布配置来源：更新/S3 相关配置现统一从 Repository secrets 读取，包括 `UPDATE_ASSET_BASE_URL` 与可选的 `UPDATE_FORCE`
 
 核心代码位置：
 
@@ -213,6 +216,7 @@ FlClash 支持通过自定义 HTTPS 更新清单为 Android 和 Windows 提供�
 - `lib/controller.dart`：自动检查更新、手动检查更新、结果处理
 - `lib/views/update_progress_dialog.dart`：应用内下载进度与重试 UI
 - `android/app/src/main/kotlin/com/follow/clash/plugins/AppPlugin.kt`：Android 安装 APK
+- `generate_update_manifest.py`：发布阶段生成 `latest.json` 与 `.sha256`
 
 更新清单格式、平台键、S3 目录建议与发布步骤，见 [HOT_UPDATE.md](HOT_UPDATE.md)。
 

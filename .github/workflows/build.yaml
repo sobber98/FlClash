@@ -209,13 +209,36 @@ jobs:
           version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
           sed "s|VERSION|$version|g" ./.github/release_template.md >> release.md
 
-      - name: Generate sha256
+      - name: Generate update manifest and sha256
+        if: env.IS_STABLE == 'true'
+        env:
+          TAG: ${{ github.ref_name }}
+          UPDATE_ASSET_BASE_URL: ${{ secrets.UPDATE_ASSET_BASE_URL }}
+          UPDATE_FORCE: ${{ secrets.UPDATE_FORCE }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+        run: |
+          python generate_update_manifest.py
+
+      - name: Install AWS CLI
         if: env.IS_STABLE == 'true'
         run: |
-          cd ./dist
-          for file in $(find . -type f -not -name "*.sha256"); do
-            sha256sum "$file" > "${file}.sha256"
-          done  
+          python -m pip install --upgrade pip
+          pip install awscli
+
+      - name: Upload release assets to compatible S3
+        if: env.IS_STABLE == 'true'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: true
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+        run: |
+          aws configure set default.s3.addressing_style path
+          aws s3 sync ./dist "s3://${S3_BUCKET}/" \
+            --endpoint-url "${S3_ENDPOINT}" \
+            --only-show-errors
 
       - name: Release
         if: ${{ env.IS_STABLE == 'true' }}

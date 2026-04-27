@@ -61,6 +61,7 @@ AppController.autoCheckUpdate / 手动检查
 - `lib/controller.dart`：自动检查、手动检查、更新结果处理
 - `lib/views/update_progress_dialog.dart`：下载进度与失败重试界面
 - `android/app/src/main/kotlin/com/follow/clash/plugins/AppPlugin.kt`：Android 安装 APK
+- `generate_update_manifest.py`：CI 发布阶段生成 `latest.json` 与 `.sha256`
 
 ## 更新清单格式
 
@@ -83,12 +84,12 @@ AppController.autoCheckUpdate / 手动检查
   },
   "assets": {
     "android-arm64-v8a": {
-      "url": "https://downloads.example.com/flclash/packages/FlClash-android-arm64-v8a-0.8.92.apk",
+      "url": "https://downloads.example.com/flclash/packages/FlClash-0.8.92-android-arm64-v8a.apk",
       "sha256": "3d7f7d1f4f01fb8c1d8b2af4f8a7fba2f784cb4fa66f3b5f8f4b8d8d65c5961d",
       "size": 73400320
     },
     "windows-amd64": {
-      "url": "https://downloads.example.com/flclash/packages/FlClash-windows-amd64-0.8.92.exe",
+      "url": "https://downloads.example.com/flclash/packages/FlClash-0.8.92-windows-amd64-setup.exe",
       "sha256": "7f8cb5a9b69538c1d1eaa1c6f84e4b26d7cc4a3ad07b6bd7c7c8dca20872b7ab",
       "size": 91226112
     }
@@ -145,11 +146,11 @@ AppController.autoCheckUpdate / 手动检查
 flclash-release/
 ├── latest.json
 └── packages/
-    ├── FlClash-android-arm64-v8a-0.8.92.apk
-    ├── FlClash-android-armeabi-v7a-0.8.92.apk
-    ├── FlClash-android-x86_64-0.8.92.apk
-    ├── FlClash-windows-amd64-0.8.92.exe
-    └── FlClash-windows-arm64-0.8.92.exe
+    ├── FlClash-0.8.92-android-arm64-v8a.apk
+    ├── FlClash-0.8.92-android-armeabi-v7a.apk
+    ├── FlClash-0.8.92-android-x86_64.apk
+    ├── FlClash-0.8.92-windows-amd64-setup.exe
+    └── FlClash-0.8.92-windows-arm64-setup.exe
 ```
 
 如果你使用的是 S3 + CDN / 自定义域名，请注意：
@@ -159,6 +160,70 @@ flclash-release/
 - 不能让清单走 `downloads.example.com`，资源走 `cdn.example.com` 或 `bucket.s3.amazonaws.com`。
 
 ## 发布流程
+
+### CI 自动生成 latest.json 与 SHA256
+
+标签发布工作流 `.github/workflows/build.yaml` 现在会在稳定版 release 阶段自动执行以下操作：
+
+1. 为 `dist/` 下的每个发布文件生成同名 `.sha256` 文件
+2. 扫描 Android APK 与 Windows Setup 安装包
+3. 基于 tag、`release.md` 和安装包元数据生成 `dist/latest.json`
+4. 为 `latest.json` 再生成一份 `latest.json.sha256`
+5. 将上述文件作为 GitHub Release 资产一并上传
+
+对应脚本为根目录下的 `generate_update_manifest.py`。
+
+### 需要配置的仓库密钥与变量
+
+当前工作流已经直接接入以下 GitHub Repository secrets：
+
+| 名称 | 必填 | 说明 |
+|------|------|------|
+| `AWS_ACCESS_KEY_ID` | 是 | S3 兼容服务访问密钥 ID |
+| `AWS_SECRET_ACCESS_KEY` | 是 | S3 兼容服务访问密钥 |
+| `S3_BUCKET` | 是 | 目标 bucket 名称 |
+| `S3_ENDPOINT` | 是 | S3 兼容服务 endpoint，例如 `https://s3.example.com` |
+| `UPDATE_ASSET_BASE_URL` | 否 | 自定义公开下载基础地址，用于覆盖默认的 `S3_ENDPOINT/S3_BUCKET` 推导值 |
+| `UPDATE_FORCE` | 否 | 是否默认生成强制更新清单。支持 `true/false`，默认 `false` |
+
+稳定版 release 阶段会使用这些 secrets，通过 `aws s3 sync --endpoint-url ...` 把 `dist/` 上传到兼容 S3。当前实现不再依赖 `S3_REGION`，并且更新/S3 相关配置统一从 Repository secrets 读取。由于工作流已强制使用 path-style，默认公开地址会按下面的规则推导：
+
+```text
+${S3_ENDPOINT}/${S3_BUCKET}/文件名
+```
+
+例如：
+
+```text
+https://s3.example.com/flclash-release/FlClash-0.8.92-android-arm64-v8a.apk
+```
+
+如果你的对象存储对外下载地址与 API endpoint 不同，例如通过 CDN 或独立下载域名暴露，则可以额外配置 `UPDATE_ASSET_BASE_URL` secret。
+
+| 名称 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `UPDATE_ASSET_BASE_URL` | secret | 否 | 用于覆盖默认公开下载地址。设置后，`latest.json` 中的 `assets[*].url` 将优先使用该值。 |
+| `UPDATE_FORCE` | secret | 否 | 是否默认生成强制更新清单。支持 `true/false`，默认 `false`。 |
+
+如果未配置 `UPDATE_ASSET_BASE_URL`，工作流会退回到 `S3_ENDPOINT + S3_BUCKET` 推导下载地址。
+
+示例：
+
+```text
+UPDATE_ASSET_BASE_URL=https://downloads.example.com/flclash/packages
+```
+
+则生成的资源 URL 会类似：
+
+```text
+https://downloads.example.com/flclash/packages/FlClash-0.8.92-android-arm64-v8a.apk
+```
+
+注意：
+
+- `latest.json` 的 host 与安装包 URL host 必须一致。
+- 如果你不配置 `UPDATE_ASSET_BASE_URL`，请直接把应用内更新地址配置为 `https://你的-endpoint/你的-bucket/latest.json`。
+- 如果你配置了 `UPDATE_ASSET_BASE_URL`，则它必须和 `latest.json` 的公开地址保持同一 host。
 
 ### 1. 构建安装包
 
@@ -170,23 +235,34 @@ dart .\setup.dart windows --arch amd64
 dart .\setup.dart windows --arch arm64
 ```
 
-### 2. 计算文件大小与 SHA256
+### 2. 获取 CI 生成结果
+
+稳定版标签发布完成后，可直接从 GitHub Release 下载：
+
+- 各平台安装包
+- 对应的 `.sha256` 文件
+- `latest.json`
+- `latest.json.sha256`
+
+如果你仍然需要手动核对，也可以使用下面的方式重新计算。
+
+### 3. 计算文件大小与 SHA256
 
 Linux/macOS 环境示例：
 
 ```bash
-sha256sum FlClash-android-arm64-v8a-0.8.92.apk
-stat -c %s FlClash-android-arm64-v8a-0.8.92.apk
+sha256sum FlClash-0.8.92-android-arm64-v8a.apk
+stat -c %s FlClash-0.8.92-android-arm64-v8a.apk
 ```
 
 Windows PowerShell 示例：
 
 ```powershell
-Get-FileHash .\FlClash-windows-amd64-0.8.92.exe -Algorithm SHA256
-(Get-Item .\FlClash-windows-amd64-0.8.92.exe).Length
+Get-FileHash .\FlClash-0.8.92-windows-amd64-setup.exe -Algorithm SHA256
+(Get-Item .\FlClash-0.8.92-windows-amd64-setup.exe).Length
 ```
 
-### 3. 上传文件
+### 4. 上传文件
 
 至少上传两类文件：
 
@@ -195,9 +271,11 @@ Get-FileHash .\FlClash-windows-amd64-0.8.92.exe -Algorithm SHA256
 
 历史包是否保留由你自行决定；应用内更新只要求 `latest.json` 中引用的文件可访问。
 
-### 4. 更新清单
+如果 `UPDATE_ASSET_BASE_URL` 指向 `https://downloads.example.com/flclash/packages`，那就需要把安装包上传到该目录对应的公开位置。
 
-更新以下内容：
+### 5. 更新清单
+
+如果你完全使用 CI 生成的 `latest.json`，这一节通常不需要手动编辑。只有在你想覆盖某些字段时，才需要手工修改：
 
 - `version`
 - `releaseDate`
@@ -207,7 +285,7 @@ Get-FileHash .\FlClash-windows-amd64-0.8.92.exe -Algorithm SHA256
 - 各平台 `sha256`
 - 各平台 `size`
 
-### 5. 应用内验证
+### 6. 应用内验证
 
 在测试环境中配置更新源地址后，至少验证一次：
 

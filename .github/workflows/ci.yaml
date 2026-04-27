@@ -53,6 +53,9 @@ jobs:
       - name: Analyze project
         run: flutter analyze --no-fatal-infos lib setup.dart
 
+      - name: Validate release automation scripts
+        run: python -m py_compile release_telegram.py generate_update_manifest.py
+
       - name: Verify generated files are committed
         run: git diff --exit-code
 
