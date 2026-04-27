@@ -55,16 +55,34 @@ def build_asset_url(base_url: str, file_name: str) -> str:
     return f"{base_url.rstrip('/')}/{quote(file_name)}"
 
 
+def ensure_https(url: str) -> str:
+    if url and not url.startswith('http://') and not url.startswith('https://'):
+        return f'https://{url}'
+    return url
+
+
 def resolve_asset_base_url() -> str:
     asset_base_url = os.getenv('UPDATE_ASSET_BASE_URL', '').strip()
     if asset_base_url:
-        return asset_base_url
+        return ensure_https(asset_base_url)
 
     s3_endpoint = os.getenv('S3_ENDPOINT', '').strip()
     s3_bucket = os.getenv('S3_BUCKET', '').strip()
     if s3_endpoint and s3_bucket:
-        return f"{s3_endpoint.rstrip('/')}/{quote(s3_bucket)}"
+        return f"{ensure_https(s3_endpoint).rstrip('/')}/{quote(s3_bucket)}"
 
+    return ''
+
+
+def read_pubspec_version(pubspec_path: Path) -> str:
+    """Read the version from pubspec.yaml, stripping the build number (+...)."""
+    if not pubspec_path.exists():
+        return ''
+    for line in pubspec_path.read_text(encoding='utf-8').splitlines():
+        stripped = line.strip()
+        if stripped.startswith('version:'):
+            raw = stripped[len('version:'):].strip().strip("'\"")
+            return raw.split('+')[0].strip()
     return ''
 
 
@@ -82,8 +100,22 @@ def main() -> int:
         'on',
     }
 
-    if not tag:
-        print('TAG or GITHUB_REF_NAME is required', file=sys.stderr)
+    # Version: prefer pubspec.yaml, fall back to TAG
+    pubspec_version = read_pubspec_version(Path('pubspec.yaml'))
+    if pubspec_version:
+        version = pubspec_version
+    elif tag:
+        version = normalize_version(tag)
+    else:
+        print('Could not determine version: pubspec.yaml not found and TAG is not set', file=sys.stderr)
+        return 1
+
+    import re as _re
+    if not _re.match(r'^\d+\.\d+', version):
+        print(
+            f'Version "{version}" does not look like a version number (expected X.Y.Z)',
+            file=sys.stderr,
+        )
         return 1
     if not asset_base_url:
         print(
@@ -137,7 +169,7 @@ def main() -> int:
     )
 
     manifest = {
-        'version': normalize_version(tag),
+        'version': version,
         'releaseDate': release_date,
         'forceUpdate': force_update,
         'changelog': changelog,
