@@ -34,6 +34,18 @@ on Mobile:
 
 ✨ 支持一键导入订阅, 深色模式
 
+🔄 支持通过自定义 HTTPS / S3 清单为 Android 和 Windows 提供应用内更新
+
+## 应用内更新
+
+FlClash 可以从自定义 HTTPS 更新清单拉取版本信息、更新日志和平台安装包。
+
+1. 在“关于”页面对应用头部连续点击 5 次，开启开发者模式。
+2. 打开“应用设置”，配置“更新源地址”。
+3. 将 `latest.json` 与各平台安装包上传到同一个 HTTPS host。
+
+维护者文档： [docs/HOT_UPDATE.md](docs/HOT_UPDATE.md)
+
 ## Use
 
 ### Linux

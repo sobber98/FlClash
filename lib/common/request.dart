@@ -71,24 +71,60 @@ class Request {
     return MemoryImage(data);
   }
 
-  Future<Map<String, dynamic>?> checkForUpdate() async {
+  Future<UpdateManifest?> checkForUpdate(String manifestUrl) async {
     try {
-      final response = await dio.get(
-        'https://api.github.com/repos/$repository/releases/latest',
-        options: Options(responseType: ResponseType.json),
+      final manifestUri = Uri.tryParse(manifestUrl);
+      if (manifestUri == null ||
+          manifestUri.scheme != 'https' ||
+          manifestUri.host.isEmpty) {
+        return null;
+      }
+      final response = await dio.get<Map<String, dynamic>>(
+        manifestUrl,
+        options: Options(
+          responseType: ResponseType.json,
+          headers: {'Cache-Control': 'no-cache'},
+        ),
       );
-      if (response.statusCode != 200) return null;
-      final data = response.data as Map<String, dynamic>;
-      final remoteVersion = data['tag_name'];
+      if (response.statusCode != 200 || response.data == null) return null;
+      final manifest = UpdateManifest.fromJson(response.data!);
+      final remoteVersion = manifest.version.replaceFirst(RegExp('^v'), '');
       final version = globalState.packageInfo.version;
       final hasUpdate =
-          utils.compareVersions(remoteVersion.replaceAll('v', ''), version) > 0;
+          utils.compareVersions(remoteVersion, version) > 0;
       if (!hasUpdate) return null;
-      return data;
+      final allowedHost = manifestUri.host.toLowerCase();
+      final hasInvalidAsset = manifest.assets.values.any((asset) {
+        final assetUri = Uri.tryParse(asset.url);
+        if (assetUri == null || assetUri.scheme != 'https') {
+          return true;
+        }
+        final host = assetUri.host.toLowerCase();
+        return host != allowedHost;
+      });
+      if (hasInvalidAsset) {
+        return null;
+      }
+      return manifest.copyWith(version: remoteVersion);
     } catch (e) {
       commonPrint.log('checkForUpdate failed', logLevel: LogLevel.warning);
       return null;
     }
+  }
+
+  Future<void> downloadUpdate({
+    required UpdateAsset asset,
+    required String savePath,
+    required void Function(int received, int total) onProgress,
+    CancelToken? cancelToken,
+  }) async {
+    await dio.download(
+      asset.url,
+      savePath,
+      cancelToken: cancelToken,
+      onReceiveProgress: onProgress,
+      options: Options(headers: {'Cache-Control': 'no-cache'}),
+    );
   }
 
   final Map<String, IpInfo Function(Map<String, dynamic>)> _ipInfoSources = {

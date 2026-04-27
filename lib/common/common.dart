@@ -43,5 +43,6 @@ export 'task.dart';
 export 'text.dart';
 export 'tray.dart';
 export 'utils.dart';
+export 'updater.dart';
 export 'window.dart';
 export 'yaml.dart';

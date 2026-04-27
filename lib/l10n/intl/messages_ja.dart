@@ -230,6 +230,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "doYouWantToPass": MessageLookupByLibrary.simpleMessage("通過させますか？"),
     "domain": MessageLookupByLibrary.simpleMessage("ドメイン"),
     "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage(
+      "ダウンロードに失敗しました。後でもう一度お試しください",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage("更新をダウンロード中..."),
     "edit": MessageLookupByLibrary.simpleMessage("編集"),
     "editGlobalRules": MessageLookupByLibrary.simpleMessage("グローバルルールを編集"),
     "editRule": MessageLookupByLibrary.simpleMessage("ルールを編集"),
@@ -312,6 +316,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "infiniteTime": MessageLookupByLibrary.simpleMessage("長期有効"),
     "init": MessageLookupByLibrary.simpleMessage("初期化"),
     "inputCorrectHotkey": MessageLookupByLibrary.simpleMessage("正しいホットキーを入力"),
+    "installFailed": MessageLookupByLibrary.simpleMessage(
+      "インストーラーの起動に失敗しました。後でもう一度お試しください",
+    ),
+    "installPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "不明なアプリのインストールを許可してから、もう一度更新してください",
+    ),
+    "installReady": MessageLookupByLibrary.simpleMessage(
+      "パッケージの準備が完了しました。まもなくインストーラーを起動します",
+    ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage("インテリジェント選択"),
     "internet": MessageLookupByLibrary.simpleMessage("インターネット"),
     "interval": MessageLookupByLibrary.simpleMessage("インターバル"),
@@ -328,6 +341,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "key": MessageLookupByLibrary.simpleMessage("キー"),
     "language": MessageLookupByLibrary.simpleMessage("言語"),
+    "later": MessageLookupByLibrary.simpleMessage("後で"),
     "layout": MessageLookupByLibrary.simpleMessage("レイアウト"),
     "light": MessageLookupByLibrary.simpleMessage("ライト"),
     "list": MessageLookupByLibrary.simpleMessage("リスト"),
@@ -387,6 +401,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noIcon": MessageLookupByLibrary.simpleMessage("なし"),
     "noInfo": MessageLookupByLibrary.simpleMessage("情報なし"),
     "noLongerRemind": MessageLookupByLibrary.simpleMessage("今後表示しない"),
+    "noMatchedUpdatePackage": MessageLookupByLibrary.simpleMessage(
+      "このプラットフォームで利用できる更新パッケージがありません",
+    ),
     "noMoreInfoDesc": MessageLookupByLibrary.simpleMessage("追加情報なし"),
     "noNetwork": MessageLookupByLibrary.simpleMessage("ネットワークなし"),
     "noNetworkApp": MessageLookupByLibrary.simpleMessage("ネットワークなしアプリ"),
@@ -537,6 +554,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "restoreStrategy_compatible": MessageLookupByLibrary.simpleMessage("互換"),
     "restoreStrategy_override": MessageLookupByLibrary.simpleMessage("上書き"),
     "restoreSuccess": MessageLookupByLibrary.simpleMessage("復元に成功しました"),
+    "retry": MessageLookupByLibrary.simpleMessage("再試行"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("ルートアドレス"),
     "routeAddressDesc": MessageLookupByLibrary.simpleMessage("ルートアドレスを設定"),
     "routeMode": MessageLookupByLibrary.simpleMessage("ルートモード"),
@@ -633,6 +651,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownNetworkError": MessageLookupByLibrary.simpleMessage("不明なネットワークエラー"),
     "unnamed": MessageLookupByLibrary.simpleMessage("無題"),
     "update": MessageLookupByLibrary.simpleMessage("更新"),
+    "updateManifestUrl": MessageLookupByLibrary.simpleMessage("更新ソース URL"),
+    "updateManifestUrlDesc": MessageLookupByLibrary.simpleMessage(
+      "カスタム S3 マニフェストからバージョンと更新情報を取得します",
+    ),
+    "updateNow": MessageLookupByLibrary.simpleMessage("今すぐ更新"),
+    "updateSourceUrlInvalid": MessageLookupByLibrary.simpleMessage(
+      "有効な HTTPS 更新ソース URL を入力してください",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URL経由でプロファイルを取得"),
@@ -651,9 +677,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "V2Boardパネルにログインしてサブスクリプションを管理",
     ),
     "v2boardLogout": MessageLookupByLibrary.simpleMessage("ログアウト"),
-    "v2boardLogoutConfirm": MessageLookupByLibrary.simpleMessage(
-      "ログアウトしてもよろしいですか？再度ログインが必要になります。",
-    ),
     "v2boardNoExpire": MessageLookupByLibrary.simpleMessage("期限なし"),
     "v2boardNoPlan": MessageLookupByLibrary.simpleMessage("プランなし"),
     "v2boardNotices": MessageLookupByLibrary.simpleMessage("お知らせ"),
@@ -677,6 +700,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "サブスクリプションを同期しました",
     ),
     "value": MessageLookupByLibrary.simpleMessage("値"),
+    "verifyFailed": MessageLookupByLibrary.simpleMessage(
+      "ファイル検証に失敗しました。再度ダウンロードしてください",
+    ),
+    "verifyingFile": MessageLookupByLibrary.simpleMessage("ファイルを検証中..."),
     "vibrantScheme": MessageLookupByLibrary.simpleMessage("ビブラント"),
     "view": MessageLookupByLibrary.simpleMessage("表示"),
     "vpnConfigChangeDetected": MessageLookupByLibrary.simpleMessage(

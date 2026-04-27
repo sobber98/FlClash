@@ -314,6 +314,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "domain": MessageLookupByLibrary.simpleMessage("Домен"),
     "download": MessageLookupByLibrary.simpleMessage("Скачивание"),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось загрузить обновление, попробуйте позже",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Загрузка обновления...",
+    ),
     "edit": MessageLookupByLibrary.simpleMessage("Редактировать"),
     "editGlobalRules": MessageLookupByLibrary.simpleMessage(
       "Редактировать глобальные правила",
@@ -434,6 +440,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputCorrectHotkey": MessageLookupByLibrary.simpleMessage(
       "Пожалуйста, введите правильную горячую клавишу",
     ),
+    "installFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось запустить установщик, попробуйте позже",
+    ),
+    "installPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "Разрешите установку неизвестных приложений и повторите обновление",
+    ),
+    "installReady": MessageLookupByLibrary.simpleMessage(
+      "Пакет готов, установка скоро начнется",
+    ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage(
       "Интеллектуальный выбор",
     ),
@@ -458,6 +473,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "key": MessageLookupByLibrary.simpleMessage("Ключ"),
     "language": MessageLookupByLibrary.simpleMessage("Язык"),
+    "later": MessageLookupByLibrary.simpleMessage("Позже"),
     "layout": MessageLookupByLibrary.simpleMessage("Макет"),
     "light": MessageLookupByLibrary.simpleMessage("Светлый"),
     "list": MessageLookupByLibrary.simpleMessage("Список"),
@@ -538,6 +554,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noInfo": MessageLookupByLibrary.simpleMessage("Нет информации"),
     "noLongerRemind": MessageLookupByLibrary.simpleMessage(
       "Больше не напоминать",
+    ),
+    "noMatchedUpdatePackage": MessageLookupByLibrary.simpleMessage(
+      "Для текущей платформы нет подходящего пакета обновления",
     ),
     "noMoreInfoDesc": MessageLookupByLibrary.simpleMessage(
       "Нет дополнительной информации",
@@ -749,6 +768,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "restoreSuccess": MessageLookupByLibrary.simpleMessage(
       "Восстановление успешно",
     ),
+    "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("Адрес маршрутизации"),
     "routeAddressDesc": MessageLookupByLibrary.simpleMessage(
       "Настройка адреса прослушивания маршрутизации",
@@ -871,6 +891,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "unnamed": MessageLookupByLibrary.simpleMessage("Без имени"),
     "update": MessageLookupByLibrary.simpleMessage("Обновить"),
+    "updateManifestUrl": MessageLookupByLibrary.simpleMessage(
+      "URL источника обновлений",
+    ),
+    "updateManifestUrlDesc": MessageLookupByLibrary.simpleMessage(
+      "Загружать версии и список изменений из пользовательского S3-манифеста",
+    ),
+    "updateNow": MessageLookupByLibrary.simpleMessage("Обновить сейчас"),
+    "updateSourceUrlInvalid": MessageLookupByLibrary.simpleMessage(
+      "Введите корректный HTTPS URL источника обновлений",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Загрузка"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage(
@@ -899,9 +929,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Войдите в панель V2Board для управления подпиской",
     ),
     "v2boardLogout": MessageLookupByLibrary.simpleMessage("Выйти"),
-    "v2boardLogoutConfirm": MessageLookupByLibrary.simpleMessage(
-      "Вы уверены, что хотите выйти? Для доступа к функциям аккаунта потребуется повторный вход.",
-    ),
     "v2boardNoExpire": MessageLookupByLibrary.simpleMessage("Без срока"),
     "v2boardNoPlan": MessageLookupByLibrary.simpleMessage("Нет плана"),
     "v2boardNotices": MessageLookupByLibrary.simpleMessage("Объявления"),
@@ -929,6 +956,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Подписка синхронизирована",
     ),
     "value": MessageLookupByLibrary.simpleMessage("Значение"),
+    "verifyFailed": MessageLookupByLibrary.simpleMessage(
+      "Проверка файла не удалась, скачайте его повторно",
+    ),
+    "verifyingFile": MessageLookupByLibrary.simpleMessage("Проверка файла..."),
     "vibrantScheme": MessageLookupByLibrary.simpleMessage("Яркие"),
     "view": MessageLookupByLibrary.simpleMessage("Просмотр"),
     "vpnConfigChangeDetected": MessageLookupByLibrary.simpleMessage(

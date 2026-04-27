@@ -34,6 +34,18 @@ on Mobile:
 
 ✨ Support subscription link, Dark mode
 
+🔄 Built-in in-app updates on Android and Windows via a custom HTTPS/S3 manifest
+
+## In-App Update
+
+FlClash can fetch version metadata, changelog and platform packages from a custom HTTPS update manifest.
+
+1. Enable Developer Mode from the About page by tapping the app header 5 times quickly.
+2. Open Application Settings and set Update manifest URL.
+3. Upload `latest.json` and platform packages to the same HTTPS host.
+
+Maintainer guide: [docs/HOT_UPDATE.md](docs/HOT_UPDATE.md)
+
 ## Use
 
 ### Linux

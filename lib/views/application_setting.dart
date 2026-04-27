@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/theme.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -380,10 +381,43 @@ class ApplicationSettingView extends ConsumerWidget {
     ).push(MaterialPageRoute(builder: (_) => const ThemeView()));
   }
 
+  Future<void> _showUpdateManifestUrlDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final currentValue = ref.read(appSettingProvider).updateManifestUrl;
+    final value = await globalState.showCommonDialog<String>(
+      child: InputDialog(
+        title: appLocalizations.updateManifestUrl,
+        value: currentValue,
+        hintText: defaultUpdateManifestUrlHint,
+        validator: (value) {
+          final uri = Uri.tryParse(value ?? '');
+          if (uri == null || uri.scheme != 'https' || uri.host.isEmpty) {
+            return appLocalizations.updateSourceUrlInvalid;
+          }
+          return null;
+        },
+      ),
+    );
+    if (value == null || value == currentValue) {
+      return;
+    }
+    ref
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(updateManifestUrl: value));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(
       appSettingProvider.select((state) => state.locale),
+    );
+    final updateManifestUrl = ref.watch(
+      appSettingProvider.select((state) => state.updateManifestUrl),
+    );
+    final developerMode = ref.watch(
+      appSettingProvider.select((state) => state.developerMode),
     );
     final themeMode = ref.watch(
       themeSettingProvider.select((state) => state.themeMode),
@@ -394,6 +428,7 @@ class ApplicationSettingView extends ConsumerWidget {
       ThemeMode.light => appLocalizations.light,
       ThemeMode.dark => appLocalizations.dark,
     };
+    final actionsCount = developerMode ? 3 : 2;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       appBar: AppBar(
@@ -408,6 +443,7 @@ class ApplicationSettingView extends ConsumerWidget {
           _ApplicationSettingsHeader(
             localeText: localeText,
             themeText: themeText,
+            actionsCount: actionsCount,
           ),
           const SizedBox(height: 16),
           _ApplicationSettingsActionCard(
@@ -425,6 +461,18 @@ class ApplicationSettingView extends ConsumerWidget {
             value: themeText,
             onTap: () => _pushThemePage(context),
           ),
+          if (developerMode) ...[
+            const SizedBox(height: 14),
+            _ApplicationSettingsActionCard(
+              icon: Icons.cloud_sync_outlined,
+              title: appLocalizations.updateManifestUrl,
+              subtitle: appLocalizations.updateManifestUrlDesc,
+              value: updateManifestUrl.isEmpty
+                  ? appLocalizations.none
+                  : updateManifestUrl,
+              onTap: () => _showUpdateManifestUrlDialog(context, ref),
+            ),
+          ],
         ],
       ),
     );
@@ -434,10 +482,12 @@ class ApplicationSettingView extends ConsumerWidget {
 class _ApplicationSettingsHeader extends StatelessWidget {
   final String localeText;
   final String themeText;
+  final int actionsCount;
 
   const _ApplicationSettingsHeader({
     required this.localeText,
     required this.themeText,
+    required this.actionsCount,
   });
 
   @override
@@ -489,10 +539,10 @@ class _ApplicationSettingsHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: _ApplicationSettingsMetric(
                   label: '可用入口',
-                  value: '2',
+                  value: actionsCount.toString(),
                 ),
               ),
             ],

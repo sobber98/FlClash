@@ -7,11 +7,14 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ComponentInfo
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.net.VpnService
 import android.os.Build
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.FileProvider
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -157,6 +160,10 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.success(true)
             }
 
+            "installApk" -> {
+                handleInstallApk(call, result)
+            }
+
             else -> {
                 result.notImplemented()
             }
@@ -194,6 +201,43 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     private fun tip(message: String?) {
         GlobalState.application.showToast(message)
+    }
+
+    private fun handleInstallApk(call: MethodCall, result: Result) {
+        val activity = activityRef?.get()
+        val path = call.argument<String>("path")
+        if (activity == null || path.isNullOrEmpty()) {
+            result.success("failed")
+            return
+        }
+        val file = File(path)
+        if (!file.exists()) {
+            result.success("failed")
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !GlobalState.application.packageManager.canRequestPackageInstalls()
+        ) {
+            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                data = Uri.parse("package:${activity.packageName}")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            activity.startActivity(intent)
+            result.success("permission_required")
+            return
+        }
+        val uri = FileProvider.getUriForFile(
+            activity,
+            "${activity.packageName}.fileprovider",
+            file
+        )
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        activity.startActivity(intent)
+        result.success("started")
     }
 
     @Suppress("DEPRECATION")

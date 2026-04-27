@@ -309,6 +309,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "domain": MessageLookupByLibrary.simpleMessage("Domain"),
     "download": MessageLookupByLibrary.simpleMessage("Download"),
+    "downloadFailed": MessageLookupByLibrary.simpleMessage(
+      "Download failed, please try again later",
+    ),
+    "downloadingUpdate": MessageLookupByLibrary.simpleMessage(
+      "Downloading update...",
+    ),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editGlobalRules": MessageLookupByLibrary.simpleMessage(
       "Edit global rules",
@@ -417,6 +423,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputCorrectHotkey": MessageLookupByLibrary.simpleMessage(
       "Please enter the correct hotkey",
     ),
+    "installFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to start the installer, please try again later",
+    ),
+    "installPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "Allow this app to install unknown apps, then try the update again",
+    ),
+    "installReady": MessageLookupByLibrary.simpleMessage(
+      "Package is ready, installer will start shortly",
+    ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage(
       "Intelligent selection",
     ),
@@ -441,6 +456,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "key": MessageLookupByLibrary.simpleMessage("Key"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
+    "later": MessageLookupByLibrary.simpleMessage("Later"),
     "layout": MessageLookupByLibrary.simpleMessage("Layout"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),
     "list": MessageLookupByLibrary.simpleMessage("List"),
@@ -517,6 +533,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noInfo": MessageLookupByLibrary.simpleMessage("No info"),
     "noLongerRemind": MessageLookupByLibrary.simpleMessage(
       "Don\'t remind again",
+    ),
+    "noMatchedUpdatePackage": MessageLookupByLibrary.simpleMessage(
+      "No update package is available for this platform",
     ),
     "noMoreInfoDesc": MessageLookupByLibrary.simpleMessage("No more info"),
     "noNetwork": MessageLookupByLibrary.simpleMessage("No network"),
@@ -708,6 +727,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Override",
     ),
     "restoreSuccess": MessageLookupByLibrary.simpleMessage("Restore success"),
+    "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "routeAddress": MessageLookupByLibrary.simpleMessage("Route address"),
     "routeAddressDesc": MessageLookupByLibrary.simpleMessage(
       "Config listen route address",
@@ -824,6 +844,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateManifestUrl": MessageLookupByLibrary.simpleMessage(
+      "Update manifest URL",
+    ),
+    "updateManifestUrlDesc": MessageLookupByLibrary.simpleMessage(
+      "Load versions and changelog from a custom S3 manifest",
+    ),
+    "updateNow": MessageLookupByLibrary.simpleMessage("Update now"),
+    "updateSourceUrlInvalid": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid HTTPS update source URL",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Upload"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage(
@@ -874,6 +904,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Subscription synced",
     ),
     "value": MessageLookupByLibrary.simpleMessage("Value"),
+    "verifyFailed": MessageLookupByLibrary.simpleMessage(
+      "File verification failed, please download again",
+    ),
+    "verifyingFile": MessageLookupByLibrary.simpleMessage("Verifying file..."),
     "vibrantScheme": MessageLookupByLibrary.simpleMessage("Vibrant"),
     "view": MessageLookupByLibrary.simpleMessage("View"),
     "vpnConfigChangeDetected": MessageLookupByLibrary.simpleMessage(

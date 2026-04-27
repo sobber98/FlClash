@@ -1129,6 +1129,131 @@ class AppLocalizations {
     );
   }
 
+  /// `Update now`
+  String get updateNow {
+    return Intl.message('Update now', name: 'updateNow', desc: '', args: []);
+  }
+
+  /// `Later`
+  String get later {
+    return Intl.message('Later', name: 'later', desc: '', args: []);
+  }
+
+  /// `Downloading update...`
+  String get downloadingUpdate {
+    return Intl.message(
+      'Downloading update...',
+      name: 'downloadingUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verifying file...`
+  String get verifyingFile {
+    return Intl.message(
+      'Verifying file...',
+      name: 'verifyingFile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download failed, please try again later`
+  String get downloadFailed {
+    return Intl.message(
+      'Download failed, please try again later',
+      name: 'downloadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File verification failed, please download again`
+  String get verifyFailed {
+    return Intl.message(
+      'File verification failed, please download again',
+      name: 'verifyFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Package is ready, installer will start shortly`
+  String get installReady {
+    return Intl.message(
+      'Package is ready, installer will start shortly',
+      name: 'installReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow this app to install unknown apps, then try the update again`
+  String get installPermissionRequired {
+    return Intl.message(
+      'Allow this app to install unknown apps, then try the update again',
+      name: 'installPermissionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to start the installer, please try again later`
+  String get installFailed {
+    return Intl.message(
+      'Failed to start the installer, please try again later',
+      name: 'installFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update manifest URL`
+  String get updateManifestUrl {
+    return Intl.message(
+      'Update manifest URL',
+      name: 'updateManifestUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Load versions and changelog from a custom S3 manifest`
+  String get updateManifestUrlDesc {
+    return Intl.message(
+      'Load versions and changelog from a custom S3 manifest',
+      name: 'updateManifestUrlDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid HTTPS update source URL`
+  String get updateSourceUrlInvalid {
+    return Intl.message(
+      'Please enter a valid HTTPS update source URL',
+      name: 'updateSourceUrlInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No update package is available for this platform`
+  String get noMatchedUpdatePackage {
+    return Intl.message(
+      'No update package is available for this platform',
+      name: 'noMatchedUpdatePackage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message('Retry', name: 'retry', desc: '', args: []);
+  }
+
   /// `Unknown`
   String get unknown {
     return Intl.message('Unknown', name: 'unknown', desc: '', args: []);
@@ -3764,10 +3889,10 @@ class AppLocalizations {
     return Intl.message('Logout', name: 'v2boardLogout', desc: '', args: []);
   }
 
-  /// `Are you sure you want to logout?`
+  /// `Are you sure you want to logout? You will need to login again to access account features.`
   String get v2boardLogoutConfirm {
     return Intl.message(
-      'Are you sure you want to logout?',
+      'Are you sure you want to logout? You will need to login again to access account features.',
       name: 'v2boardLogoutConfirm',
       desc: '',
       args: [],

@@ -1,6 +1,6 @@
 # FlClash 开发文档
 
-> 最后更新：2026-04-16 · 版本：0.8.92+2026020201
+> 最后更新：2026-04-27 · 版本：0.8.92+2026020201
 
 ## 目录
 
@@ -8,6 +8,7 @@
 - [技术栈](#技术栈)
 - [目录结构](#目录结构)
 - [运行时配置](#运行时配置)
+- [应用内更新（S3 清单）](#应用内更新s3-清单)
 - [架构设计](#架构设计)
   - [整体架构](#整体架构)
   - [Flutter 应用层](#flutter-应用层)
@@ -195,6 +196,28 @@ FlClash/
 
 ---
 
+## 应用内更新（S3 清单）
+
+FlClash 支持通过自定义 HTTPS 更新清单为 Android 和 Windows 提供应用内更新。
+
+- 配置入口：`AppSettingProps.updateManifestUrl`，默认值为空，仅在开发者模式下显示“更新源地址”设置项
+- 支持平台：Android、Windows 走应用内下载与安装；macOS、Linux 仍跳转到 GitHub Releases
+- 安全约束：清单 URL 与所有资源 URL 都必须是 HTTPS，且资源必须与清单使用相同 host
+- 完整性校验：安装包下载完成后会执行 SHA256 校验，失败时会删除缓存文件并提示重试
+- Android 安装：通过 `installApk` MethodChannel + `FileProvider` 拉起系统安装
+
+核心代码位置：
+
+- `lib/common/request.dart`：清单拉取与合法性校验
+- `lib/common/updater.dart`：平台键解析、下载、SHA256 校验、安装
+- `lib/controller.dart`：自动检查更新、手动检查更新、结果处理
+- `lib/views/update_progress_dialog.dart`：应用内下载进度与重试 UI
+- `android/app/src/main/kotlin/com/follow/clash/plugins/AppPlugin.kt`：Android 安装 APK
+
+更新清单格式、平台键、S3 目录建议与发布步骤，见 [HOT_UPDATE.md](HOT_UPDATE.md)。
+
+---
+
 ## 架构设计
 
 ### 整体架构
@@ -287,7 +310,7 @@ Application (ConsumerStatefulWidget)
 全局控制器（单例），核心职责：
 - 偏好持久化 `savePreferences()`
 - Profile 自动更新（20 分钟间隔）
-- 应用版本检查
+- 应用版本检查与应用内更新（Android / Windows）
 - Core 连接管理 `fullSetup()`
 - 配置防抖更新 `updateConfigDebounce()`（500ms）
 - 系统 DNS 设置（macOS）

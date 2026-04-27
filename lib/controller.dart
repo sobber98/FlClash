@@ -8,9 +8,9 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/services/v2board/v2board.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/profiles/profiles.dart';
+import 'package:fl_clash/views/update_progress_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'common/common.dart';
 import 'database/database.dart';
@@ -118,23 +118,24 @@ extension InitControllerExt on AppController {
 
   Future<void> autoCheckUpdate() async {
     if (!_ref.read(appSettingProvider).autoCheckUpdate) return;
-    final res = await request.checkForUpdate();
-    checkUpdateResultHandle(data: res);
+    final manifestUrl = _ref.read(appSettingProvider).updateManifestUrl;
+    final res = await request.checkForUpdate(manifestUrl);
+    await checkUpdateResultHandle(data: res);
   }
 
   Future<void> checkUpdateResultHandle({
-    Map<String, dynamic>? data,
+    UpdateManifest? data,
     bool isUser = false,
   }) async {
     if (data != null) {
-      final tagName = data['tag_name'];
-      final body = data['body'];
-      final submits = utils.parseReleaseBody(body);
+      final submits = _resolveUpdateNotes(data);
       final textTheme = _context.textTheme;
       final res = await globalState.showMessage(
         title: appLocalizations.discoverNewVersion,
+        dismissible: !data.forceUpdate,
+        cancelable: !data.forceUpdate,
         message: TextSpan(
-          text: '$tagName \n',
+          text: 'v${data.version} \n',
           style: textTheme.headlineSmall,
           children: [
             TextSpan(text: '\n', style: textTheme.bodyMedium),
@@ -142,12 +143,18 @@ extension InitControllerExt on AppController {
               TextSpan(text: '- $submit \n', style: textTheme.bodyMedium),
           ],
         ),
-        confirmText: appLocalizations.goDownload,
+        confirmText: AppUpdater.isSupported
+            ? appLocalizations.updateNow
+            : appLocalizations.download,
         cancelText: isUser ? null : appLocalizations.noLongerRemind,
       );
       if (res == true) {
-        launchUrl(Uri.parse('https://github.com/$repository/releases/latest'));
-      } else if (!isUser && res == false) {
+        if (AppUpdater.isSupported) {
+          await _performInAppUpdate(data);
+        } else {
+          globalState.openUrl('https://github.com/$repository/releases/latest');
+        }
+      } else if (!isUser && res == false && !data.forceUpdate) {
         _ref
             .read(appSettingProvider.notifier)
             .update((state) => state.copyWith(autoCheckUpdate: false));
@@ -158,6 +165,50 @@ extension InitControllerExt on AppController {
         message: TextSpan(text: appLocalizations.checkUpdateError),
       );
     }
+  }
+
+  Future<void> _performInAppUpdate(UpdateManifest manifest) async {
+    try {
+      final asset = await AppUpdater.pickAsset(manifest);
+      if (asset == null) {
+        await globalState.showMessage(
+          title: appLocalizations.checkUpdate,
+          message: TextSpan(text: appLocalizations.noMatchedUpdatePackage),
+        );
+        return;
+      }
+      await globalState.showCommonDialog<bool>(
+        dismissible: !manifest.forceUpdate,
+        child: UpdateProgressDialog(
+          version: manifest.version,
+          asset: asset,
+          forceUpdate: manifest.forceUpdate,
+        ),
+      );
+    } catch (e) {
+      commonPrint.log(
+        'performInAppUpdate failed: $e',
+        logLevel: LogLevel.warning,
+      );
+      await globalState.showMessage(
+        title: appLocalizations.checkUpdate,
+        message: TextSpan(text: appLocalizations.installFailed),
+      );
+    }
+  }
+
+  List<String> _resolveUpdateNotes(UpdateManifest manifest) {
+    final locale =
+        utils.getLocaleForString(_ref.read(appSettingProvider).locale) ??
+        WidgetsBinding.instance.platformDispatcher.locale;
+    final localeKey = locale.countryCode?.isNotEmpty == true
+        ? '${locale.languageCode}_${locale.countryCode}'
+        : locale.languageCode;
+    return manifest.changelog[localeKey] ??
+        manifest.changelog[locale.languageCode] ??
+        manifest.changelog['en'] ??
+        manifest.changelog.values.firstOrNull ??
+        [];
   }
 }
 

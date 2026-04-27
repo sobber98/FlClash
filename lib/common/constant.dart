@@ -55,6 +55,9 @@ const clashConfigKey = 'clash_config';
 const configKey = 'config';
 const double dialogCommonWidth = 300;
 const repository = 'chen08209/FlClash';
+const defaultUpdateManifestUrl = '';
+const defaultUpdateManifestUrlHint =
+    'https://your-s3.example.com/FlClash/latest.json';
 const defaultExternalController = '127.0.0.1:9090';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;

@@ -6,6 +6,23 @@ import 'package:fl_clash/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+enum ApkInstallResult {
+  started('started'),
+  permissionRequired('permission_required'),
+  failed('failed');
+
+  final String value;
+
+  const ApkInstallResult(this.value);
+
+  static ApkInstallResult fromValue(String? value) {
+    return values.firstWhere(
+      (result) => result.value == value,
+      orElse: () => ApkInstallResult.failed,
+    );
+  }
+}
+
 class App {
   static App? _instance;
   late MethodChannel methodChannel;
@@ -61,6 +78,13 @@ class App {
   Future<bool> openFile(String path) async {
     return await methodChannel.invokeMethod<bool>('openFile', {'path': path}) ??
         false;
+  }
+
+  Future<ApkInstallResult> installApk(String path) async {
+    final value = await methodChannel.invokeMethod<String>('installApk', {
+      'path': path,
+    });
+    return ApkInstallResult.fromValue(value);
   }
 
   Future<ImageProvider?> getPackageIcon(String packageName) async {
