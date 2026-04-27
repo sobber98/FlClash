@@ -593,8 +593,20 @@ ColorScheme genColorScheme(
     final dynamicColorScheme = brightness == Brightness.dark
         ? globalState.dynamicDarkColorScheme
         : globalState.dynamicLightColorScheme;
+    if (dynamicColorScheme != null) {
+      return ColorScheme.fromSeed(
+        seedColor: dynamicColorScheme.primary,
+        brightness: brightness,
+        dynamicSchemeVariant: vm2.b,
+      );
+    }
+    // Use the custom indigo default light scheme when no dynamic color or
+    // user-defined color is set.
+    if (brightness == Brightness.light) {
+      return defaultLightColorScheme;
+    }
     return ColorScheme.fromSeed(
-      seedColor: dynamicColorScheme?.primary ?? globalState.accentColor,
+      seedColor: globalState.accentColor,
       brightness: brightness,
       dynamicSchemeVariant: vm2.b,
     );

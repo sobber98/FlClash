@@ -2,6 +2,50 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+// Default indigo palette for light mode
+const _kPrimary = Color(0xFF6366F1);
+const _kSecondary = Color(0xFF818CF8);
+const _kContainer = Color(0xFFE0E7FF);
+const _kSurface = Color(0xFFF8FAFC);
+const _kOnSurface = Color(0xFF1E293B);
+
+/// The default light [ColorScheme] based on the indigo palette.
+final defaultLightColorScheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: _kPrimary,
+  onPrimary: Colors.white,
+  primaryContainer: _kContainer,
+  onPrimaryContainer: _kOnSurface,
+  secondary: _kSecondary,
+  onSecondary: Colors.white,
+  secondaryContainer: _kContainer,
+  onSecondaryContainer: _kOnSurface,
+  tertiary: _kSecondary,
+  onTertiary: Colors.white,
+  tertiaryContainer: _kContainer,
+  onTertiaryContainer: _kOnSurface,
+  error: const Color(0xFFBA1A1A),
+  onError: Colors.white,
+  errorContainer: const Color(0xFFFFDAD6),
+  onErrorContainer: const Color(0xFF410002),
+  surface: _kSurface,
+  onSurface: _kOnSurface,
+  surfaceContainerHighest: const Color(0xFFD9E2F8),
+  surfaceContainerHigh: const Color(0xFFE3EAFA),
+  surfaceContainer: _kContainer,
+  surfaceContainerLow: const Color(0xFFF0F4FC),
+  surfaceContainerLowest: _kSurface,
+  onSurfaceVariant: const Color(0xFF3E4A6B),
+  outline: const Color(0xFF8595B0),
+  outlineVariant: const Color(0xFFCBD5EE),
+  shadow: Colors.black,
+  scrim: Colors.black,
+  inverseSurface: _kOnSurface,
+  onInverseSurface: _kSurface,
+  inversePrimary: _kSecondary,
+  surfaceTint: _kPrimary,
+);
+
 extension ColorExtension on Color {
   Color get opacity80 {
     return withAlpha(204);
