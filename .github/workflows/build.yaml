@@ -1,271 +1,232 @@
-name: build
+name: Build & Release
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
 env:
-  IS_STABLE: ${{ !contains(github.ref, '-') }}
+  FLUTTER_VERSION: '3.41.5'
+  GO_VERSION: '1.24.0'
+  JAVA_VERSION: '17'
+  NDK_VERSION: '28.0.13004108'
+  IS_STABLE: ${{ !contains(github.ref_name, '-') && inputs.prerelease != 'true' }}
 
 jobs:
+  # ────────────────────────────────────────────────────────────────
+  #  Build jobs (parallel matrix)
+  # ────────────────────────────────────────────────────────────────
   build:
+    name: Build / ${{ matrix.platform }}${{ matrix.arch && format(' {0}', matrix.arch) || '' }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
+          # Android (all ABIs in one job)
           - platform: android
             os: ubuntu-latest
+
+          # Windows x64
           - platform: windows
-            os: Windows-2022
+            os: windows-2022
             arch: amd64
+
+          # Linux x64
           - platform: linux
             os: ubuntu-22.04
             arch: amd64
-          - platform: macos
-            os: macos-15-intel
-            arch: amd64
-          - platform: macos
-            os: macos-latest
-            arch: arm64
-          #          - platform: windows
-          #            os: windows-11-arm
-          #            arch: arm64
+
+          # Linux arm64
           - platform: linux
             os: ubuntu-24.04-arm
             arch: arm64
 
-    steps:
-      - name: Setup rust
-        if: startsWith(matrix.os, 'windows-11-arm')
-        run: |
-          Invoke-WebRequest -Uri "https://win.rustup.rs/aarch64" -OutFile rustup-init.exe
-          .\rustup-init.exe -y --default-toolchain stable
-          $cargoPath = "$env:USERPROFILE\.cargo\bin"
-          Add-Content $env:GITHUB_PATH $cargoPath
+          # macOS Intel
+          - platform: macos
+            os: macos-15-intel
+            arch: amd64
 
+          # macOS Apple Silicon
+          - platform: macos
+            os: macos-latest
+            arch: arm64
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Setup Android Signing
-        if: startsWith(matrix.platform,'android')
+      # ── Android: signing secrets ──────────────────────────────────
+      - name: Setup Android signing
+        if: matrix.platform == 'android'
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
           echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/local.properties
-          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/local.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/local.properties
+          {
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}"
+            echo "storePassword=${{ secrets.STORE_PASSWORD }}"
+            echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
+          } >> android/local.properties
 
+      # ── Android: Java / SDK / NDK ─────────────────────────────────
+      - name: Setup Java
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Android SDK
+        if: matrix.platform == 'android'
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        if: matrix.platform == 'android'
+        run: |
+          yes | sdkmanager --licenses > /dev/null
+          sdkmanager "ndk;${{ env.NDK_VERSION }}"
+          echo "ANDROID_NDK=${ANDROID_SDK_ROOT}/ndk/${{ env.NDK_VERSION }}" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_HOME=${ANDROID_SDK_ROOT}/ndk/${{ env.NDK_VERSION }}" >> "$GITHUB_ENV"
+
+      # ── Go ────────────────────────────────────────────────────────
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.0'
-          cache-dependency-path: |
-            core/go.sum
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
 
+      # ── Flutter (stable for all except ubuntu-24.04-arm) ──────────
       - name: Setup Flutter
-        if: ${{ !(startsWith(matrix.os, 'windows-11-arm') || startsWith(matrix.os, 'ubuntu-24.04-arm')) }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu-24.04-arm') }}
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.41.5
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - name: Setup Flutter With Other
-        if: startsWith(matrix.os, 'windows-11-arm') || startsWith(matrix.os, 'ubuntu-24.04-arm')
+
+      - name: Setup Flutter (master channel – ARM Linux)
+        if: startsWith(matrix.os, 'ubuntu-24.04-arm')
         uses: subosito/flutter-action@v2
         with:
           channel: master
-          flutter-version: 3.41.5
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - name: Get Flutter Dependency
-        run: |
-          flutter --version
-          flutter pub get
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
-      - name: Setup
-        run: dart setup.dart ${{ matrix.platform }} ${{ matrix.arch && format('--arch {0}', matrix.arch) }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }}
+      # ── Build ─────────────────────────────────────────────────────
+      - name: Build
+        run: >
+          dart setup.dart ${{ matrix.platform }}
+          ${{ matrix.arch && format('--arch {0}', matrix.arch) || '' }}
+          ${{ env.IS_STABLE == 'true' && '--env stable' || '' }}
 
-      - name: Upload
+      # ── Upload dist/ ──────────────────────────────────────────────
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: artifact-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) }}
-          path: ./dist
+          name: dist-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
+          path: dist/
+          if-no-files-found: error
           overwrite: true
 
-  changelog:
+  # ────────────────────────────────────────────────────────────────
+  #  Release job – runs after all builds succeed
+  # ────────────────────────────────────────────────────────────────
+  release:
+    name: Publish Release
+    needs: build
     runs-on: ubuntu-latest
-    needs: [ build ]
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        if: ${{ env.IS_STABLE == 'true' }}
-        with:
-          fetch-depth: 0
-          ref: refs/heads/main
-      - name: Generate
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          last_ver=$(grep -m1 '^## ' CHANGELOG.md 2>/dev/null | sed 's/^## //')
-          
-          tags=($(git tag --merged HEAD --sort=-creatordate))
-          
-          temp="NEW_CHANGELOG.md" > "$temp"
-          
-          for i in "${!tags[@]}"; do
-              curr="${tags[i]}"
-              [[ "$curr" == "$last_ver" ]] && break
-          
-              prev="${tags[i+1]}"
-              range="${prev:+$prev..}$curr"
-          
-              echo -e "## $curr\n" >> "$temp"
-              git log --no-merges --pretty=format:"%B" "$range" | \
-              awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$temp"
-          done
-          [ -f CHANGELOG.md ] && cat CHANGELOG.md >> "$temp"
-          
-          mv "$temp" CHANGELOG.md
 
-      - name: Commit
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          git add CHANGELOG.md
-          if ! git diff --cached --quiet; then
-            echo "Commit pushing"
-            git config --local user.email "chen08209@gmail.com"
-            git config --local user.name "chen08209"
-            git commit -m "Update changelog"
-            git push
-            if [ $? -eq 0 ]; then
-              echo "Push succeeded"
-            else
-              echo "Push failed"
-              exit 1
-            fi
-          fi
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  upload:
-    permissions: write-all
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    services:
-      telegram-bot-api:
-        image: aiogram/telegram-bot-api:latest
-        env:
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-        ports:
-          - 8081:8081
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Download
+      # ── Merge all platform artifacts into dist/ ───────────────────
+      - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./dist/
-          pattern: artifact-*
+          path: dist/
+          pattern: dist-*
           merge-multiple: true
 
-      - name: Generate release.md
+      - name: List dist contents
+        run: find dist/ -type f | sort
+
+      # ── SHA-256 checksums ─────────────────────────────────────────
+      - name: Generate SHA256 checksums
         run: |
-          tags=($(git tag --merged HEAD --sort=-creatordate))
-          preTag=$(curl -s "https://api.github.com/repos/chen08209/FlClash/releases/latest" | \
-          sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p')
-          
-          [ -z "$preTag" ] && preTag=""
-          
-          out="release.md" > "$out"
-          
-          for i in "${!tags[@]}"; do
-            curr="${tags[i]}"
-            [[ "$curr" == "$preTag" ]] && break
-          
-            prev="${tags[i+1]}"
-            range="${prev:+$prev..}$curr"
-          
-            git log --no-merges --pretty=format:"%B" "$range" | \
-            awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$out"
+          cd dist
+          find . -maxdepth 1 -type f ! -name '*.sha256' | while IFS= read -r f; do
+            sha256sum "$f" > "${f}.sha256"
+            echo "  $(cat "${f}.sha256")"
           done
-      - name: Push to telegram
+
+      # ── Release body ──────────────────────────────────────────────
+      - name: Prepare release notes
+        id: notes
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          # Expand VERSION placeholder in template
+          sed "s/VERSION/$VERSION/g" .github/release_template.md > release_body.md
+          # Append manual release notes if present
+          if [ -f release.md ]; then
+            printf '\n---\n\n' >> release_body.md
+            cat release.md >> release_body.md
+          fi
+
+      # ── Create GitHub Release and upload assets ───────────────────
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: release_body.md
+          prerelease: ${{ env.IS_STABLE != 'true' }}
+          generate_release_notes: false
+          fail_on_unmatched_files: false
+          files: |
+            dist/**
+
+      # ── Update manifest (stable only) ────────────────────────────
+      - name: Generate update manifest
+        if: env.IS_STABLE == 'true'
+        env:
+          TAG: ${{ github.ref_name }}
+          DIST_DIR: dist
+          RELEASE_NOTES_FILE: release.md
+          UPDATE_ASSET_BASE_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}
+        run: python generate_update_manifest.py
+
+      # ── Telegram notification (opt-in via repo variable) ──────────
+      - name: Notify Telegram
+        if: vars.TELEGRAM_NOTIFY == 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TAG: ${{ github.ref_name }}
           RUN_ID: ${{ github.run_id }}
         run: |
-          python -m pip install --upgrade pip
-          pip install requests
+          pip install --quiet requests
           python release_telegram.py
-
-      - name: Patch release.md
-        run: |
-          version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
-          sed "s|VERSION|$version|g" ./.github/release_template.md >> release.md
-
-      - name: Generate update manifest and sha256
-        if: env.IS_STABLE == 'true'
-        env:
-          TAG: ${{ github.ref_name }}
-          UPDATE_ASSET_BASE_URL: ${{ secrets.UPDATE_ASSET_BASE_URL }}
-          UPDATE_FORCE: ${{ secrets.UPDATE_FORCE }}
-          S3_BUCKET: ${{ secrets.S3_BUCKET }}
-          S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
-        run: |
-          python generate_update_manifest.py
-
-      - name: Install AWS CLI
-        if: env.IS_STABLE == 'true'
-        run: |
-          python -m pip install --upgrade pip
-          pip install awscli
-
-      - name: Upload release assets to compatible S3
-        if: env.IS_STABLE == 'true'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_EC2_METADATA_DISABLED: true
-          S3_BUCKET: ${{ secrets.S3_BUCKET }}
-          S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
-        run: |
-          aws configure set default.s3.addressing_style path
-          aws s3 sync ./dist "s3://${S3_BUCKET}/" \
-            --endpoint-url "${S3_ENDPOINT}" \
-            --only-show-errors
-
-      - name: Release
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./dist/*
-          body_path: './release.md'
-
-      - name: Create Fdroid Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          mkdir -p ./tmp
-          cp ./dist/*android-arm64-v8a* ./tmp/ || true
-          echo "Files copied successfully"
-
-      - name: Push to fdroid repo
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./tmp/
-          destination-github-username: chen08209
-          destination-repository-name: FlClash-fdroid-repo
-          user-name: 'github-actions[bot]'
-          user-email: 'github-actions[bot]@users.noreply.github.com'
-          target-branch: main
-          commit-message: Update from ${{ github.ref_name }}
-          target-directory: /tmp/
-
