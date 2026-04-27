@@ -880,10 +880,10 @@ class _FeatureIcon extends StatelessWidget {
       width: compact ? 46 : 54,
       height: compact ? 46 : 54,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(compact ? 16 : 18),
       ),
-      child: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: compact ? 22 : 26),
+      child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: compact ? 22 : 26),
     );
   }
 }

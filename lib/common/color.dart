@@ -14,11 +14,11 @@ final defaultLightColorScheme = ColorScheme(
   brightness: Brightness.light,
   primary: _kPrimary,
   onPrimary: Colors.white,
-  primaryContainer: _kContainer,
+  primaryContainer: _kContainer,        // #E0E7FF – connect btn / feature icon bg
   onPrimaryContainer: _kOnSurface,
   secondary: _kSecondary,
   onSecondary: Colors.white,
-  secondaryContainer: _kContainer,
+  secondaryContainer: _kContainer,      // #E0E7FF – selected chip / nav indicator
   onSecondaryContainer: _kOnSurface,
   tertiary: _kSecondary,
   onTertiary: Colors.white,
@@ -28,13 +28,15 @@ final defaultLightColorScheme = ColorScheme(
   onError: Colors.white,
   errorContainer: const Color(0xFFFFDAD6),
   onErrorContainer: const Color(0xFF410002),
-  surface: _kSurface,
+  surface: _kSurface,                   // #F8FAFC – scaffold background
   onSurface: _kOnSurface,
-  surfaceContainerHighest: const Color(0xFFD9E2F8),
-  surfaceContainerHigh: const Color(0xFFE3EAFA),
-  surfaceContainer: _kContainer,
-  surfaceContainerLow: const Color(0xFFF0F4FC),
-  surfaceContainerLowest: _kSurface,
+  // Surface container hierarchy (lightest → most elevated in light mode):
+  //   Scaffold     Cards/sheets    Nav/overlay   Segment outer
+  surfaceContainerLowest: _kSurface,    // #F8FAFC – scaffold bg
+  surfaceContainerLow: Colors.white,    // #FFFFFF – plain cards, selected mode btn
+  surfaceContainer: Colors.white,       // #FFFFFF – bottom nav bar, sheets
+  surfaceContainerHigh: Colors.white,   // #FFFFFF – filled cards (CommonCard.filled)
+  surfaceContainerHighest: _kContainer, // #E0E7FF – segment outer, card outline
   onSurfaceVariant: const Color(0xFF3E4A6B),
   outline: const Color(0xFF8595B0),
   outlineVariant: const Color(0xFFCBD5EE),

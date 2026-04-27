@@ -25,13 +25,13 @@ class ConnectButton extends ConsumerWidget {
       ConnectionVisualState.connected => const Color(0xFF16A34A),
       ConnectionVisualState.connecting => const Color(0xFF1F2937),
       ConnectionVisualState.disconnecting => const Color(0xFF7C2D12),
-      ConnectionVisualState.disconnected => scheme.surfaceContainerHigh,
+      ConnectionVisualState.disconnected => scheme.primaryContainer,
     };
     final iconColor = switch (connectionState) {
       ConnectionVisualState.connected => Colors.white,
       ConnectionVisualState.connecting => Colors.white,
       ConnectionVisualState.disconnecting => Colors.white,
-      ConnectionVisualState.disconnected => scheme.onSurfaceVariant,
+      ConnectionVisualState.disconnected => scheme.primary,
     };
     final label = switch (connectionState) {
       ConnectionVisualState.connected => appLocalizations.connected,
