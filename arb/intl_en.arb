@@ -142,6 +142,7 @@
   "addressTip": "Please enter a valid WebDAV address",
   "password": "Password",
   "checkUpdate": "Check for updates",
+  "checkUpdateDesc": "Check if a new version is available",
   "discoverNewVersion": "Discover the new version",
   "checkUpdateError": "The current application is already the latest version",
   "goDownload": "Go to download",

@@ -1,5 +1,8 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/controller.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/app_config.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/theme.dart';
@@ -381,6 +384,17 @@ class ApplicationSettingView extends ConsumerWidget {
     ).push(MaterialPageRoute(builder: (_) => const ThemeView()));
   }
 
+  Future<void> _checkUpdate(BuildContext context, WidgetRef ref) async {
+    final userUrl = ref.read(appSettingProvider).updateManifestUrl;
+    final configUrl = ref.read(appUpdateManifestUrlProvider);
+    final manifestUrl = userUrl.trim().isNotEmpty ? userUrl : configUrl;
+    final data = await appController.safeRun<UpdateManifest?>(
+      () => request.checkForUpdate(manifestUrl),
+      title: appLocalizations.checkUpdate,
+    );
+    await appController.checkUpdateResultHandle(data: data, isUser: true);
+  }
+
   Future<void> _showUpdateManifestUrlDialog(
     BuildContext context,
     WidgetRef ref,
@@ -460,6 +474,14 @@ class ApplicationSettingView extends ConsumerWidget {
             subtitle: appLocalizations.themeDesc,
             value: themeText,
             onTap: () => _pushThemePage(context),
+          ),
+          const SizedBox(height: 14),
+          _ApplicationSettingsActionCard(
+            icon: Icons.system_update_outlined,
+            title: appLocalizations.checkUpdate,
+            subtitle: appLocalizations.checkUpdateDesc,
+            value: globalState.packageInfo.version,
+            onTap: () => _checkUpdate(context, ref),
           ),
           if (developerMode) ...[
             const SizedBox(height: 14),

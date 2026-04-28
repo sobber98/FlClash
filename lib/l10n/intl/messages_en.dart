@@ -193,6 +193,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "checkError": MessageLookupByLibrary.simpleMessage("Check error"),
     "checkUpdate": MessageLookupByLibrary.simpleMessage("Check for updates"),
+    "checkUpdateDesc": MessageLookupByLibrary.simpleMessage("Check if a new version is available"),
     "checkUpdateError": MessageLookupByLibrary.simpleMessage(
       "The current application is already the latest version",
     ),

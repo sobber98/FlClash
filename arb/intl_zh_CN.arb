@@ -142,6 +142,7 @@
   "addressTip": "请输入有效的WebDAV地址",
   "password": "密码",
   "checkUpdate": "检查更新",
+  "checkUpdateDesc": "检查是否有新版本可用",
   "discoverNewVersion": "发现新版本",
   "checkUpdateError": "当前应用已经是最新版了",
   "goDownload": "前往下载",

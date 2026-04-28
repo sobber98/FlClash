@@ -194,6 +194,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "checkError": MessageLookupByLibrary.simpleMessage("Ошибка проверки"),
     "checkUpdate": MessageLookupByLibrary.simpleMessage("Проверить обновления"),
+    "checkUpdateDesc": MessageLookupByLibrary.simpleMessage("Проверить наличие новой версии"),
     "checkUpdateError": MessageLookupByLibrary.simpleMessage(
       "Текущее приложение уже является последней версией",
     ),

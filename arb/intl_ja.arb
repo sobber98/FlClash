@@ -142,6 +142,7 @@
   "addressTip": "有効なWebDAVアドレスを入力",
   "password": "パスワード",
   "checkUpdate": "更新を確認",
+  "checkUpdateDesc": "新しいバージョンが利用可能か確認",
   "discoverNewVersion": "新バージョンを発見",
   "checkUpdateError": "アプリは最新版です",
   "goDownload": "ダウンロードへ",

@@ -1099,6 +1099,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Check if a new version is available`
+  String get checkUpdateDesc {
+    return Intl.message(
+      'Check if a new version is available',
+      name: 'checkUpdateDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Discover the new version`
   String get discoverNewVersion {
     return Intl.message(
