@@ -6,11 +6,7 @@ import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const _authTextColor = Color(0xFF0F172A);
-const _authFieldBackground = Color(0xFFF6F7FB);
-const _authFieldBorder = Color(0xFFE8EBF1);
 const _authHintColor = Color(0xFFC3C8D1);
-const _authSubtitleColor = Color(0xFF8B919E);
 
 class V2BoardLoginView extends ConsumerStatefulWidget {
   final bool showRegisterAction;
@@ -146,22 +142,22 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
           children: [
             const SizedBox(height: 16),
             const _AuthBrandIcon(),
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
             Text(
               '欢迎回来',
               textAlign: TextAlign.center,
-              style: context.textTheme.displaySmall?.copyWith(
+              style: context.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                letterSpacing: -1,
-                color: _authTextColor,
+                letterSpacing: -0.8,
+                color: context.colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               '请输入您的凭据以访问您的私人网络',
               textAlign: TextAlign.center,
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: _authSubtitleColor,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 36),
@@ -441,18 +437,18 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
                     Text(
                       '开启自由之旅',
                       textAlign: TextAlign.center,
-                      style: context.textTheme.displaySmall?.copyWith(
+                      style: context.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        letterSpacing: -1,
-                        color: _authTextColor,
+                        letterSpacing: -0.8,
+                        color: context.colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
                       '加入我们的全球隐私网络',
                       textAlign: TextAlign.center,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: _authSubtitleColor,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 36),
@@ -643,13 +639,13 @@ class _AuthWarning extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF4E5),
-        borderRadius: BorderRadius.circular(18),
+        color: context.colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         text,
         style: context.textTheme.bodyMedium?.copyWith(
-          color: const Color(0xFF9A6700),
+          color: context.colorScheme.onTertiaryContainer,
         ),
       ),
     );
@@ -665,7 +661,7 @@ class _AuthDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: _authFieldBorder)),
+        Expanded(child: Divider(color: context.colorScheme.outlineVariant)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
@@ -675,7 +671,7 @@ class _AuthDivider extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(child: Divider(color: _authFieldBorder)),
+        Expanded(child: Divider(color: context.colorScheme.outlineVariant)),
       ],
     );
   }
@@ -707,30 +703,30 @@ class _AuthInput extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
-      style: const TextStyle(color: _authTextColor),
+      style: TextStyle(color: context.colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: _authHintColor),
-        prefixIcon: Icon(prefixIcon, color: _authHintColor),
+        hintStyle: TextStyle(color: context.colorScheme.onSurfaceVariant),
+        prefixIcon: Icon(prefixIcon, color: context.colorScheme.onSurfaceVariant),
         suffixIcon: suffix,
         filled: true,
-        fillColor: _authFieldBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+        fillColor: context.colorScheme.surfaceContainerHighest,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(color: _authFieldBorder),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: context.colorScheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(color: _authTextColor, width: 1.2),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: context.colorScheme.onSurface, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: context.colorScheme.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: context.colorScheme.error, width: 1.5),
         ),
       ),
     );
@@ -750,42 +746,33 @@ class _AuthPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 72,
-      child: FilledButton(
-        onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: context.colorScheme.onSurface,
-          foregroundColor: context.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          elevation: 0,
+    return FilledButton(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        backgroundColor: context.colorScheme.onSurface,
+        foregroundColor: context.colorScheme.surface,
+        minimumSize: const Size.fromHeight(56),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
         ),
-        child: isLoading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: context.colorScheme.surface,
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    label,
-                    style: context.textTheme.titleMedium?.copyWith(
-                      color: context.colorScheme.surface,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  const Icon(Icons.arrow_forward_rounded),
-                ],
-              ),
+        elevation: 0,
       ),
+      child: isLoading
+          ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: context.colorScheme.surface,
+              ),
+            )
+          : Text(
+              label,
+              style: context.textTheme.titleMedium?.copyWith(
+                color: context.colorScheme.surface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
     );
   }
 }
@@ -801,23 +788,21 @@ class _AuthSecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 68,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: _authSubtitleColor,
-          side: const BorderSide(color: _authFieldBorder, width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(52),
+        foregroundColor: context.colorScheme.onSurfaceVariant,
+        side: BorderSide(color: context.colorScheme.outlineVariant, width: 1.5),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
         ),
-        child: Text(
-          label,
-          style: context.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: _authTextColor,
-          ),
+      ),
+      child: Text(
+        label,
+        style: context.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: context.colorScheme.onSurface,
         ),
       ),
     );
@@ -840,7 +825,7 @@ class _AuthCompactButton extends StatelessWidget {
       style: FilledButton.styleFrom(
         backgroundColor: context.colorScheme.onSurface,
         foregroundColor: context.colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: Text(label),
     );

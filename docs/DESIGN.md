@@ -149,7 +149,104 @@ Go Core 周期性上报
 
 ---
 
-## 7. 扩展点
+## 7. UI 设计规范
+
+> 本节记录当前已重构的 UI 风格，所有端（Android / Windows / macOS / Linux）开发必须遵循此规范，保持视觉一致性。
+
+### 7.1 整体风格
+
+- **主题**：默认浅色模式（`ThemeMode.light`），用户可在设置中切换
+- **设计语言**：Material 3
+- **字体**：HarmonyOS Sans SC
+- **色调**：Indigo 调色板（primary `#6366F1`）
+
+### 7.2 颜色体系
+
+使用 `context.colorScheme.*` 语义颜色，**禁止直接使用硬编码十六进制颜色值**。
+
+| 用途 | 颜色 Token |
+|------|-----------|
+| 页面背景 | `surfaceContainerLowest` / `surface` |
+| 卡片背景 | `surfaceContainerLow` |
+| 卡片标题栏/次级区域 | `surfaceContainerHighest` |
+| 主操作按钮背景 | `onSurface`（深色）|
+| 主操作按钮文字 | `surface`（浅色）|
+| 次要文字 / 图标 | `onSurfaceVariant` |
+| 输入框背景 | `surfaceContainerHighest` |
+| 输入框边框（默认）| `outlineVariant` |
+| 输入框边框（聚焦）| `onSurface` |
+| 危险操作 | `error` / `onError` |
+
+### 7.3 圆角规范
+
+| 组件类型 | 圆角值 |
+|---------|--------|
+| 大卡片（页面级）| `24` |
+| 中卡片（内容块）| `18` |
+| 小卡片（列表项）| `14`–`16` |
+| 按钮（主要）| `18` |
+| 按钮（紧凑）| `14`–`16` |
+| 输入框 | `18` |
+| 标签 / 芯片 | `999`（全圆）|
+| 图标容器 | `14`–`20` |
+
+### 7.4 间距规范
+
+- 页面水平 padding：移动端 `16`，桌面端 `24`
+- 卡片内 padding：`18`–`20`
+- 卡片间距：`14`–`16`
+- 标题到内容间距：`8`–`12`
+- 图标与文字间距：`10`–`12`
+
+### 7.5 排版规范
+
+| 用途 | TextTheme Token |
+|------|----------------|
+| 页面大标题 | `headlineMedium`（w600，letterSpacing -0.8）|
+| 卡片主标题 | `titleLarge`（w600）|
+| 卡片次标题 | `titleMedium`（w600）|
+| 正文 | `bodyMedium` / `bodyLarge` |
+| 辅助说明 | `bodySmall` / `labelSmall` |
+| 按钮文字 | `titleMedium`（w600）|
+
+### 7.6 按钮规范
+
+- **主操作按钮**：`FilledButton`，背景 `onSurface`，高度 `56`，圆角 `18`
+- **次要操作按钮**：`OutlinedButton`，边框 `outlineVariant`，高度 `52`，圆角 `18`
+- **危险操作按钮**：使用 `error` 色系
+- **禁用状态**：传入 `onPressed: null`，不要手动修改颜色
+
+### 7.7 布局规范
+
+- **移动端**：底部 TabBar 导航 + 滚动列表，卡片竖向堆叠
+- **桌面端**：左侧固定导航栏 + 右侧内容区，支持 Wrap 多列布局（宽屏）
+- 通过 `isMobileViewProvider` 判断当前平台视图模式
+
+### 7.8 卡片阴影
+
+```dart
+BoxShadow(
+  color: Color(0x10000000),
+  blurRadius: 18,
+  offset: Offset(0, 4),
+)
+```
+
+### 7.9 登录 / 表单页面
+
+- 输入框圆角 `18`，背景 `surfaceContainerHighest`
+- 标题字号 `headlineMedium`，副标题 `bodyMedium`
+- 所有颜色使用 `context.colorScheme.*`，不使用硬编码颜色
+
+### 7.10 注意事项
+
+- **禁止使用 `ThemeMode.system` 作为新用户默认值**，统一使用 `ThemeMode.light`
+- 首次安装不弹出数据收集提示
+- 所有文字截断应配合 `maxLines + overflow: TextOverflow.ellipsis`
+
+---
+
+## 8. 扩展点
 
 | 扩展方向 | 实现路径 |
 |----------|----------|

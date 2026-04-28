@@ -265,78 +265,77 @@ class _PlanCard extends StatelessWidget {
     final periods = _periods();
     final features = _featureRows();
     return InkWell(
-      borderRadius: BorderRadius.circular(34),
+      borderRadius: BorderRadius.circular(24),
       onTap: () => _openDetail(context),
       child: Ink(
-        padding: const EdgeInsets.all(28),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(34),
-          border: Border.all(color: Colors.black, width: 2.6),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.black, width: 2),
           boxShadow: const [
             BoxShadow(
               color: Color(0x10000000),
-              blurRadius: 20,
-              offset: Offset(0, 6),
+              blurRadius: 12,
+              offset: Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 62,
-              height: 62,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Icon(
-                Icons.diamond_outlined,
-                color: Colors.white,
-                size: 28,
-              ),
-            ),
-            const SizedBox(height: 22),
-            Text(
-              plan.name,
-              style: context.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.8,
-                color: _cardTextColor,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              '订阅方案',
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFFB0B6C0),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _trafficText(),
-              style: context.textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF737B88),
-              ),
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(
+                    Icons.diamond_outlined,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        plan.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.5,
+                          color: _cardTextColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _trafficText(),
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFF737B88),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             if (periods.isNotEmpty) ...[
-              const SizedBox(height: 18),
-              Text(
-                '选择规格',
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFFB0B6C0),
-                ),
-              ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: 6,
+                runSpacing: 6,
                 children: periods.take(3).map((item) {
                   final highlighted = item.key == 'month' ||
                       (filter == _PlanFilter.onetime && item.key == 'onetime');
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: highlighted ? Colors.black : const Color(0xFFF3F5F8),
                       borderRadius: BorderRadius.circular(999),
@@ -344,7 +343,7 @@ class _PlanCard extends StatelessWidget {
                     child: Text(
                       _periodLabels[item.key] ?? item.key,
                       locale: const Locale('zh', 'CN'),
-                      style: context.textTheme.labelLarge?.copyWith(
+                      style: context.textTheme.labelMedium?.copyWith(
                         color: highlighted ? Colors.white : const Color(0xFF374151),
                         fontWeight: FontWeight.w500,
                       ),
@@ -353,58 +352,63 @@ class _PlanCard extends StatelessWidget {
                 }).toList(growable: false),
               ),
             ],
-            const SizedBox(height: 18),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: '¥${(headline.value / 100).toStringAsFixed(2)}',
-                    style: context.textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                      letterSpacing: -1.2,
-                    ),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '¥${(headline.value / 100).toStringAsFixed(2)}',
+                        style: context.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      TextSpan(
+                        text: headline.label == '一次性'
+                            ? '/次'
+                            : '/${headline.label.replaceAll('付', '')}',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFF9CA3AF),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  TextSpan(
-                    text: headline.label == '一次性'
-                        ? '/次'
-                        : '/${headline.label.replaceAll('付', '')}',
-                    style: context.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF9CA3AF),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 18),
-            for (final feature in features) ...[
-              Text(
-                feature,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.titleMedium?.copyWith(
-                  color: const Color(0xFF47505E),
                 ),
-              ),
-              const SizedBox(height: 12),
+                const Spacer(),
+                FilledButton(
+                  onPressed: () => _openDetail(context),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(80, 38),
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Text('订阅'),
+                ),
+              ],
+            ),
+            if (features.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              for (final feature in features) ...[
+                Text(
+                  feature,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF47505E),
+                  ),
+                ),
+                const SizedBox(height: 4),
+              ],
             ],
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: () => _openDetail(context),
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(58),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text('立即订阅'),
-              ),
-            ),
           ],
         ),
       ),

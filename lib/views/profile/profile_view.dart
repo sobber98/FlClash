@@ -669,6 +669,8 @@ class _ActionTile extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),

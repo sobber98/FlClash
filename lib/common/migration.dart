@@ -7,7 +7,7 @@ class Migration {
 
   Migration._internal();
 
-  final currentVersion = 1;
+  final currentVersion = 2;
 
   factory Migration() {
     _instance ??= Migration._internal();
@@ -40,9 +40,22 @@ class Migration {
       }
       data = await _oldToNow(configMap);
     }
+    if (_oldVersion < 2 && data.configMap != null) {
+      _migrateThemeToLight(data.configMap!);
+    }
     final res = await sync(data);
     await preferences.setVersion(currentVersion);
     return res;
+  }
+
+  /// 将 themeMode 从 system 强制迁移为 light，与 Android 客户端默认行为对齐。
+  void _migrateThemeToLight(Map<String, Object?> configMap) {
+    final themeProps = configMap['themeProps'];
+    if (themeProps is Map) {
+      if (themeProps['themeMode'] == 'system') {
+        themeProps['themeMode'] = 'light';
+      }
+    }
   }
 
   Future<MigrationData> _oldToNow(Map<String, Object?> configMap) async {

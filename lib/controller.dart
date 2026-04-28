@@ -87,11 +87,7 @@ extension InitControllerExt on AppController {
     if (_ref.read(appSettingProvider.select((state) => state.crashlyticsTip))) {
       return;
     }
-    await globalState.showMessage(
-      title: appLocalizations.dataCollectionTip,
-      cancelable: false,
-      message: TextSpan(text: appLocalizations.dataCollectionContent),
-    );
+    // 跳过数据收集提示，直接标记为已确认
     _ref
         .read(appSettingProvider.notifier)
         .update((state) => state.copyWith(crashlyticsTip: true));

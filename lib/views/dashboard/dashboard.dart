@@ -194,45 +194,68 @@ class _AnnouncementBar extends StatelessWidget {
                         final notice = notices[index];
                         final title = v2boardNoticeHeadline(notice);
                         final content = v2boardPlainText(notice.content);
+                        final timeStr = _formatTime(
+                          notice.updatedAt ?? notice.createdAt,
+                        );
                         return Container(
-                          padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.surfaceContainerLow,
                             borderRadius: BorderRadius.circular(18),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x10000000),
+                                blurRadius: 18,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
                           ),
+                          clipBehavior: Clip.antiAlias,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                title.isNotEmpty ? title : '公告 ${index + 1}',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w600),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        title.isNotEmpty ? title : '公告 ${index + 1}',
+                                        style: Theme.of(context).textTheme.titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                              color: Theme.of(context).colorScheme.onSurface,
+                                            ),
+                                      ),
+                                    ),
+                                    if (timeStr.isNotEmpty)
+                                      Text(
+                                        timeStr,
+                                        style: Theme.of(context).textTheme.labelSmall
+                                            ?.copyWith(
+                                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                            ),
+                                      ),
+                                  ],
+                                ),
                               ),
-                              if (_formatTime(
-                                notice.updatedAt ?? notice.createdAt,
-                              ).isNotEmpty) ...[
-                                const SizedBox(height: 6),
-                                Text(
-                                  _formatTime(
-                                    notice.updatedAt ?? notice.createdAt,
+                              if (content.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: SelectableText(
+                                    content,
+                                    style: Theme.of(context).textTheme.bodyMedium
+                                        ?.copyWith(
+                                          height: 1.6,
+                                          color: Theme.of(context).colorScheme.onSurface,
+                                        ),
                                   ),
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                      ),
                                 ),
-                              ],
-                              if (content.isNotEmpty) ...[
-                                const SizedBox(height: 12),
-                                SelectableText(
-                                  content,
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        height: 1.55,
-                                        color: Theme.of(context).colorScheme.onSurface,
-                                      ),
-                                ),
-                              ],
                             ],
                           ),
                         );
