@@ -538,28 +538,20 @@ class _SupportSection extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: _ActionTile(
-                  icon: Icons.receipt_long_rounded,
-                  title: '订单记录',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const OrderListView()),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _ActionTile(
-                  icon: Icons.donut_large_rounded,
-                  title: '流量明细',
-                  onTap: () => _showTrafficDetails(ref),
-                ),
-              ),
-            ],
+          _ActionTile(
+            icon: Icons.receipt_long_rounded,
+            title: '订单记录',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const OrderListView()),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          _ActionTile(
+            icon: Icons.donut_large_rounded,
+            title: '流量明细',
+            onTap: () => _showTrafficDetails(ref),
           ),
           const SizedBox(height: 14),
           _SupportListTile(
