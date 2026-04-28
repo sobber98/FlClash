@@ -117,6 +117,7 @@ extension InitControllerExt on AppController {
     final userUrl = _ref.read(appSettingProvider).updateManifestUrl;
     final configUrl = _ref.read(appUpdateManifestUrlProvider);
     final manifestUrl = userUrl.trim().isNotEmpty ? userUrl : configUrl;
+    if (manifestUrl.trim().isEmpty) return;
     final res = await request.checkForUpdate(manifestUrl);
     await checkUpdateResultHandle(data: res);
   }

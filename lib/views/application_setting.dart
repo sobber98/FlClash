@@ -388,6 +388,10 @@ class ApplicationSettingView extends ConsumerWidget {
     final userUrl = ref.read(appSettingProvider).updateManifestUrl;
     final configUrl = ref.read(appUpdateManifestUrlProvider);
     final manifestUrl = userUrl.trim().isNotEmpty ? userUrl : configUrl;
+    if (manifestUrl.trim().isEmpty) {
+      globalState.openUrl('https://github.com/$repository/releases/latest');
+      return;
+    }
     final data = await appController.safeRun<UpdateManifest?>(
       () => request.checkForUpdate(manifestUrl),
       title: appLocalizations.checkUpdate,
