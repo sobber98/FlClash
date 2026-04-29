@@ -313,10 +313,8 @@ class $ProfilesTable extends Profiles
     return $ProfilesTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<OverwriteType, String, String>
-  $converteroverwriteType = const EnumNameConverter<OverwriteType>(
-    OverwriteType.values,
-  );
+  static TypeConverter<OverwriteType, String> $converteroverwriteType =
+      const OverwriteTypeConverter();
   static TypeConverter<SubscriptionInfo?, String?> $convertersubscriptionInfo =
       const SubscriptionInfoConverter();
   static TypeConverter<Map<String, String>, String> $converterselectedMap =
@@ -438,9 +436,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       currentGroupName: serializer.fromJson<String?>(json['currentGroupName']),
       url: serializer.fromJson<String>(json['url']),
       lastUpdateDate: serializer.fromJson<DateTime?>(json['lastUpdateDate']),
-      overwriteType: $ProfilesTable.$converteroverwriteType.fromJson(
-        serializer.fromJson<String>(json['overwriteType']),
-      ),
+      overwriteType: serializer.fromJson<OverwriteType>(json['overwriteType']),
       scriptId: serializer.fromJson<int?>(json['scriptId']),
       autoUpdateDurationMillis: serializer.fromJson<int>(
         json['autoUpdateDurationMillis'],
@@ -465,9 +461,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       'currentGroupName': serializer.toJson<String?>(currentGroupName),
       'url': serializer.toJson<String>(url),
       'lastUpdateDate': serializer.toJson<DateTime?>(lastUpdateDate),
-      'overwriteType': serializer.toJson<String>(
-        $ProfilesTable.$converteroverwriteType.toJson(overwriteType),
-      ),
+      'overwriteType': serializer.toJson<OverwriteType>(overwriteType),
       'scriptId': serializer.toJson<int?>(scriptId),
       'autoUpdateDurationMillis': serializer.toJson<int>(
         autoUpdateDurationMillis,
@@ -1364,10 +1358,10 @@ class $ProfileRuleLinksTable extends ProfileRuleLinks
     return $ProfileRuleLinksTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<RuleScene, String, String> $converterscene =
-      const EnumNameConverter<RuleScene>(RuleScene.values);
-  static JsonTypeConverter2<RuleScene?, String?, String?> $converterscenen =
-      JsonTypeConverter2.asNullable($converterscene);
+  static TypeConverter<RuleScene, String> $converterscene =
+      const RuleSceneConverter();
+  static TypeConverter<RuleScene?, String?> $converterscenen =
+      NullAwareTypeConverter.wrap($converterscene);
 }
 
 class RawProfileRuleLink extends DataClass
@@ -1428,9 +1422,7 @@ class RawProfileRuleLink extends DataClass
       id: serializer.fromJson<String>(json['id']),
       profileId: serializer.fromJson<int?>(json['profileId']),
       ruleId: serializer.fromJson<int>(json['ruleId']),
-      scene: $ProfileRuleLinksTable.$converterscenen.fromJson(
-        serializer.fromJson<String?>(json['scene']),
-      ),
+      scene: serializer.fromJson<RuleScene?>(json['scene']),
       order: serializer.fromJson<String?>(json['order']),
     );
   }
@@ -1441,9 +1433,7 @@ class RawProfileRuleLink extends DataClass
       'id': serializer.toJson<String>(id),
       'profileId': serializer.toJson<int?>(profileId),
       'ruleId': serializer.toJson<int>(ruleId),
-      'scene': serializer.toJson<String?>(
-        $ProfileRuleLinksTable.$converterscenen.toJson(scene),
-      ),
+      'scene': serializer.toJson<RuleScene?>(scene),
       'order': serializer.toJson<String?>(order),
     };
   }

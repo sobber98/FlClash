@@ -20,12 +20,23 @@ class ProfileRuleLinks extends Table {
   IntColumn get ruleId =>
       integer().references(Rules, #id, onDelete: KeyAction.cascade)();
 
-  TextColumn get scene => textEnum<RuleScene>().nullable()();
+  TextColumn get scene =>
+      text().map(const RuleSceneConverter()).nullable()();
 
   TextColumn get order => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
+}
+
+class RuleSceneConverter extends TypeConverter<RuleScene, String> {
+  const RuleSceneConverter();
+
+  @override
+  RuleScene fromSql(String fromDb) => RuleScene.values.byName(fromDb);
+
+  @override
+  String toSql(RuleScene value) => value.name;
 }
 
 extension RawProfileRuleLinkExt on RawProfileRuleLink {

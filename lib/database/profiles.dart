@@ -15,7 +15,8 @@ class Profiles extends Table {
 
   DateTimeColumn get lastUpdateDate => dateTime().nullable()();
 
-  TextColumn get overwriteType => textEnum<OverwriteType>()();
+  TextColumn get overwriteType =>
+      text().map(const OverwriteTypeConverter())();
 
   IntColumn get scriptId => integer().nullable()();
 
@@ -34,6 +35,16 @@ class Profiles extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+}
+
+class OverwriteTypeConverter extends TypeConverter<OverwriteType, String> {
+  const OverwriteTypeConverter();
+
+  @override
+  OverwriteType fromSql(String fromDb) => OverwriteType.values.byName(fromDb);
+
+  @override
+  String toSql(OverwriteType value) => value.name;
 }
 
 class SubscriptionInfoConverter
