@@ -47,6 +47,9 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
+      - name: Sync package name from config
+        run: dart scripts/sync_package_name.dart
+
       - name: Regenerate source files
         run: dart run build_runner build --delete-conflicting-outputs
 
