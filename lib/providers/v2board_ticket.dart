@@ -1,6 +1,6 @@
-import 'package:fl_clash/providers/config.dart';
-import 'package:fl_clash/providers/v2board.dart';
-import 'package:fl_clash/services/v2board/v2board.dart';
+import 'package:v2box/providers/config.dart';
+import 'package:v2box/providers/v2board.dart';
+import 'package:v2box/services/v2board/v2board.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final v2boardTicketsProvider =

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:isolate';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/models/models.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/models/models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 

@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/database/database.dart';
-import 'package:fl_clash/models/models.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/database/database.dart';
+import 'package:v2box/models/models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/database.g.dart';

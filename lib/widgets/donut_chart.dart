@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:fl_clash/common/common.dart';
+import 'package:v2box/common/common.dart';
 import 'package:flutter/material.dart';
 
 @immutable

@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/core/controller.dart';
-import 'package:fl_clash/enum/enum.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/core/controller.dart';
+import 'package:v2box/enum/enum.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'clash_config.dart';

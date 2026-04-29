@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:fl_clash/services/v2board/v2board_models.dart';
+import 'package:v2box/services/v2board/v2board_models.dart';
 
 const v2boardPaymentCallbackScheme = 'flclash';
 const v2boardPaymentCallbackHost = 'payment-callback';

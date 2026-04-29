@@ -1,10 +1,10 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/features/features.dart';
-import 'package:fl_clash/models/clash_config.dart';
-import 'package:fl_clash/providers/database.dart';
-import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/state.dart';
-import 'package:fl_clash/widgets/widgets.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/features/features.dart';
+import 'package:v2box/models/clash_config.dart';
+import 'package:v2box/providers/database.dart';
+import 'package:v2box/providers/providers.dart';
+import 'package:v2box/state.dart';
+import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

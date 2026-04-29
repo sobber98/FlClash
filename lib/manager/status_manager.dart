@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/widgets/fade_box.dart';
-import 'package:fl_clash/widgets/theme.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/models/models.dart';
+import 'package:v2box/providers/providers.dart';
+import 'package:v2box/widgets/fade_box.dart';
+import 'package:v2box/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

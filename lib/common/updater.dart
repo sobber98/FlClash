@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
-import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/plugins/app.dart';
+import 'package:v2box/models/models.dart';
+import 'package:v2box/plugins/app.dart';
 import 'package:path/path.dart';
 
 import 'common.dart';

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:fl_clash/services/v2board/v2board_endpoints.dart';
-import 'package:fl_clash/services/v2board/v2board_models.dart';
-import 'package:fl_clash/services/v2board/v2board_ticket_models.dart';
+import 'package:v2box/services/v2board/v2board_endpoints.dart';
+import 'package:v2box/services/v2board/v2board_models.dart';
+import 'package:v2box/services/v2board/v2board_ticket_models.dart';
 
 class V2BoardApiException implements Exception {
   final String message;

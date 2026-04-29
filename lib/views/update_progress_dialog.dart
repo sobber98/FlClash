@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/widgets/dialog.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/models/models.dart';
+import 'package:v2box/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 
 enum _UpdateProgressStatus { downloading, verifying, installing, failed }

@@ -1,8 +1,8 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/common.dart';
-import 'package:fl_clash/providers/config.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/controller.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/common.dart';
+import 'package:v2box/providers/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

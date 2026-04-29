@@ -1,6 +1,6 @@
-import 'package:fl_clash/controller.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/models.dart';
+import 'package:v2box/controller.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/models.dart';
 import 'package:flutter/material.dart';
 
 class CommonPrint {

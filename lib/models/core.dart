@@ -1,5 +1,5 @@
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/models.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/models.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'generated/core.freezed.dart';

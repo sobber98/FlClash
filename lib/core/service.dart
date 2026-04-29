@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/core/core.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/core.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/core/core.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/core.dart';
 
 import 'interface.dart';
 

@@ -1,10 +1,10 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
-import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/services/v2board/v2board.dart';
-import 'package:fl_clash/state.dart';
-import 'package:fl_clash/views/subscription/ticket_list_view.dart';
-import 'package:fl_clash/widgets/widgets.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/controller.dart';
+import 'package:v2box/providers/providers.dart';
+import 'package:v2box/services/v2board/v2board.dart';
+import 'package:v2box/state.dart';
+import 'package:v2box/views/subscription/ticket_list_view.dart';
+import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

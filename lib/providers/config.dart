@@ -1,6 +1,6 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/services/v2board/v2board.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/models/models.dart';
+import 'package:v2box/services/v2board/v2board.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/config.g.dart';

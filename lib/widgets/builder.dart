@@ -1,4 +1,4 @@
-import 'package:fl_clash/widgets/inherited.dart';
+import 'package:v2box/widgets/inherited.dart';
 import 'package:flutter/material.dart';
 
 class ScrollOverBuilder extends StatefulWidget {

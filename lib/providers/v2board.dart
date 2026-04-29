@@ -1,4 +1,4 @@
-import 'package:fl_clash/services/v2board/v2board.dart';
+import 'package:v2box/services/v2board/v2board.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/v2board.g.dart';

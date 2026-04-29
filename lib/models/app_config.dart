@@ -1,5 +1,5 @@
-import 'package:fl_clash/common/constant.dart' as constants;
-import 'package:fl_clash/enum/enum.dart';
+import 'package:v2box/common/constant.dart' as constants;
+import 'package:v2box/enum/enum.dart';
 
 class AppConfig {
   final String serverUrl;

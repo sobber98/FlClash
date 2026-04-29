@@ -1,6 +1,6 @@
-import 'package:fl_clash/common/app_localizations.dart';
-import 'package:fl_clash/views/config/general.dart';
-import 'package:fl_clash/widgets/widgets.dart';
+import 'package:v2box/common/app_localizations.dart';
+import 'package:v2box/views/config/general.dart';
+import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class ConfigView extends StatelessWidget {

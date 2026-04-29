@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/views/proxies/common.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/providers/providers.dart';
+import 'package:v2box/views/proxies/common.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AutoTestState {

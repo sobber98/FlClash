@@ -1,10 +1,10 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/services/v2board/v2board.dart';
-import 'package:fl_clash/views/subscription/order_list_view.dart';
-import 'package:fl_clash/views/subscription/plan_detail_view.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/controller.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/providers/providers.dart';
+import 'package:v2box/services/v2board/v2board.dart';
+import 'package:v2box/views/subscription/order_list_view.dart';
+import 'package:v2box/views/subscription/plan_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

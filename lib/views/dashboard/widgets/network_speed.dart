@@ -1,7 +1,7 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/providers/app.dart';
-import 'package:fl_clash/widgets/widgets.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/models/models.dart';
+import 'package:v2box/providers/app.dart';
+import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

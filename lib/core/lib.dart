@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/controller.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/core.dart';
-import 'package:fl_clash/plugins/service.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/controller.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/core.dart';
+import 'package:v2box/plugins/service.dart';
 
 import 'interface.dart';
 

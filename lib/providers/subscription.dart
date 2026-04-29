@@ -1,5 +1,5 @@
-import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/services/v2board/v2board.dart';
+import 'package:v2box/providers/providers.dart';
+import 'package:v2box/services/v2board/v2board.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final subscriptionPlansProvider = Provider<AsyncValue<List<V2BoardPlan>>>((

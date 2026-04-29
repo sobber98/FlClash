@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fl_clash/core/core.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/plugins/app.dart';
-import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/services/v2board/v2board.dart';
-import 'package:fl_clash/state.dart';
-import 'package:fl_clash/views/profiles/profiles.dart';
-import 'package:fl_clash/views/update_progress_dialog.dart';
+import 'package:v2box/core/core.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/plugins/app.dart';
+import 'package:v2box/providers/providers.dart';
+import 'package:v2box/services/v2board/v2board.dart';
+import 'package:v2box/state.dart';
+import 'package:v2box/views/profiles/profiles.dart';
+import 'package:v2box/views/update_progress_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

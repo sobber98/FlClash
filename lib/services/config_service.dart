@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:fl_clash/common/preferences.dart';
-import 'package:fl_clash/models/app_config.dart';
+import 'package:v2box/common/preferences.dart';
+import 'package:v2box/models/app_config.dart';
 import 'package:flutter/services.dart';
 
 class ConfigService {

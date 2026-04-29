@@ -1,19 +1,19 @@
 import 'dart:io';
 
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/pages/editor.dart';
-import 'package:fl_clash/providers/app.dart';
-import 'package:fl_clash/providers/database.dart';
-import 'package:fl_clash/providers/state.dart';
-import 'package:fl_clash/state.dart';
-import 'package:fl_clash/widgets/input.dart';
-import 'package:fl_clash/widgets/list.dart';
-import 'package:fl_clash/widgets/null_status.dart';
-import 'package:fl_clash/widgets/pop_scope.dart';
-import 'package:fl_clash/widgets/scaffold.dart';
-import 'package:fl_clash/widgets/theme.dart';
+import 'package:v2box/common/common.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/models.dart';
+import 'package:v2box/pages/editor.dart';
+import 'package:v2box/providers/app.dart';
+import 'package:v2box/providers/database.dart';
+import 'package:v2box/providers/state.dart';
+import 'package:v2box/state.dart';
+import 'package:v2box/widgets/input.dart';
+import 'package:v2box/widgets/list.dart';
+import 'package:v2box/widgets/null_status.dart';
+import 'package:v2box/widgets/pop_scope.dart';
+import 'package:v2box/widgets/scaffold.dart';
+import 'package:v2box/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

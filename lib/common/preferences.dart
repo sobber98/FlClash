@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:fl_clash/models/models.dart';
+import 'package:v2box/models/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constant.dart';

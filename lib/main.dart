@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:desktop_webview_window/desktop_webview_window.dart';
-import 'package:fl_clash/pages/error.dart';
-import 'package:fl_clash/state.dart';
+import 'package:v2box/pages/error.dart';
+import 'package:v2box/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

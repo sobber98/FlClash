@@ -1,4 +1,4 @@
-import 'package:fl_clash/enum/enum.dart';
+import 'package:v2box/enum/enum.dart';
 import 'package:flutter/material.dart';
 
 class CommonChip extends StatelessWidget {

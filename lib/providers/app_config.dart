@@ -1,6 +1,6 @@
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/app_config.dart';
-import 'package:fl_clash/services/config_service.dart';
+import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/app_config.dart';
+import 'package:v2box/services/config_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final appConfigProvider = AsyncNotifierProvider<AppConfigNotifier, AppConfig>(
