@@ -1,14 +1,14 @@
-display_name: FlClash
+display_name: v2box
 
 icon: ./assets/images/icon.png
 
 keywords:
-  - FlClash
+  - v2box
   - Clash
   - ClashMeta
   - Proxy
 
-generic_name: FlClash
+generic_name: v2box
 
 categories:
   - Network
