@@ -1,6 +1,7 @@
 import 'package:v2box/common/common.dart';
 import 'package:v2box/controller.dart';
 import 'package:v2box/enum/enum.dart';
+import 'package:v2box/models/models.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
 import 'package:v2box/widgets/widgets.dart';
@@ -745,6 +746,7 @@ class _NodeCard extends ConsumerWidget {
         : ref.watch(getSelectedProxyNameProvider(currentGroupName));
     return _DashboardCard(
       compact: compact,
+      onTap: () => _showNodeSelector(context),
       child: Row(
         children: [
           _FeatureIcon(icon: Icons.public_rounded, compact: compact),
@@ -790,6 +792,277 @@ class _NodeCard extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  void _showNodeSelector(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const _NodeSelectorSheet(),
+    );
+  }
+}
+
+class _NodeSelectorSheet extends ConsumerStatefulWidget {
+  const _NodeSelectorSheet();
+
+  @override
+  ConsumerState<_NodeSelectorSheet> createState() => _NodeSelectorSheetState();
+}
+
+class _NodeSelectorSheetState extends ConsumerState<_NodeSelectorSheet> {
+  String? _selectedGroupName;
+
+  @override
+  Widget build(BuildContext context) {
+    final groups = ref.watch(filterGroupsStateProvider('')).value;
+    final currentGroupName = ref.watch(
+      currentProfileProvider.select((state) => state?.currentGroupName),
+    );
+    final selectedGroupName = _resolveGroupName(groups, currentGroupName);
+    final selectedGroup = selectedGroupName == null
+        ? null
+        : groups.getGroup(selectedGroupName);
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.72,
+      minChildSize: 0.42,
+      maxChildSize: 0.92,
+      builder: (context, scrollController) {
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x22000000),
+                blurRadius: 24,
+                offset: Offset(0, -8),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                width: 42,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: context.colorScheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 18, 14, 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '切换加速节点',
+                        style: context.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ],
+                ),
+              ),
+              if (groups.length > 1)
+                SizedBox(
+                  height: 48,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 22),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (_, index) {
+                      final group = groups[index];
+                      final selected = group.name == selectedGroupName;
+                      return ChoiceChip(
+                        selected: selected,
+                        label: Text(group.name),
+                        onSelected: (_) {
+                          setState(() {
+                            _selectedGroupName = group.name;
+                          });
+                        },
+                      );
+                    },
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    itemCount: groups.length,
+                  ),
+                ),
+              Expanded(
+                child: selectedGroup == null || selectedGroup.all.isEmpty
+                    ? _NodeSelectorEmpty(scrollController: scrollController)
+                    : ListView.separated(
+                        controller: scrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                        itemBuilder: (_, index) => _NodeOptionTile(
+                          group: selectedGroup,
+                          proxy: selectedGroup.all[index],
+                        ),
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
+                        itemCount: selectedGroup.all.length,
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String? _resolveGroupName(List<Group> groups, String? currentGroupName) {
+    if (groups.isEmpty) return null;
+    final selected = _selectedGroupName;
+    if (selected != null && groups.any((group) => group.name == selected)) {
+      return selected;
+    }
+    if (currentGroupName != null &&
+        groups.any((group) => group.name == currentGroupName)) {
+      return currentGroupName;
+    }
+    return groups.first.name;
+  }
+}
+
+class _NodeSelectorEmpty extends StatelessWidget {
+  final ScrollController scrollController;
+
+  const _NodeSelectorEmpty({required this.scrollController});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      controller: scrollController,
+      padding: const EdgeInsets.fromLTRB(24, 44, 24, 24),
+      children: [
+        Icon(
+          Icons.public_off_rounded,
+          size: 44,
+          color: context.colorScheme.onSurfaceVariant,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          '暂无可切换节点',
+          textAlign: TextAlign.center,
+          style: context.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '订阅同步完成后，可在这里选择加速节点。',
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _NodeOptionTile extends ConsumerWidget {
+  final Group group;
+  final Proxy proxy;
+
+  const _NodeOptionTile({required this.group, required this.proxy});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedProxyName = ref.watch(getSelectedProxyNameProvider(group.name));
+    final delay = ref.watch(
+      getDelayProvider(proxyName: proxy.name, testUrl: group.testUrl),
+    );
+    final selected = selectedProxyName == proxy.name;
+
+    return Material(
+      color: selected
+          ? context.colorScheme.primaryContainer
+          : context.colorScheme.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(18),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          appController.updateCurrentGroupName(group.name);
+          appController.updateCurrentSelectedMap(group.name, proxy.name);
+          appController.changeProxyDebounce(group.name, proxy.name);
+          Navigator.of(context).pop();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? context.colorScheme.primary
+                      : context.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Icon(
+                  selected ? Icons.check_rounded : Icons.public_rounded,
+                  color: selected
+                      ? context.colorScheme.onPrimary
+                      : context.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      proxy.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        color: selected
+                            ? context.colorScheme.onPrimaryContainer
+                            : context.colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      proxy.type,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                _delayText(delay),
+                style: context.textTheme.labelLarge?.copyWith(
+                  color: context.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _delayText(int? delay) {
+    if (delay == null) return '--';
+    if (delay <= 0) return '检测中';
+    return '${delay}ms';
   }
 }
 
@@ -862,14 +1135,16 @@ class _SummaryText extends StatelessWidget {
 
 class _DashboardCard extends StatelessWidget {
   final Widget child;
+  final VoidCallback? onTap;
   final bool compact;
 
-  const _DashboardCard({required this.child, this.compact = false});
+  const _DashboardCard({required this.child, this.onTap, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
     return CommonCard(
       type: CommonCardType.filled,
+      onPressed: onTap,
       child: Padding(padding: EdgeInsets.all(compact ? 18 : 24), child: child),
     );
   }
