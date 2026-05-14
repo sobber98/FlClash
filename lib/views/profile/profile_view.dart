@@ -8,13 +8,14 @@ import 'package:v2box/state.dart';
 import 'package:v2box/views/subscription/order_list_view.dart';
 import 'package:v2box/views/subscription/ticket_list_view.dart';
 import 'package:v2box/views/v2board/login_view.dart';
+import 'package:v2box/views/v2board/v2board_design.dart';
 import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _profileBackground = Color(0xFFF5F6F8);
+const _profileBackground = v2BoardPageBackground;
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
@@ -147,20 +148,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               32,
             ),
             children: [
-              Text(
-                '用户中心',
-                style: context.textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -1,
-                  color: context.colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '管理您的账户与服务',
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: context.colorScheme.onSurfaceVariant,
-                ),
+              V2BoardPageHeader(
+                title: '用户中心',
+                subtitle: '管理您的账户与服务',
+                compact: isMobile,
               ),
               const SizedBox(height: 18),
               _ProfileHeaderCard(
@@ -205,29 +196,18 @@ class _ProfileHeaderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final email = user?.email ?? '-';
-    return Container(
+    return V2BoardCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x10000000),
-            blurRadius: 18,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
       child: Row(
         children: [
           Container(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: context.colorScheme.onSurface,
-              borderRadius: BorderRadius.circular(18),
+              gradient: v2BoardGradient,
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.person_rounded, color: context.colorScheme.surface),
+            child: const Icon(Icons.person_rounded, color: Colors.white),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -242,8 +222,8 @@ class _ProfileHeaderCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.6,
+                          color: v2BoardInk,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
@@ -274,7 +254,7 @@ class _ProfileHeaderCard extends StatelessWidget {
               Text(
                 '到期时间',
                 style: context.textTheme.bodyMedium?.copyWith(
-                  color: context.colorScheme.onSurfaceVariant,
+                  color: v2BoardMuted,
                 ),
               ),
               const SizedBox(height: 8),
@@ -284,13 +264,13 @@ class _ProfileHeaderCard extends StatelessWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: context.colorScheme.onSurface,
-                  borderRadius: BorderRadius.circular(14),
+                  color: v2BoardInk,
+                  borderRadius: BorderRadius.circular(7),
                 ),
                 child: Text(
                   _expireText(),
                   style: context.textTheme.titleSmall?.copyWith(
-                    color: context.colorScheme.surface,
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -340,25 +320,14 @@ class _UsageCard extends StatelessWidget {
     final used = v2boardResolvedUsedTraffic(user, subscription);
     final total = v2boardResolvedTotalTraffic(user, subscription);
     final progress = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
-    return Container(
+    return V2BoardCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x10000000),
-            blurRadius: 18,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.donut_large_rounded, color: context.colorScheme.onSurfaceVariant),
+              const Icon(Icons.donut_large_rounded, color: v2BoardInk),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -382,32 +351,22 @@ class _UsageCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 10,
-              backgroundColor: context.colorScheme.surfaceContainerHighest,
-              valueColor: AlwaysStoppedAnimation<Color>(context.colorScheme.primary),
+              backgroundColor: v2BoardSoft,
+              valueColor: const AlwaysStoppedAnimation<Color>(v2BoardPrimary),
             ),
           ),
           const SizedBox(height: 18),
           Text(
             _resetText(),
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-            ),
+            style: context.textTheme.bodyMedium?.copyWith(color: v2BoardMuted),
           ),
           const SizedBox(height: 18),
           SizedBox(
             width: double.infinity,
-            child: FilledButton.icon(
+            child: V2BoardPrimaryButton(
               onPressed: () => appController.toPage(PageLabel.subscription),
-              style: FilledButton.styleFrom(
-                backgroundColor: context.colorScheme.onSurface,
-                foregroundColor: context.colorScheme.surface,
-                minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              icon: const Icon(Icons.autorenew_rounded),
-              label: const Text('续费套餐'),
+              icon: Icons.autorenew_rounded,
+              label: '续费套餐',
             ),
           ),
         ],
@@ -508,25 +467,14 @@ class _SupportSection extends ConsumerWidget {
     final websiteUrl = _websiteUrl(serverUrl);
     final telegramUrl = _telegramUrl();
     final mailUrl = _mailUrl();
-    return Container(
+    return V2BoardCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x10000000),
-            blurRadius: 18,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.headset_mic_outlined, color: context.colorScheme.onSurfaceVariant),
+              const Icon(Icons.headset_mic_outlined, color: v2BoardInk),
               const SizedBox(width: 10),
               Text(
                 '帮助与支持',
@@ -541,9 +489,9 @@ class _SupportSection extends ConsumerWidget {
             icon: Icons.receipt_long_rounded,
             title: '订单记录',
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const OrderListView()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const OrderListView()));
             },
           ),
           const SizedBox(height: 12),
@@ -656,7 +604,10 @@ class _ActionTile extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: context.colorScheme.onSurfaceVariant),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: context.colorScheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),
