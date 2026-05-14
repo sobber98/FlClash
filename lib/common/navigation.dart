@@ -1,6 +1,8 @@
 import 'package:v2box/enum/enum.dart';
 import 'package:v2box/models/models.dart';
-import 'package:v2box/views/views.dart';
+import 'package:v2box/views/dashboard/dashboard.dart';
+import 'package:v2box/views/profile/profile_view.dart';
+import 'package:v2box/views/subscription/subscription_view.dart';
 import 'package:flutter/material.dart';
 
 class Navigation {
@@ -32,57 +34,6 @@ class Navigation {
         builder: (_) =>
             const ProfileView(key: GlobalObjectKey(PageLabel.profile)),
         modes: const [NavigationItemMode.mobile, NavigationItemMode.desktop],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.lan_outlined),
-        label: PageLabel.proxies,
-        builder: (_) =>
-            const ProxiesView(key: GlobalObjectKey(PageLabel.proxies)),
-        modes: const [],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.construction_outlined),
-        label: PageLabel.tools,
-        builder: (_) => const ToolsView(key: GlobalObjectKey(PageLabel.tools)),
-        modes: const [],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.folder_outlined),
-        label: PageLabel.profiles,
-        builder: (_) =>
-            const ProfilesView(key: GlobalObjectKey(PageLabel.profiles)),
-        modes: const [],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.view_timeline),
-        label: PageLabel.requests,
-        builder: (_) =>
-            const RequestsView(key: GlobalObjectKey(PageLabel.requests)),
-        description: 'requestsDesc',
-        modes: const [],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.ballot_outlined),
-        label: PageLabel.connections,
-        builder: (_) =>
-            const ConnectionsView(key: GlobalObjectKey(PageLabel.connections)),
-        description: 'connectionsDesc',
-        modes: const [],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.storage_outlined),
-        label: PageLabel.resources,
-        description: 'resourcesDesc',
-        builder: (_) =>
-            const ResourcesView(key: GlobalObjectKey(PageLabel.resources)),
-        modes: const [],
-      ),
-      NavigationItem(
-        icon: const Icon(Icons.adb_outlined),
-        label: PageLabel.logs,
-        builder: (_) => const LogsView(key: GlobalObjectKey(PageLabel.logs)),
-        description: 'logsDesc',
-        modes: const [],
       ),
     ];
   }

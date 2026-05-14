@@ -1,25 +1,9 @@
-import 'package:v2box/common/common.dart';
+import 'package:v2box/common/compute.dart';
+import 'package:v2box/common/iterable.dart';
+import 'package:v2box/common/string.dart';
 import 'package:v2box/controller.dart';
 import 'package:v2box/core/core.dart';
-import 'package:v2box/enum/enum.dart';
 import 'package:v2box/models/models.dart';
-import 'package:v2box/state.dart';
-
-double get listHeaderHeight {
-  final measure = globalState.measure;
-  return 20 + measure.titleMediumHeight + 4 + measure.bodyMediumHeight + 2;
-}
-
-double getItemHeight(ProxyCardType proxyCardType) {
-  final measure = globalState.measure;
-  final baseHeight =
-      16 + measure.bodyMediumHeight * 2 + measure.bodySmallHeight + 8 + 4;
-  return switch (proxyCardType) {
-    ProxyCardType.expand => baseHeight + measure.labelSmallHeight + 6,
-    ProxyCardType.shrink => baseHeight,
-    ProxyCardType.min => baseHeight - measure.bodyMediumHeight,
-  };
-}
 
 Future<void> proxyDelayTest(Proxy proxy, [String? testUrl]) async {
   final groups = appController.groups;
@@ -70,21 +54,4 @@ Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
     await Future.wait(batchDelayProxies);
   }
   appController.addSortNum();
-}
-
-double getScrollToSelectedOffset({
-  required String groupName,
-  required List<Proxy> proxies,
-  int? columns,
-}) {
-  final currentColumns = columns ?? appController.getProxiesColumns();
-  final proxyCardType = appController.config.proxiesStyleProps.cardType;
-  final selectedProxyName = appController.getSelectedProxyName(groupName);
-  final findSelectedIndex = proxies.indexWhere(
-    (proxy) => proxy.name == selectedProxyName,
-  );
-  final selectedIndex = findSelectedIndex != -1 ? findSelectedIndex : 0;
-  final rows = (selectedIndex / currentColumns).floor();
-  final gapCount = rows > 0 ? rows - 1 : 0;
-  return rows * getItemHeight(proxyCardType) + gapCount * 8;
 }

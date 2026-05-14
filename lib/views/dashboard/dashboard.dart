@@ -3,7 +3,6 @@ import 'package:v2box/controller.dart';
 import 'package:v2box/enum/enum.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
-import 'package:v2box/views/proxies/tab.dart';
 import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -746,19 +745,6 @@ class _NodeCard extends ConsumerWidget {
         : ref.watch(getSelectedProxyNameProvider(currentGroupName));
     return _DashboardCard(
       compact: compact,
-      onTap: () {
-        showSheet(
-          context: context,
-          props: SheetProps(isScrollControlled: true),
-          builder: (_, type) {
-            return AdaptiveSheetScaffold(
-              type: type,
-              title: appLocalizations.proxies,
-              body: const ProxiesTabView(),
-            );
-          },
-        );
-      },
       child: Row(
         children: [
           _FeatureIcon(icon: Icons.public_rounded, compact: compact),
@@ -876,16 +862,14 @@ class _SummaryText extends StatelessWidget {
 
 class _DashboardCard extends StatelessWidget {
   final Widget child;
-  final VoidCallback? onTap;
   final bool compact;
 
-  const _DashboardCard({required this.child, this.onTap, this.compact = false});
+  const _DashboardCard({required this.child, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
     return CommonCard(
       type: CommonCardType.filled,
-      onPressed: onTap,
       child: Padding(padding: EdgeInsets.all(compact ? 18 : 24), child: child),
     );
   }

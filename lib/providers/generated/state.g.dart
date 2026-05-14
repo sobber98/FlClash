@@ -436,47 +436,6 @@ final class ContentWidthProvider
 
 String _$contentWidthHash() => r'4cc35c66aba9a64c55d8657e40afc706373b8de3';
 
-@ProviderFor(dashboardState)
-const dashboardStateProvider = DashboardStateProvider._();
-
-final class DashboardStateProvider
-    extends $FunctionalProvider<DashboardState, DashboardState, DashboardState>
-    with $Provider<DashboardState> {
-  const DashboardStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'dashboardStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$dashboardStateHash();
-
-  @$internal
-  @override
-  $ProviderElement<DashboardState> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  DashboardState create(Ref ref) {
-    return dashboardState(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(DashboardState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<DashboardState>(value),
-    );
-  }
-}
-
-String _$dashboardStateHash() => r'e8616e327c1b96658d917e4e4950f70ecb099d85';
-
 @ProviderFor(proxiesActionsState)
 const proxiesActionsStateProvider = ProxiesActionsStateProvider._();
 
@@ -1917,7 +1876,7 @@ final class CheckIpProvider
   }
 }
 
-String _$checkIpHash() => r'7d8be66f0e8164bcf20c32659da2a4bea9893596';
+String _$checkIpHash() => r'947e79f087fd2df25fab5a595db143d9387c41f0';
 
 @ProviderFor(genColorScheme)
 const genColorSchemeProvider = GenColorSchemeFamily._();

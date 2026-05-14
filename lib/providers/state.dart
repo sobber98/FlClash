@@ -200,18 +200,6 @@ double contentWidth(Ref ref) {
 }
 
 @riverpod
-DashboardState dashboardState(Ref ref) {
-  final dashboardWidgets = ref.watch(
-    appSettingProvider.select((state) => state.dashboardWidgets),
-  );
-  final contentWidth = ref.watch(contentWidthProvider);
-  return DashboardState(
-    dashboardWidgets: dashboardWidgets,
-    contentWidth: contentWidth,
-  );
-}
-
-@riverpod
 ProxiesActionsState proxiesActionsState(Ref ref) {
   final pageLabel = ref.watch(currentPageLabelProvider);
   final hasProviders = ref.watch(
@@ -568,13 +556,7 @@ String getProxyDesc(Ref ref, Proxy proxy) {
 VM3<bool, int, bool> checkIp(Ref ref) {
   final isInit = ref.watch(initProvider);
   final checkIpNum = ref.watch(checkIpNumProvider);
-  final containsDetection = ref.watch(
-    dashboardStateProvider.select(
-      (state) =>
-          state.dashboardWidgets.contains(DashboardWidget.networkDetection),
-    ),
-  );
-  return VM3(isInit, checkIpNum, containsDetection);
+  return VM3(isInit, checkIpNum, true);
 }
 
 @riverpod

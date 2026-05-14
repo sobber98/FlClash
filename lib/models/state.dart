@@ -281,14 +281,6 @@ abstract class ClashConfigState with _$ClashConfigState {
 }
 
 @freezed
-abstract class DashboardState with _$DashboardState {
-  const factory DashboardState({
-    required List<DashboardWidget> dashboardWidgets,
-    required double contentWidth,
-  }) = _DashboardState;
-}
-
-@freezed
 abstract class SelectedProxyState with _$SelectedProxyState {
   const factory SelectedProxyState({
     required String proxyName,
