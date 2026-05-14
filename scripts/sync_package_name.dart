@@ -199,14 +199,14 @@ Future<void> main() async {
   // 14. distribute_options.yaml
   if (replaceInFile(
     'distribute_options.yaml',
-    {RegExp(r"^app_name:.*$", multiLine: true): "app_name: '$appName'"},
+    {RegExp(r'^app_name:.*$', multiLine: true): 'app_name: \'$appName\''},
   )) {
     print('  distribute_options.yaml: updated');
     changes++;
   }
 
   if (changes == 0) {
-    print('App name is already "$appName" across all configs. Nothing to do.');
+    print('App name is already \'$appName\' across all configs. Nothing to do.');
   } else {
     print('\nDone ($changes update(s)). Run "dart run build_runner build --delete-conflicting-outputs" to regenerate code.');
   }
