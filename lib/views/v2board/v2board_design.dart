@@ -142,6 +142,139 @@ class V2BoardPageHeader extends StatelessWidget {
   }
 }
 
+class V2BoardAuthHeroPanel extends StatelessWidget {
+  final String appName;
+
+  const V2BoardAuthHeroPanel({super.key, required this.appName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 620),
+      padding: const EdgeInsets.fromLTRB(42, 48, 36, 34),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFF5F6FF), Color(0xFFEAF0FF)],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          V2BoardLogo(size: 48, showText: false),
+          const SizedBox(height: 18),
+          Text(
+            '$appName Client',
+            style: context.textTheme.headlineSmall?.copyWith(
+              color: v2BoardInk,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8EBFF),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              '安全 · 稳定 · 高效',
+              style: context.textTheme.labelMedium?.copyWith(
+                color: v2BoardPrimary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          const SizedBox(height: 46),
+          Text(
+            '安全连接全球网络\n极速稳定的访问体验',
+            style: context.textTheme.displaySmall?.copyWith(
+              color: v2BoardInk,
+              fontWeight: FontWeight.w800,
+              height: 1.28,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            '为个人与团队提供安全、稳定、易用的网络连接服务，多端同步，随时随地畅享全球资源。',
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: v2BoardMuted,
+              height: 1.7,
+            ),
+          ),
+          const SizedBox(height: 32),
+          const _V2BoardHeroFeature(
+            icon: Icons.verified_user_outlined,
+            title: '安全连接',
+            text: '多重加密协议，保障数据传输安全可靠',
+          ),
+          const SizedBox(height: 18),
+          const _V2BoardHeroFeature(
+            icon: Icons.flash_on_outlined,
+            title: '极速节点',
+            text: '全球优质节点加速，智能路由低延迟',
+          ),
+          const SizedBox(height: 18),
+          const _V2BoardHeroFeature(
+            icon: Icons.devices_outlined,
+            title: '多端同步',
+            text: '支持 PC / Mobile 多端使用，数据实时同步',
+          ),
+          const Spacer(),
+          Text(
+            '© 2024 V2Board. All rights reserved.',
+            style: context.textTheme.bodySmall?.copyWith(color: v2BoardMuted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _V2BoardHeroFeature extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String text;
+
+  const _V2BoardHeroFeature({
+    required this.icon,
+    required this.title,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        V2BoardIconBox(icon: icon, size: 42),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: context.textTheme.titleSmall?.copyWith(
+                  color: v2BoardInk,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                text,
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: v2BoardMuted,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class V2BoardCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;

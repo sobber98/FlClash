@@ -424,207 +424,251 @@ class _V2BoardRegisterPageState extends ConsumerState<V2BoardRegisterPage> {
   Widget build(BuildContext context) {
     final configuredServer = ref.watch(appServerUrlProvider).trim();
     final storedProps = ref.watch(v2boardSettingProvider);
+    final appName = ref.watch(appDisplayNameProvider);
     final hasServerUrl =
         configuredServer.isNotEmpty ||
         ((storedProps?.serverUrl.trim().isNotEmpty) ?? false);
     return Scaffold(
       backgroundColor: v2BoardPageBackground,
       body: SafeArea(
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 460),
-              child: V2BoardCard(
-                padding: const EdgeInsets.fromLTRB(22, 20, 22, 24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          onPressed: () => Navigator.of(context).maybePop(),
-                          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 860;
+            if (isWide) {
+              return Container(
+                key: const ValueKey('register-page-shell'),
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 38,
+                      child: V2BoardAuthHeroPanel(appName: appName),
+                    ),
+                    Expanded(
+                      flex: 62,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 54,
+                          vertical: 36,
+                        ),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 760),
+                            child: _buildRegisterForm(context, hasServerUrl),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      const Center(child: V2BoardLogo()),
-                      const SizedBox(height: 28),
-                      Text(
-                        '开启自由之旅',
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: v2BoardInk,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '加入我们的全球隐私网络',
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: v2BoardMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 36),
-                      if (!hasServerUrl) ...[
-                        const _AuthWarning(text: '注册服务暂未配置，请联系管理员。'),
-                        const SizedBox(height: 16),
-                      ],
-                      _AuthLabel('邮箱'),
-                      const SizedBox(height: 8),
-                      _AuthInput(
-                        controller: _emailController,
-                        hintText: '请输入邮箱地址',
-                        prefixIcon: Icons.mail_outline_rounded,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return '请输入邮箱地址';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 18),
-                      _AuthLabel('密码'),
-                      const SizedBox(height: 8),
-                      ValueListenableBuilder(
-                        valueListenable: _passwordObscureController,
-                        builder: (_, obscure, _) {
-                          return _AuthInput(
-                            controller: _passwordController,
-                            hintText: '请输入密码（至少8位）',
-                            prefixIcon: Icons.lock_outline_rounded,
-                            obscureText: obscure,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return '请输入密码';
-                              }
-                              if (value.length < 8) {
-                                return appLocalizations.v2boardPasswordTip;
-                              }
-                              return null;
-                            },
-                            suffix: IconButton(
-                              onPressed: () {
-                                _passwordObscureController.value = !obscure;
-                              },
-                              icon: Icon(
-                                obscure
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: _authHintColor,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 18),
-                      _AuthLabel('确认密码'),
-                      const SizedBox(height: 8),
-                      ValueListenableBuilder(
-                        valueListenable: _confirmObscureController,
-                        builder: (_, obscure, _) {
-                          return _AuthInput(
-                            controller: _confirmPasswordController,
-                            hintText: '请再次输入密码',
-                            prefixIcon: Icons.lock_outline_rounded,
-                            obscureText: obscure,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return '请再次输入密码';
-                              }
-                              if (value != _passwordController.text) {
-                                return '两次输入的密码不一致';
-                              }
-                              return null;
-                            },
-                            suffix: IconButton(
-                              onPressed: () {
-                                _confirmObscureController.value = !obscure;
-                              },
-                              icon: Icon(
-                                obscure
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: _authHintColor,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 18),
-                      _AuthLabel('邀请码'),
-                      const SizedBox(height: 8),
-                      _AuthInput(
-                        controller: _inviteCodeController,
-                        hintText: '如有邀请码请输入（可选）',
-                        prefixIcon: Icons.card_giftcard_outlined,
-                        validator: _commConfig?.isInviteForce == true
-                            ? (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return '请输入邀请码';
-                                }
-                                return null;
-                              }
-                            : null,
-                      ),
-                      if (_commConfig?.isEmailVerify == true) ...[
-                        const SizedBox(height: 18),
-                        _AuthLabel('邮箱验证码'),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _AuthInput(
-                                controller: _emailCodeController,
-                                hintText: '请输入邮箱验证码',
-                                prefixIcon: Icons.verified_outlined,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return '请输入邮箱验证码';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            SizedBox(
-                              height: 60,
-                              child: _AuthCompactButton(
-                                label: _isSendingCode ? '发送中' : '发送验证码',
-                                onPressed: _isSendingCode
-                                    ? null
-                                    : _sendEmailCode,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      const SizedBox(height: 24),
-                      V2BoardPrimaryButton(
-                        label: '创建账户并开始',
-                        onPressed: _isLoading || !hasServerUrl
-                            ? null
-                            : _register,
-                        loading: _isLoading,
-                      ),
-                      const SizedBox(height: 24),
-                      const _AuthDivider(text: '已有账户?'),
-                      const SizedBox(height: 24),
-                      _AuthSecondaryButton(
-                        label: '返回登录页面',
-                        onPressed: () => Navigator.of(context).maybePop(),
-                      ),
-                    ],
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 460),
+                  child: V2BoardCard(
+                    key: const ValueKey('register-page-shell'),
+                    padding: const EdgeInsets.fromLTRB(22, 20, 22, 24),
+                    child: _buildRegisterForm(context, hasServerUrl),
                   ),
                 ),
               ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegisterForm(BuildContext context, bool hasServerUrl) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              ),
             ),
-          ),
+            const SizedBox(height: 8),
+            const Center(child: V2BoardLogo()),
+            const SizedBox(height: 28),
+            Text(
+              '开启自由之旅',
+              textAlign: TextAlign.center,
+              style: context.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: v2BoardInk,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '加入我们的全球隐私网络',
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: v2BoardMuted,
+              ),
+            ),
+            const SizedBox(height: 36),
+            if (!hasServerUrl) ...[
+              const _AuthWarning(text: '注册服务暂未配置，请联系管理员。'),
+              const SizedBox(height: 16),
+            ],
+            _AuthLabel('邮箱'),
+            const SizedBox(height: 8),
+            _AuthInput(
+              controller: _emailController,
+              hintText: '请输入邮箱地址',
+              prefixIcon: Icons.mail_outline_rounded,
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '请输入邮箱地址';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 18),
+            _AuthLabel('密码'),
+            const SizedBox(height: 8),
+            ValueListenableBuilder(
+              valueListenable: _passwordObscureController,
+              builder: (_, obscure, _) {
+                return _AuthInput(
+                  controller: _passwordController,
+                  hintText: '请输入密码（至少8位）',
+                  prefixIcon: Icons.lock_outline_rounded,
+                  obscureText: obscure,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '请输入密码';
+                    }
+                    if (value.length < 8) {
+                      return appLocalizations.v2boardPasswordTip;
+                    }
+                    return null;
+                  },
+                  suffix: IconButton(
+                    onPressed: () {
+                      _passwordObscureController.value = !obscure;
+                    },
+                    icon: Icon(
+                      obscure
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: _authHintColor,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 18),
+            _AuthLabel('确认密码'),
+            const SizedBox(height: 8),
+            ValueListenableBuilder(
+              valueListenable: _confirmObscureController,
+              builder: (_, obscure, _) {
+                return _AuthInput(
+                  controller: _confirmPasswordController,
+                  hintText: '请再次输入密码',
+                  prefixIcon: Icons.lock_outline_rounded,
+                  obscureText: obscure,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '请再次输入密码';
+                    }
+                    if (value != _passwordController.text) {
+                      return '两次输入的密码不一致';
+                    }
+                    return null;
+                  },
+                  suffix: IconButton(
+                    onPressed: () {
+                      _confirmObscureController.value = !obscure;
+                    },
+                    icon: Icon(
+                      obscure
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: _authHintColor,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 18),
+            _AuthLabel('邀请码'),
+            const SizedBox(height: 8),
+            _AuthInput(
+              controller: _inviteCodeController,
+              hintText: '如有邀请码请输入（可选）',
+              prefixIcon: Icons.card_giftcard_outlined,
+              validator: _commConfig?.isInviteForce == true
+                  ? (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return '请输入邀请码';
+                      }
+                      return null;
+                    }
+                  : null,
+            ),
+            if (_commConfig?.isEmailVerify == true) ...[
+              const SizedBox(height: 18),
+              _AuthLabel('邮箱验证码'),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: _AuthInput(
+                      controller: _emailCodeController,
+                      hintText: '请输入邮箱验证码',
+                      prefixIcon: Icons.verified_outlined,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return '请输入邮箱验证码';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    height: 60,
+                    child: _AuthCompactButton(
+                      label: _isSendingCode ? '发送中' : '发送验证码',
+                      onPressed: _isSendingCode ? null : _sendEmailCode,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 24),
+            V2BoardPrimaryButton(
+              label: '创建账户并开始',
+              onPressed: _isLoading || !hasServerUrl ? null : _register,
+              loading: _isLoading,
+            ),
+            const SizedBox(height: 24),
+            const _AuthDivider(text: '已有账户?'),
+            const SizedBox(height: 24),
+            _AuthSecondaryButton(
+              label: '返回登录页面',
+              onPressed: () => Navigator.of(context).maybePop(),
+            ),
+          ],
         ),
       ),
     );
