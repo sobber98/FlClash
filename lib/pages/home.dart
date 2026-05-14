@@ -36,50 +36,61 @@ class _StartupLoginPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: v2BoardPageBackground,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1120),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth >= 860;
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: v2BoardLine),
-                      boxShadow: v2BoardShadow,
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: isWide
-                        ? Row(
-                            children: [
-                              Expanded(
-                                flex: 38,
-                                child: _AuthHeroPanel(appName: appName),
-                              ),
-                              const Expanded(
-                                flex: 62,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 54,
-                                    vertical: 44,
-                                  ),
-                                  child: V2BoardLoginView(),
-                                ),
-                              ),
-                            ],
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.fromLTRB(18, 20, 18, 24),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 860;
+            if (isWide) {
+              return Container(
+                key: const ValueKey('startup-login-shell'),
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    Expanded(flex: 38, child: _AuthHeroPanel(appName: appName)),
+                    Expanded(
+                      flex: 62,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 54,
+                          vertical: 44,
+                        ),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 760),
                             child: V2BoardLoginView(),
                           ),
-                  );
-                },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
+                ),
+                child: Container(
+                  key: const ValueKey('startup-login-shell'),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: v2BoardLine),
+                    boxShadow: v2BoardShadow,
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(18, 20, 18, 24),
+                    child: V2BoardLoginView(),
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
