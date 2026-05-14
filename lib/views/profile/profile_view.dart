@@ -44,24 +44,21 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     ]);
   }
 
-  void _showLoginSheet(BuildContext context) {
+  void _showLoginSheet(
+    BuildContext context, {
+    bool showRegisterInitially = false,
+  }) {
     showSheet(
       context: context,
       props: SheetProps(isScrollControlled: true),
       builder: (_, type) {
         return AdaptiveSheetScaffold(
           type: type,
-          title: '登录',
-          body: const V2BoardLoginView(),
+          title: showRegisterInitially ? '注册' : '登录',
+          body: V2BoardLoginView(showRegisterInitially: showRegisterInitially),
         );
       },
     );
-  }
-
-  void _showRegisterPage(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const V2BoardRegisterPage()));
   }
 
   @override
@@ -121,7 +118,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                     if (enableRegistration) ...[
                       const SizedBox(height: 10),
                       OutlinedButton(
-                        onPressed: () => _showRegisterPage(context),
+                        onPressed: () => _showLoginSheet(
+                          context,
+                          showRegisterInitially: true,
+                        ),
                         child: const Text('注册'),
                       ),
                     ],

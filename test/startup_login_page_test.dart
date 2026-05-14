@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:v2box/l10n/l10n.dart';
 import 'package:v2box/pages/home.dart';
 import 'package:v2box/providers/providers.dart';
-import 'package:v2box/views/v2board/login_view.dart';
 
 void main() {
   testWidgets('startup login page fills the desktop client window', (
@@ -47,7 +46,7 @@ void main() {
     expect(loginShellRect.size, scaffoldRect.size);
   });
 
-  testWidgets('register page uses desktop auth layout on wide windows', (
+  testWidgets('register tab switches inline instead of opening register page', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1200, 800);
@@ -72,17 +71,16 @@ void main() {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: AppLocalizations.delegate.supportedLocales,
-          home: const V2BoardRegisterPage(),
+          home: const HomePage(),
         ),
       ),
     );
 
-    final scaffoldRect = tester.getRect(find.byType(Scaffold));
-    final registerShellRect = tester.getRect(
-      find.byKey(const ValueKey('register-page-shell')),
-    );
+    await tester.tap(find.text('注册'));
+    await tester.pumpAndSettle();
 
-    expect(registerShellRect.topLeft, scaffoldRect.topLeft);
-    expect(registerShellRect.size, scaffoldRect.size);
+    expect(find.text('创建账户并开始'), findsOneWidget);
+    expect(find.byKey(const ValueKey('startup-login-shell')), findsOneWidget);
+    expect(find.byKey(const ValueKey('register-page-shell')), findsNothing);
   });
 }
