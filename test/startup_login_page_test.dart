@@ -80,6 +80,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('创建账户并开始'), findsOneWidget);
+    expect(find.text('邮箱验证码'), findsOneWidget);
     expect(find.byKey(const ValueKey('startup-login-shell')), findsOneWidget);
     expect(find.byKey(const ValueKey('register-page-shell')), findsNothing);
   });

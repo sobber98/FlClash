@@ -312,6 +312,10 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
   bool _isSendingCode = false;
   V2BoardCommConfig? _commConfig;
 
+  bool get _showEmailCodeField => _commConfig?.isEmailVerify ?? true;
+
+  bool get _isEmailCodeRequired => _commConfig?.isEmailVerify == true;
+
   @override
   void initState() {
     super.initState();
@@ -569,7 +573,7 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
                   }
                 : null,
           ),
-          if (_commConfig?.isEmailVerify == true) ...[
+          if (_showEmailCodeField) ...[
             const SizedBox(height: 18),
             _AuthLabel('邮箱验证码'),
             const SizedBox(height: 8),
@@ -581,7 +585,8 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
                     hintText: '请输入邮箱验证码',
                     prefixIcon: Icons.verified_outlined,
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
+                      if (_isEmailCodeRequired &&
+                          (value == null || value.trim().isEmpty)) {
                         return '请输入邮箱验证码';
                       }
                       return null;
