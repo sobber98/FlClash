@@ -38,7 +38,8 @@ class _StartupLoginPage extends ConsumerWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final isWide = constraints.maxWidth >= 860;
+            final isWide =
+                constraints.maxWidth >= 1040 && constraints.maxHeight >= 700;
             if (isWide) {
               return Container(
                 key: const ValueKey('startup-login-shell'),
@@ -71,27 +72,41 @@ class _StartupLoginPage extends ConsumerWidget {
               );
             }
 
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
-                ),
-                child: Container(
-                  key: const ValueKey('startup-login-shell'),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: v2BoardLine),
-                    boxShadow: v2BoardShadow,
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(18, 20, 18, 24),
-                    child: V2BoardLoginView(),
-                  ),
-                ),
+            final canUseStaticCard =
+                constraints.maxWidth >= 520 && constraints.maxHeight >= 560;
+            final cardPadding = canUseStaticCard
+                ? const EdgeInsets.symmetric(horizontal: 20, vertical: 18)
+                : const EdgeInsets.symmetric(horizontal: 20, vertical: 24);
+            final card = Container(
+              key: const ValueKey('startup-login-shell'),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: v2BoardLine),
+                boxShadow: v2BoardShadow,
               ),
+              clipBehavior: Clip.antiAlias,
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(18, 20, 18, 24),
+                child: V2BoardLoginView(),
+              ),
+            );
+            if (canUseStaticCard) {
+              return Padding(
+                padding: cardPadding,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: 680,
+                      maxHeight: constraints.maxHeight - cardPadding.vertical,
+                    ),
+                    child: card,
+                  ),
+                ),
+              );
+            }
+            return Center(
+              child: SingleChildScrollView(padding: cardPadding, child: card),
             );
           },
         ),

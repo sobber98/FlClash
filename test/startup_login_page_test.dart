@@ -84,4 +84,99 @@ void main() {
     expect(find.byKey(const ValueKey('startup-login-shell')), findsOneWidget);
     expect(find.byKey(const ValueKey('register-page-shell')), findsNothing);
   });
+
+  testWidgets('desktop register form fits in the first viewport', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          v2boardSettingProvider.overrideWithValue(null),
+          appDisplayNameProvider.overrideWithValue('v2box'),
+          appServerUrlProvider.overrideWithValue('https://example.com'),
+          appEnableRegistrationProvider.overrideWithValue(true),
+        ],
+        child: MaterialApp(
+          locale: const Locale('zh', 'CN'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.delegate.supportedLocales,
+          home: const HomePage(),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('注册'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Scrollable && widget.axisDirection == AxisDirection.down,
+      ),
+      findsNothing,
+    );
+
+    final scaffoldRect = tester.getRect(find.byType(Scaffold));
+    for (final text in const ['邮箱', '密码', '确认密码', '邀请码', '邮箱验证码', '创建账户并开始']) {
+      final rect = tester.getRect(find.text(text).first);
+      expect(
+        scaffoldRect.contains(rect.topLeft) &&
+            scaffoldRect.contains(rect.bottomRight),
+        isTrue,
+        reason: '$text should be visible without vertical scrolling',
+      );
+    }
+  });
+
+  testWidgets('compact desktop register form fits without vertical scrolling', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(960, 650);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          v2boardSettingProvider.overrideWithValue(null),
+          appDisplayNameProvider.overrideWithValue('v2box'),
+          appServerUrlProvider.overrideWithValue('https://example.com'),
+          appEnableRegistrationProvider.overrideWithValue(true),
+        ],
+        child: MaterialApp(
+          locale: const Locale('zh', 'CN'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.delegate.supportedLocales,
+          home: const HomePage(),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('注册'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Scrollable && widget.axisDirection == AxisDirection.down,
+      ),
+      findsNothing,
+    );
+  });
 }

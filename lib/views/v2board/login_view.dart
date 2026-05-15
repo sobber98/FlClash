@@ -139,44 +139,61 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
         configuredServer.isNotEmpty ||
         ((storedProps?.serverUrl.trim().isNotEmpty) ?? false);
     final enableRegistration = ref.watch(appEnableRegistrationProvider);
-    return SingleChildScrollView(
-      padding: EdgeInsets.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: V2BoardLogo(
-              size: MediaQuery.sizeOf(context).width < 520 ? 34 : 42,
-            ),
-          ),
-          const SizedBox(height: 28),
-          V2BoardSegmented<int>(
-            value: _mode == _AuthMode.login ? 0 : 1,
-            items: const [(value: 0, label: '登录'), (value: 1, label: '注册')],
-            onChanged: (value) {
-              if (value == 0) {
-                _switchAuthMode(_AuthMode.login);
-                return;
-              }
-              if (enableRegistration) {
-                _switchAuthMode(_AuthMode.register);
-              }
-            },
-          ),
-          const SizedBox(height: 34),
-          if (_mode == _AuthMode.register)
-            const _V2BoardRegisterView()
-          else
-            Form(
-              key: _formKey,
-              child: _buildLoginForm(
-                context,
-                hasServerUrl: hasServerUrl,
-                enableRegistration: enableRegistration,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final hasBoundedHeight = constraints.hasBoundedHeight;
+        final useStaticLayout =
+            hasBoundedHeight &&
+            constraints.maxHeight >= 560 &&
+            constraints.maxWidth >= 520;
+        final compact = hasBoundedHeight && constraints.maxHeight < 740;
+        final twoColumnRegister = constraints.maxWidth >= 520;
+        final content = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: V2BoardLogo(
+                size: compact || MediaQuery.sizeOf(context).width < 520
+                    ? 34
+                    : 42,
               ),
             ),
-        ],
-      ),
+            SizedBox(height: compact ? 18 : 28),
+            V2BoardSegmented<int>(
+              value: _mode == _AuthMode.login ? 0 : 1,
+              items: const [(value: 0, label: '登录'), (value: 1, label: '注册')],
+              onChanged: (value) {
+                if (value == 0) {
+                  _switchAuthMode(_AuthMode.login);
+                  return;
+                }
+                if (enableRegistration) {
+                  _switchAuthMode(_AuthMode.register);
+                }
+              },
+            ),
+            SizedBox(height: compact ? 20 : 34),
+            if (_mode == _AuthMode.register)
+              _V2BoardRegisterView(
+                compact: compact,
+                twoColumn: twoColumnRegister,
+              )
+            else
+              Form(
+                key: _formKey,
+                child: _buildLoginForm(
+                  context,
+                  hasServerUrl: hasServerUrl,
+                  enableRegistration: enableRegistration,
+                ),
+              ),
+          ],
+        );
+        if (useStaticLayout) {
+          return content;
+        }
+        return SingleChildScrollView(padding: EdgeInsets.zero, child: content);
+      },
     );
   }
 
@@ -292,7 +309,10 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
 }
 
 class _V2BoardRegisterView extends ConsumerStatefulWidget {
-  const _V2BoardRegisterView();
+  final bool compact;
+  final bool twoColumn;
+
+  const _V2BoardRegisterView({required this.compact, required this.twoColumn});
 
   @override
   ConsumerState<_V2BoardRegisterView> createState() =>
@@ -466,6 +486,155 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
   }
 
   Widget _buildRegisterForm(BuildContext context, bool hasServerUrl) {
+    final fieldGap = widget.compact ? 12.0 : 18.0;
+    final labelGap = widget.compact ? 6.0 : 8.0;
+    final buttonGap = widget.compact ? 16.0 : 24.0;
+    final bottomGap = widget.compact ? 12.0 : 24.0;
+    final emailField = _AuthFieldBlock(
+      label: '邮箱',
+      labelGap: labelGap,
+      child: _AuthInput(
+        controller: _emailController,
+        hintText: '请输入邮箱地址',
+        prefixIcon: Icons.mail_outline_rounded,
+        keyboardType: TextInputType.emailAddress,
+        compact: widget.compact,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return '请输入邮箱地址';
+          }
+          return null;
+        },
+      ),
+    );
+    final passwordField = _AuthFieldBlock(
+      label: '密码',
+      labelGap: labelGap,
+      child: ValueListenableBuilder(
+        valueListenable: _passwordObscureController,
+        builder: (_, obscure, _) {
+          return _AuthInput(
+            controller: _passwordController,
+            hintText: '请输入密码（至少8位）',
+            prefixIcon: Icons.lock_outline_rounded,
+            obscureText: obscure,
+            compact: widget.compact,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '请输入密码';
+              }
+              if (value.length < 8) {
+                return appLocalizations.v2boardPasswordTip;
+              }
+              return null;
+            },
+            suffix: IconButton(
+              onPressed: () {
+                _passwordObscureController.value = !obscure;
+              },
+              icon: Icon(
+                obscure
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: _authHintColor,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+    final confirmPasswordField = _AuthFieldBlock(
+      label: '确认密码',
+      labelGap: labelGap,
+      child: ValueListenableBuilder(
+        valueListenable: _confirmObscureController,
+        builder: (_, obscure, _) {
+          return _AuthInput(
+            controller: _confirmPasswordController,
+            hintText: '请再次输入密码',
+            prefixIcon: Icons.lock_outline_rounded,
+            obscureText: obscure,
+            compact: widget.compact,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '请再次输入密码';
+              }
+              if (value != _passwordController.text) {
+                return '两次输入的密码不一致';
+              }
+              return null;
+            },
+            suffix: IconButton(
+              onPressed: () {
+                _confirmObscureController.value = !obscure;
+              },
+              icon: Icon(
+                obscure
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: _authHintColor,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+    final inviteCodeField = _AuthFieldBlock(
+      label: '邀请码',
+      labelGap: labelGap,
+      child: _AuthInput(
+        controller: _inviteCodeController,
+        hintText: '如有邀请码请输入（可选）',
+        prefixIcon: Icons.card_giftcard_outlined,
+        compact: widget.compact,
+        validator: _commConfig?.isInviteForce == true
+            ? (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '请输入邀请码';
+                }
+                return null;
+              }
+            : null,
+      ),
+    );
+    final emailCodeField = _AuthFieldBlock(
+      label: '邮箱验证码',
+      labelGap: labelGap,
+      child: Row(
+        children: [
+          Expanded(
+            child: _AuthInput(
+              controller: _emailCodeController,
+              hintText: '请输入邮箱验证码',
+              prefixIcon: Icons.verified_outlined,
+              compact: widget.compact,
+              validator: (value) {
+                if (_isEmailCodeRequired &&
+                    (value == null || value.trim().isEmpty)) {
+                  return '请输入邮箱验证码';
+                }
+                return null;
+              },
+            ),
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            height: widget.compact ? 50 : 60,
+            child: _AuthCompactButton(
+              label: _isSendingCode ? '发送中' : '发送验证码',
+              onPressed: _isSendingCode ? null : _sendEmailCode,
+            ),
+          ),
+        ],
+      ),
+    );
+    final fields = <Widget>[
+      emailField,
+      passwordField,
+      confirmPasswordField,
+      inviteCodeField,
+      if (_showEmailCodeField) emailCodeField,
+    ];
     final form = Form(
       key: _formKey,
       child: Column(
@@ -475,146 +644,82 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
             const _AuthWarning(text: '注册服务暂未配置，请联系管理员。'),
             const SizedBox(height: 16),
           ],
-          _AuthLabel('邮箱'),
-          const SizedBox(height: 8),
-          _AuthInput(
-            controller: _emailController,
-            hintText: '请输入邮箱地址',
-            prefixIcon: Icons.mail_outline_rounded,
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return '请输入邮箱地址';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 18),
-          _AuthLabel('密码'),
-          const SizedBox(height: 8),
-          ValueListenableBuilder(
-            valueListenable: _passwordObscureController,
-            builder: (_, obscure, _) {
-              return _AuthInput(
-                controller: _passwordController,
-                hintText: '请输入密码（至少8位）',
-                prefixIcon: Icons.lock_outline_rounded,
-                obscureText: obscure,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '请输入密码';
-                  }
-                  if (value.length < 8) {
-                    return appLocalizations.v2boardPasswordTip;
-                  }
-                  return null;
-                },
-                suffix: IconButton(
-                  onPressed: () {
-                    _passwordObscureController.value = !obscure;
-                  },
-                  icon: Icon(
-                    obscure
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: _authHintColor,
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 18),
-          _AuthLabel('确认密码'),
-          const SizedBox(height: 8),
-          ValueListenableBuilder(
-            valueListenable: _confirmObscureController,
-            builder: (_, obscure, _) {
-              return _AuthInput(
-                controller: _confirmPasswordController,
-                hintText: '请再次输入密码',
-                prefixIcon: Icons.lock_outline_rounded,
-                obscureText: obscure,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '请再次输入密码';
-                  }
-                  if (value != _passwordController.text) {
-                    return '两次输入的密码不一致';
-                  }
-                  return null;
-                },
-                suffix: IconButton(
-                  onPressed: () {
-                    _confirmObscureController.value = !obscure;
-                  },
-                  icon: Icon(
-                    obscure
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: _authHintColor,
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 18),
-          _AuthLabel('邀请码'),
-          const SizedBox(height: 8),
-          _AuthInput(
-            controller: _inviteCodeController,
-            hintText: '如有邀请码请输入（可选）',
-            prefixIcon: Icons.card_giftcard_outlined,
-            validator: _commConfig?.isInviteForce == true
-                ? (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return '请输入邀请码';
-                    }
-                    return null;
-                  }
-                : null,
-          ),
-          if (_showEmailCodeField) ...[
-            const SizedBox(height: 18),
-            _AuthLabel('邮箱验证码'),
-            const SizedBox(height: 8),
+          if (widget.twoColumn)
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _AuthInput(
-                    controller: _emailCodeController,
-                    hintText: '请输入邮箱验证码',
-                    prefixIcon: Icons.verified_outlined,
-                    validator: (value) {
-                      if (_isEmailCodeRequired &&
-                          (value == null || value.trim().isEmpty)) {
-                        return '请输入邮箱验证码';
-                      }
-                      return null;
-                    },
+                  child: _AuthFieldColumn(
+                    gap: fieldGap,
+                    children: fields.take(3).toList(growable: false),
                   ),
                 ),
-                const SizedBox(width: 12),
-                SizedBox(
-                  height: 60,
-                  child: _AuthCompactButton(
-                    label: _isSendingCode ? '发送中' : '发送验证码',
-                    onPressed: _isSendingCode ? null : _sendEmailCode,
+                const SizedBox(width: 18),
+                Expanded(
+                  child: _AuthFieldColumn(
+                    gap: fieldGap,
+                    children: fields.skip(3).toList(growable: false),
                   ),
                 ),
               ],
-            ),
-          ],
-          const SizedBox(height: 24),
+            )
+          else
+            _AuthFieldColumn(gap: fieldGap, children: fields),
+          SizedBox(height: buttonGap),
           V2BoardPrimaryButton(
             label: '创建账户并开始',
             onPressed: _isLoading || !hasServerUrl ? null : _register,
             loading: _isLoading,
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: bottomGap),
         ],
       ),
     );
     return form;
+  }
+}
+
+class _AuthFieldColumn extends StatelessWidget {
+  final double gap;
+  final List<Widget> children;
+
+  const _AuthFieldColumn({required this.gap, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var index = 0; index < children.length; index++) ...[
+          if (index > 0) SizedBox(height: gap),
+          children[index],
+        ],
+      ],
+    );
+  }
+}
+
+class _AuthFieldBlock extends StatelessWidget {
+  final String label;
+  final double labelGap;
+  final Widget child;
+
+  const _AuthFieldBlock({
+    required this.label,
+    required this.labelGap,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _AuthLabel(label),
+        SizedBox(height: labelGap),
+        child,
+      ],
+    );
   }
 }
 
@@ -666,6 +771,7 @@ class _AuthInput extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final bool compact;
 
   const _AuthInput({
     required this.controller,
@@ -675,6 +781,7 @@ class _AuthInput extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.validator,
+    this.compact = false,
   });
 
   @override
@@ -692,9 +799,9 @@ class _AuthInput extends StatelessWidget {
         suffixIcon: suffix,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
+        contentPadding: EdgeInsets.symmetric(
           horizontal: 16,
-          vertical: 16,
+          vertical: compact ? 12 : 16,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
