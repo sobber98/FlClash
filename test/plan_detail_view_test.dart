@@ -51,6 +51,17 @@ void main() {
     expect(find.text('立即支付'), findsOneWidget);
   });
 
+  testWidgets('desktop package sections align to the same left edge', (
+    tester,
+  ) async {
+    await _pumpPlanDetail(tester, size: const Size(1200, 800), isMobile: false);
+
+    final specificationLeft = tester.getTopLeft(find.text('订阅规格')).dx;
+    final paymentLeft = tester.getTopLeft(find.text('优惠与支付')).dx;
+
+    expect(specificationLeft, closeTo(paymentLeft, 1));
+  });
+
   testWidgets('mobile package detail exposes a sticky payment bar', (
     tester,
   ) async {

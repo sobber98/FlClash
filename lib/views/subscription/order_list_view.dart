@@ -3,13 +3,11 @@ import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
 import 'package:v2box/state.dart';
 import 'package:v2box/views/subscription/payment_flow.dart';
+import 'package:v2box/views/v2board/v2board_design.dart';
 import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-const _ordersBackground = Color(0xFFF5F6F8);
-const _cardTextColor = Color(0xFF0F172A);
 
 class OrderListView extends ConsumerStatefulWidget {
   const OrderListView({super.key});
@@ -45,20 +43,20 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
   Color _statusColor(int status) {
     return switch (status) {
       0 => const Color(0xFFB45309),
-      1 => const Color(0xFF2563EB),
-      2 => const Color(0xFF6B7280),
-      3 => const Color(0xFF047857),
-      _ => const Color(0xFF4B5563),
+      1 => v2BoardPrimary,
+      2 => v2BoardMuted,
+      3 => v2BoardSuccess,
+      _ => v2BoardMuted,
     };
   }
 
   Color _statusBackground(int status) {
     return switch (status) {
       0 => const Color(0xFFFFF7ED),
-      1 => const Color(0xFFEFF6FF),
-      2 => const Color(0xFFF3F4F6),
-      3 => const Color(0xFFECFDF5),
-      _ => const Color(0xFFF3F4F6),
+      1 => v2BoardSoft,
+      2 => const Color(0xFFF3F6FA),
+      3 => const Color(0xFFEAFBF3),
+      _ => const Color(0xFFF3F6FA),
     };
   }
 
@@ -104,10 +102,7 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
       globalState.showMessage(
         title: appLocalizations.tip,
         message: TextSpan(
-          text: formatPaymentFlowError(
-            error,
-            fallback: '取消订单失败，请稍后重试。',
-          ),
+          text: formatPaymentFlowError(error, fallback: '取消订单失败，请稍后重试。'),
         ),
       );
     }
@@ -163,10 +158,7 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
       globalState.showMessage(
         title: appLocalizations.tip,
         message: TextSpan(
-          text: formatPaymentFlowError(
-            error,
-            fallback: '恢复订单支付失败，请稍后重试。',
-          ),
+          text: formatPaymentFlowError(error, fallback: '恢复订单支付失败，请稍后重试。'),
         ),
       );
     }
@@ -179,99 +171,188 @@ class _OrderListViewState extends ConsumerState<OrderListView> {
     final plans = plansState is AsyncData<List<V2BoardPlan>>
         ? plansState.value
         : const <V2BoardPlan>[];
+    final isMobile = ref.watch(isMobileViewProvider);
+
     return Scaffold(
-      backgroundColor: _ordersBackground,
-      appBar: AppBar(
-        backgroundColor: _ordersBackground,
-        elevation: 0,
-        centerTitle: false,
-        title: const Text('订单记录'),
-      ),
-      body: RefreshIndicator(
-        onRefresh: _refresh,
-        child: ordersState.when(
-          data: (orders) {
-            final pendingCount = orders.where((order) => order.status == 0).length;
-            final completedCount = orders
-                .where((order) => order.status == 3)
-                .length;
-            final totalCompleted = orders
-                .where((order) => order.status == 3)
-                .fold<int>(0, (sum, order) => sum + order.totalAmount);
-            if (orders.isEmpty) {
-              return ListView(
-                padding: const EdgeInsets.all(16),
-                children: const [
-                  _OrdersHeader(
-                    pendingCount: 0,
-                    completedCount: 0,
-                    totalCompleted: '¥0.00',
-                  ),
-                  SizedBox(height: 16),
-                  _OrdersEmptyState(),
-                ],
-              );
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-              itemCount: orders.length + 1,
-              itemBuilder: (_, index) {
-                if (index == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _OrdersHeader(
-                      pendingCount: pendingCount,
-                      completedCount: completedCount,
-                      totalCompleted: _formatPrice(totalCompleted),
-                    ),
-                  );
+      backgroundColor: v2BoardPageBackground,
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          child: ordersState.when(
+            data: (orders) => _OrdersContent(
+              orders: orders,
+              plans: plans,
+              isMobile: isMobile,
+              statusText: _statusText,
+              statusColor: _statusColor,
+              statusBackground: _statusBackground,
+              formatPrice: _formatPrice,
+              formatTime: _formatTime,
+              typeText: _typeText,
+              onCopy: (order) async {
+                await Clipboard.setData(ClipboardData(text: order.tradeNo));
+                if (mounted) {
+                  globalState.showNotifier('订单号已复制');
                 }
-                final order = orders[index - 1];
-                final planName = plans
-                    .where((plan) => plan.id == order.planId)
-                    .map((plan) => plan.name)
-                    .firstOrNull;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
-                  child: _OrderCard(
-                    order: order,
-                    planName: planName,
-                    statusText: _statusText(order.status),
-                    statusColor: _statusColor(order.status),
-                    statusBackground: _statusBackground(order.status),
-                    priceText: _formatPrice(order.totalAmount),
-                    timeText: _formatTime(order.createdAt),
-                    typeText: _typeText(order.type),
-                    onCopy: () async {
-                      await Clipboard.setData(
-                        ClipboardData(text: order.tradeNo),
-                      );
-                      if (mounted) {
-                        globalState.showNotifier('订单号已复制');
-                      }
-                    },
-                    onContinuePay: order.status == 0
-                        ? () => _continuePayment(order, planName)
-                        : null,
-                    onCancel: order.status == 0 ? () => _cancelOrder(order) : null,
-                  ),
-                );
               },
-            );
-          },
-          error: (error, _) => ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              const _OrdersHeader(
-                pendingCount: 0,
-                completedCount: 0,
-                totalCompleted: '¥0.00',
-              ),
-              const SizedBox(height: 16),
-              _OrdersErrorState(error: error),
-            ],
+              onContinuePay: _continuePayment,
+              onCancel: _cancelOrder,
+            ),
+            error: (error, _) => _OrdersContent(
+              orders: const [],
+              plans: plans,
+              isMobile: isMobile,
+              error: error,
+              statusText: _statusText,
+              statusColor: _statusColor,
+              statusBackground: _statusBackground,
+              formatPrice: _formatPrice,
+              formatTime: _formatTime,
+              typeText: _typeText,
+              onCopy: (_) async {},
+              onContinuePay: _continuePayment,
+              onCancel: _cancelOrder,
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
           ),
-          loading: () => const Center(child: CircularProgressIndicator()),
+        ),
+      ),
+    );
+  }
+}
+
+class _OrdersContent extends StatelessWidget {
+  final List<V2BoardOrder> orders;
+  final List<V2BoardPlan> plans;
+  final bool isMobile;
+  final Object? error;
+  final String Function(int status) statusText;
+  final Color Function(int status) statusColor;
+  final Color Function(int status) statusBackground;
+  final String Function(int amount) formatPrice;
+  final String Function(int? timestamp) formatTime;
+  final String Function(int type) typeText;
+  final Future<void> Function(V2BoardOrder order) onCopy;
+  final Future<void> Function(V2BoardOrder order, String? planName)
+  onContinuePay;
+  final Future<void> Function(V2BoardOrder order) onCancel;
+
+  const _OrdersContent({
+    required this.orders,
+    required this.plans,
+    required this.isMobile,
+    required this.statusText,
+    required this.statusColor,
+    required this.statusBackground,
+    required this.formatPrice,
+    required this.formatTime,
+    required this.typeText,
+    required this.onCopy,
+    required this.onContinuePay,
+    required this.onCancel,
+    this.error,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pendingCount = orders.where((order) => order.status == 0).length;
+    final completedCount = orders.where((order) => order.status == 3).length;
+    final totalCompleted = orders
+        .where((order) => order.status == 3)
+        .fold<int>(0, (sum, order) => sum + order.totalAmount);
+
+    return ListView(
+      padding: EdgeInsets.fromLTRB(
+        isMobile ? 16 : 24,
+        isMobile ? 12 : 22,
+        isMobile ? 16 : 24,
+        isMobile ? 24 : 32,
+      ),
+      children: [
+        _OrdersPageHeader(compact: isMobile),
+        const SizedBox(height: 18),
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1040),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _OrdersHeader(
+                  pendingCount: pendingCount,
+                  completedCount: completedCount,
+                  totalCompleted: formatPrice(totalCompleted),
+                  compact: isMobile,
+                ),
+                const SizedBox(height: 14),
+                if (error != null)
+                  _OrdersErrorState(error: error!)
+                else if (orders.isEmpty)
+                  const _OrdersEmptyState()
+                else
+                  for (var index = 0; index < orders.length; index++) ...[
+                    _buildOrderCard(orders[index], index),
+                    if (index != orders.length - 1) const SizedBox(height: 14),
+                  ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOrderCard(V2BoardOrder order, int index) {
+    final planName = plans
+        .where((plan) => plan.id == order.planId)
+        .map((plan) => plan.name)
+        .firstOrNull;
+    return _OrderCard(
+      key: ValueKey('order-card-$index'),
+      order: order,
+      planName: planName,
+      statusText: statusText(order.status),
+      statusColor: statusColor(order.status),
+      statusBackground: statusBackground(order.status),
+      priceText: formatPrice(order.totalAmount),
+      timeText: formatTime(order.createdAt),
+      typeText: typeText(order.type),
+      compact: isMobile,
+      onCopy: () => onCopy(order),
+      onContinuePay: order.status == 0
+          ? () => onContinuePay(order, planName)
+          : null,
+      onCancel: order.status == 0 ? () => onCancel(order) : null,
+    );
+  }
+}
+
+class _OrdersPageHeader extends StatelessWidget {
+  final bool compact;
+
+  const _OrdersPageHeader({required this.compact});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1040),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: () => Navigator.of(context).maybePop(),
+              icon: const Icon(Icons.arrow_back_rounded),
+              color: v2BoardInk,
+              tooltip: '返回',
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: V2BoardPageHeader(
+                title: '订单记录',
+                subtitle: compact ? null : '查看购买、续费和支付状态',
+                compact: compact,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -282,73 +363,83 @@ class _OrdersHeader extends StatelessWidget {
   final int pendingCount;
   final int completedCount;
   final String totalCompleted;
+  final bool compact;
 
   const _OrdersHeader({
     required this.pendingCount,
     required this.completedCount,
     required this.totalCompleted,
-  });
+    required this.compact,
+  }) : super(key: const ValueKey('orders-stats-card'));
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x10000000),
-            blurRadius: 18,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+    return V2BoardCard(
+      padding: EdgeInsets.all(compact ? 18 : 22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '订单中心',
-            style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.8,
-              color: _cardTextColor,
+            style: context.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: v2BoardInk,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             '查看购买、续费和支付状态',
             style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: v2BoardMuted,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: _OrdersMetric(
-                  label: '待支付',
-                  value: '$pendingCount',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _OrdersMetric(
-                  label: '已完成',
-                  value: '$completedCount',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _OrdersMetric(
-                  label: '累计支付',
-                  value: totalCompleted,
-                ),
-              ),
-            ],
-          ),
+          compact ? _compactMetrics(context) : _desktopMetrics(),
         ],
       ),
+    );
+  }
+
+  Widget _desktopMetrics() {
+    return Row(
+      children: [
+        Expanded(
+          child: _OrdersMetric(label: '待支付', value: '$pendingCount'),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _OrdersMetric(label: '已完成', value: '$completedCount'),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _OrdersMetric(label: '累计支付', value: totalCompleted),
+        ),
+      ],
+    );
+  }
+
+  Widget _compactMetrics(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _OrdersMetric.plain(label: '待支付', value: '$pendingCount'),
+        ),
+        const SizedBox(
+          height: 42,
+          child: VerticalDivider(width: 1, color: v2BoardLine),
+        ),
+        Expanded(
+          child: _OrdersMetric.plain(label: '已完成', value: '$completedCount'),
+        ),
+        const SizedBox(
+          height: 42,
+          child: VerticalDivider(width: 1, color: v2BoardLine),
+        ),
+        Expanded(
+          child: _OrdersMetric.plain(label: '累计支付', value: totalCompleted),
+        ),
+      ],
     );
   }
 }
@@ -356,36 +447,53 @@ class _OrdersHeader extends StatelessWidget {
 class _OrdersMetric extends StatelessWidget {
   final String label;
   final String value;
+  final bool framed;
 
-  const _OrdersMetric({required this.label, required this.value});
+  const _OrdersMetric({required this.label, required this.value})
+    : framed = true;
+
+  const _OrdersMetric.plain({required this.label, required this.value})
+    : framed = false;
 
   @override
   Widget build(BuildContext context) {
+    final content = Column(
+      crossAxisAlignment: framed
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: v2BoardMuted,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: v2BoardInk,
+          ),
+        ),
+      ],
+    );
+    if (!framed) {
+      return content;
+    }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F7FB),
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFFF7F9FD),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: v2BoardLine),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF9CA3AF),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: _cardTextColor,
-            ),
-          ),
-        ],
-      ),
+      child: content,
     );
   }
 }
@@ -399,11 +507,13 @@ class _OrderCard extends StatelessWidget {
   final String priceText;
   final String timeText;
   final String typeText;
+  final bool compact;
   final VoidCallback onCopy;
   final VoidCallback? onContinuePay;
   final VoidCallback? onCancel;
 
   const _OrderCard({
+    super.key,
     required this.order,
     required this.planName,
     required this.statusText,
@@ -412,6 +522,7 @@ class _OrderCard extends StatelessWidget {
     required this.priceText,
     required this.timeText,
     required this.typeText,
+    required this.compact,
     required this.onCopy,
     required this.onContinuePay,
     required this.onCancel,
@@ -419,19 +530,8 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x10000000),
-            blurRadius: 18,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+    return V2BoardCard(
+      padding: EdgeInsets.all(compact ? 14 : 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -439,114 +539,171 @@ class _OrderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 52,
-                height: 52,
+                width: compact ? 42 : 48,
+                height: compact ? 42 : 48,
                 decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(18),
+                  gradient: v2BoardGradient,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.receipt_long_rounded,
                   color: Colors.white,
+                  size: compact ? 22 : 24,
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       planName?.isNotEmpty == true ? planName! : '订阅服务订单',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: _cardTextColor,
+                        fontWeight: FontWeight.w800,
+                        color: v2BoardInk,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       typeText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF9CA3AF),
+                        color: v2BoardMuted,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: statusBackground,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  statusText,
-                  style: context.textTheme.labelLarge?.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+              const SizedBox(width: 10),
+              _StatusChip(
+                text: statusText,
+                foreground: statusColor,
+                background: statusBackground,
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
           _OrderInfoRow(label: '订单号', value: order.tradeNo),
           const SizedBox(height: 10),
           _OrderInfoRow(label: '创建时间', value: timeText),
           const SizedBox(height: 10),
           _OrderInfoRow(label: '订单金额', value: priceText, emphasize: true),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: onCopy,
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    side: const BorderSide(color: Color(0xFFE5E7EB)),
-                  ),
-                  child: const Text('复制订单号'),
-                ),
-              ),
-              if (onContinuePay != null) ...[
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton.tonal(
-                    onPressed: onContinuePay,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    child: const Text('继续支付'),
-                  ),
-                ),
-              ],
-            ],
+          const SizedBox(height: 16),
+          _OrderActions(
+            compact: compact,
+            onCopy: onCopy,
+            onContinuePay: onContinuePay,
+            onCancel: onCancel,
           ),
-          if (onCancel != null) ...[
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: onCancel,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52),
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                ),
-                child: const Text('取消订单'),
-              ),
-            ),
-          ],
         ],
       ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String text;
+  final Color foreground;
+  final Color background;
+
+  const _StatusChip({
+    required this.text,
+    required this.foreground,
+    required this.background,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: context.textTheme.labelLarge?.copyWith(
+          color: foreground,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+class _OrderActions extends StatelessWidget {
+  final bool compact;
+  final VoidCallback onCopy;
+  final VoidCallback? onContinuePay;
+  final VoidCallback? onCancel;
+
+  const _OrderActions({
+    required this.compact,
+    required this.onCopy,
+    required this.onContinuePay,
+    required this.onCancel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final buttons = [
+      Expanded(child: _CopyButton(onPressed: onCopy)),
+      if (onContinuePay != null) ...[
+        const SizedBox(width: 10),
+        Expanded(
+          child: V2BoardPrimaryButton(label: '继续支付', onPressed: onContinuePay),
+        ),
+      ],
+    ];
+
+    return Column(
+      children: [
+        Row(children: buttons),
+        if (onCancel != null) ...[
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: onCancel,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: v2BoardMuted,
+                minimumSize: const Size.fromHeight(46),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                side: const BorderSide(color: v2BoardLine),
+              ),
+              child: const Text('取消订单'),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _CopyButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _CopyButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: v2BoardPrimary,
+        minimumSize: const Size.fromHeight(46),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        side: const BorderSide(color: Color(0xFFC9D0FF)),
+      ),
+      child: const Text('复制订单号'),
     );
   }
 }
@@ -589,27 +746,31 @@ class _PaymentMethodDialogState extends State<_PaymentMethodDialog> {
         width: 320,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: widget.options.map((option) {
-            final selected = _selected?.value == option.value;
-            return ListTile(
-              onTap: () {
-                setState(() {
-                  _selected = option;
-                });
-              },
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                selected
-                    ? Icons.radio_button_checked_rounded
-                    : Icons.radio_button_off_rounded,
-                color: selected ? Theme.of(context).colorScheme.primary : null,
-              ),
-              title: Text(option.label),
-              subtitle: option.value == option.label
-                  ? null
-                  : Text(option.value),
-            );
-          }).toList(growable: false),
+          children: widget.options
+              .map((option) {
+                final selected = _selected?.value == option.value;
+                return ListTile(
+                  onTap: () {
+                    setState(() {
+                      _selected = option;
+                    });
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    selected
+                        ? Icons.radio_button_checked_rounded
+                        : Icons.radio_button_off_rounded,
+                    color: selected
+                        ? Theme.of(context).colorScheme.primary
+                        : null,
+                  ),
+                  title: Text(option.label),
+                  subtitle: option.value == option.label
+                      ? null
+                      : Text(option.value),
+                );
+              })
+              .toList(growable: false),
         ),
       ),
     );
@@ -634,21 +795,22 @@ class _OrderInfoRow extends StatelessWidget {
         Text(
           label,
           style: context.textTheme.bodyMedium?.copyWith(
-            color: const Color(0xFF9CA3AF),
+            color: v2BoardMuted,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        const Spacer(),
-        Flexible(
+        const SizedBox(width: 12),
+        Expanded(
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: (emphasize
-                    ? context.textTheme.titleMedium
-                    : context.textTheme.bodyLarge)
-                ?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: _cardTextColor,
-            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style:
+                (emphasize
+                        ? context.textTheme.titleMedium
+                        : context.textTheme.bodyMedium)
+                    ?.copyWith(fontWeight: FontWeight.w800, color: v2BoardInk),
           ),
         ),
       ],
@@ -661,16 +823,13 @@ class _OrdersEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-      ),
+    return V2BoardCard(
+      padding: const EdgeInsets.all(24),
       child: Text(
         '当前没有任何订单记录，下拉可以重新获取最新结果。',
         style: context.textTheme.titleMedium?.copyWith(
-          color: _cardTextColor,
+          color: v2BoardMuted,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -684,16 +843,15 @@ class _OrdersErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+    return V2BoardCard(
+      padding: const EdgeInsets.all(24),
+      child: Text(
+        error.toString(),
+        style: context.textTheme.titleMedium?.copyWith(
+          color: v2BoardInk,
+          fontWeight: FontWeight.w700,
+        ),
       ),
-      child: Text(error.toString(),
-          style: context.textTheme.titleMedium?.copyWith(
-            color: _cardTextColor,
-          )),
     );
   }
 }

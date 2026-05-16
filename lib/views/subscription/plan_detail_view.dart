@@ -216,6 +216,7 @@ class _PlanDetailViewState extends ConsumerState<PlanDetailView> {
 
   Widget _desktopContent() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _DetailHeroCard(
           planName: widget.plan.name,
