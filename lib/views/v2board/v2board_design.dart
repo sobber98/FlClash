@@ -293,26 +293,28 @@ class V2BoardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = BorderRadius.circular(12);
     final content = Ink(
       padding: padding,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: borderRadius,
         border: border ?? Border.all(color: v2BoardLine),
         boxShadow: v2BoardShadow,
       ),
       child: child,
     );
     if (onTap == null) {
-      return content;
+      return Material(
+        color: Colors.transparent,
+        borderRadius: borderRadius,
+        child: content,
+      );
     }
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: content,
-      ),
+      borderRadius: borderRadius,
+      child: InkWell(borderRadius: borderRadius, onTap: onTap, child: content),
     );
   }
 }

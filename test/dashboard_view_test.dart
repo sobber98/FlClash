@@ -8,6 +8,7 @@ import 'package:v2box/l10n/l10n.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
 import 'package:v2box/views/dashboard/dashboard.dart';
+import 'package:v2box/views/v2board/v2board_design.dart';
 
 const _notices = [
   V2BoardNotice(
@@ -225,5 +226,38 @@ void main() {
 
     final trafficSummary = tester.getRect(find.textContaining('剩余流量:'));
     expect(trafficSummary.bottom, lessThanOrEqualTo(604));
+  });
+
+  testWidgets('desktop dashboard keeps action card content inside cards', (
+    tester,
+  ) async {
+    await _pumpDashboard(tester, size: const Size(696, 604), isMobile: false);
+
+    final tunCard = tester.getRect(
+      find.byKey(const ValueKey('dashboard-tun-card')),
+    );
+    final outboundCard = tester.getRect(
+      find.byKey(const ValueKey('dashboard-outbound-card')),
+    );
+    final tunTitle = tester.getRect(find.text('TUN 模式'));
+    final outboundTitle = tester.getRect(find.text('出站规则'));
+
+    expect(tunTitle.top, greaterThanOrEqualTo(tunCard.top));
+    expect(outboundTitle.top, greaterThanOrEqualTo(outboundCard.top));
+  });
+
+  testWidgets('desktop dashboard does not overlap status and action cards', (
+    tester,
+  ) async {
+    await _pumpDashboard(tester, size: const Size(696, 604), isMobile: false);
+
+    final statusCard = tester.getRect(
+      find.ancestor(of: find.text('未连接'), matching: find.byType(V2BoardCard)),
+    );
+    final tunCard = tester.getRect(
+      find.byKey(const ValueKey('dashboard-tun-card')),
+    );
+
+    expect(tunCard.top, greaterThanOrEqualTo(statusCard.bottom + 8));
   });
 }
