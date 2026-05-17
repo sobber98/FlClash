@@ -249,7 +249,6 @@ class _DesktopShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appName = ref.watch(appDisplayNameProvider);
-    final email = ref.watch(v2boardSettingProvider)?.email;
     return SafeArea(
       child: Row(
         children: [
@@ -307,61 +306,129 @@ class _DesktopShell extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                InkWell(
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () => appController.toPage(PageLabel.profile),
-                  child: Ink(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: v2BoardSoft,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            gradient: v2BoardGradient,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.person_rounded,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '用户中心',
-                                style: context.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                email?.isNotEmpty == true ? email! : '管理您的账户',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: v2BoardMuted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                const _DesktopConnectionSummary(),
               ],
             ),
           ),
           Expanded(
             child: Container(color: _shellBackground, child: child),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DesktopConnectionSummary extends ConsumerWidget {
+  const _DesktopConnectionSummary();
+
+  String _statusText(ConnectionVisualState state) {
+    return switch (state) {
+      ConnectionVisualState.connected => '已连接',
+      ConnectionVisualState.connecting => '连接中',
+      ConnectionVisualState.disconnecting => '断开中',
+      ConnectionVisualState.disconnected => '未连接',
+    };
+  }
+
+  Color _statusColor(ConnectionVisualState state) {
+    return switch (state) {
+      ConnectionVisualState.connected => v2BoardSuccess,
+      ConnectionVisualState.connecting => const Color(0xFFF59E0B),
+      ConnectionVisualState.disconnecting => const Color(0xFFF59E0B),
+      ConnectionVisualState.disconnected => v2BoardMuted,
+    };
+  }
+
+  Color _backgroundColor(ConnectionVisualState state) {
+    return switch (state) {
+      ConnectionVisualState.connected => const Color(0xFFEFFBF4),
+      ConnectionVisualState.connecting => const Color(0xFFFFF7E8),
+      ConnectionVisualState.disconnecting => const Color(0xFFFFF7E8),
+      ConnectionVisualState.disconnected => v2BoardSoft,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final connectionState = ref.watch(connectionVisualStateProvider);
+    final currentGroupName = ref.watch(
+      currentProfileProvider.select((state) => state?.currentGroupName),
+    );
+    final selectedProxyName = currentGroupName == null
+        ? null
+        : ref.watch(getSelectedProxyNameProvider(currentGroupName));
+    final statusColor = _statusColor(connectionState);
+    final nodeName = selectedProxyName?.isNotEmpty == true
+        ? selectedProxyName!
+        : '自动选择';
+
+    return Container(
+      key: const ValueKey('desktop-connection-summary'),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      decoration: BoxDecoration(
+        color: _backgroundColor(connectionState),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: statusColor.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: statusColor,
+              borderRadius: BorderRadius.circular(9),
+              boxShadow: [
+                BoxShadow(
+                  color: statusColor.withValues(alpha: 0.18),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.shield_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _statusText(connectionState),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: statusColor,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  nodeName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: v2BoardMuted,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: statusColor,
+              shape: BoxShape.circle,
+            ),
           ),
         ],
       ),

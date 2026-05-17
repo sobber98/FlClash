@@ -2,9 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:v2box/enum/enum.dart';
 import 'package:v2box/l10n/l10n.dart';
+import 'package:v2box/models/models.dart';
 import 'package:v2box/pages/home.dart';
 import 'package:v2box/providers/providers.dart';
+import 'package:v2box/services/v2board/v2board.dart';
+
+const _loggedInProps = V2BoardProps(
+  serverUrl: 'https://example.com',
+  authData: 'Bearer token',
+  subscribeToken: 'subscribe-token',
+  email: 'test@rnmtq.eu',
+);
+
+const _desktopNavigationItems = [
+  NavigationItem(
+    keep: false,
+    icon: Icon(Icons.home_filled),
+    label: PageLabel.dashboard,
+    builder: _emptyPage,
+  ),
+  NavigationItem(
+    keep: false,
+    icon: Icon(Icons.person_rounded),
+    label: PageLabel.profile,
+    builder: _emptyPage,
+  ),
+];
+
+Widget _emptyPage(BuildContext context) => const SizedBox();
 
 void main() {
   testWidgets('startup login page fills the desktop client window', (
@@ -178,5 +205,64 @@ void main() {
       ),
       findsNothing,
     );
+  });
+
+  testWidgets('desktop sidebar shows connection summary instead of user card', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(960, 650);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          v2boardSettingProvider.overrideWithValue(_loggedInProps),
+          appDisplayNameProvider.overrideWithValue('v2box'),
+          viewSizeProvider.overrideWithValue(const Size(960, 650)),
+          currentNavigationItemsStateProvider.overrideWithValue(
+            const NavigationItemsState(value: _desktopNavigationItems),
+          ),
+          currentProfileProvider.overrideWithValue(
+            const Profile(
+              id: 1,
+              currentGroupName: 'HK',
+              autoUpdateDuration: Duration.zero,
+              selectedMap: {'HK': '香港B'},
+            ),
+          ),
+          groupsProvider.overrideWithValue([
+            const Group(
+              type: GroupType.Selector,
+              name: 'HK',
+              all: [Proxy(name: '香港B', type: 'ss')],
+            ),
+          ]),
+          coreStatusProvider.overrideWithValue(CoreStatus.connected),
+          runTimeProvider.overrideWithValue(1),
+        ],
+        child: const MaterialApp(home: HomePage()),
+      ),
+    );
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('desktop-connection-summary')),
+      findsOneWidget,
+    );
+    expect(find.text('已连接'), findsOneWidget);
+    expect(find.text('香港B'), findsOneWidget);
+    expect(find.text('test@rnmtq.eu'), findsNothing);
+
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(HomePage)),
+    );
+    expect(container.read(currentPageLabelProvider), PageLabel.dashboard);
+
+    await tester.tap(find.byKey(const ValueKey('desktop-connection-summary')));
+    await tester.pump();
+
+    expect(container.read(currentPageLabelProvider), PageLabel.dashboard);
   });
 }

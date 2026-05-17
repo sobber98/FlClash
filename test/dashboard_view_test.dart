@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart' show Override;
 import 'package:v2box/enum/enum.dart';
 import 'package:v2box/l10n/l10n.dart';
+import 'package:v2box/models/models.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
 import 'package:v2box/views/dashboard/dashboard.dart';
@@ -82,6 +83,7 @@ Future<void> _pumpDashboard(
   required Size size,
   required bool isMobile,
   ProviderContainer? container,
+  Profile? currentProfile,
   List<Override> extraOverrides = const [],
 }) async {
   tester.view.physicalSize = size;
@@ -96,7 +98,7 @@ Future<void> _pumpDashboard(
     v2boardUserProvider.overrideWith(_NoopUserNotifier.new),
     v2boardSubscriptionProvider.overrideWith(_NoopSubscriptionNotifier.new),
     v2boardPlansProvider.overrideWith(_NoopPlansNotifier.new),
-    currentProfileProvider.overrideWithValue(null),
+    currentProfileProvider.overrideWithValue(currentProfile),
     ...extraOverrides,
   ];
   final app = MaterialApp(
@@ -226,6 +228,34 @@ void main() {
 
     final trafficSummary = tester.getRect(find.textContaining('剩余流量:'));
     expect(trafficSummary.bottom, lessThanOrEqualTo(604));
+  });
+
+  testWidgets('desktop dashboard does not show node selector in the header', (
+    tester,
+  ) async {
+    await _pumpDashboard(
+      tester,
+      size: const Size(1080, 600),
+      isMobile: false,
+      currentProfile: const Profile(
+        id: 1,
+        currentGroupName: 'HK',
+        autoUpdateDuration: Duration.zero,
+        selectedMap: {'HK': '香港E'},
+      ),
+      extraOverrides: [
+        groupsProvider.overrideWithValue([
+          const Group(
+            type: GroupType.Selector,
+            name: 'HK',
+            all: [Proxy(name: '香港E', type: 'ss')],
+          ),
+        ]),
+      ],
+    );
+
+    expect(find.text('仪表盘'), findsOneWidget);
+    expect(find.byIcon(Icons.keyboard_arrow_down_rounded), findsNothing);
   });
 
   testWidgets('desktop dashboard keeps action card content inside cards', (

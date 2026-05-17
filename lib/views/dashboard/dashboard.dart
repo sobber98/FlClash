@@ -109,7 +109,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         onPressed: _refresh,
                         icon: const Icon(Icons.notifications_none_rounded),
                       )
-                    : _NodePill(name: selectedProxyName),
+                    : null,
               ),
               SizedBox(height: isMobile ? 12 : (isShortDesktop ? 10 : 18)),
               if (v2boardNoticePreview(notices).isNotEmpty) ...[
@@ -158,45 +158,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _NodePill extends StatelessWidget {
-  final String? name;
-
-  const _NodePill({required this.name});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 220),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: v2BoardLine),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.language_rounded, color: v2BoardPrimary, size: 18),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              name?.isNotEmpty == true ? name! : '美国直连',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: context.textTheme.labelLarge?.copyWith(
-                color: v2BoardInk,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.keyboard_arrow_down_rounded, color: v2BoardMuted),
-        ],
       ),
     );
   }
