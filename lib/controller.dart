@@ -492,6 +492,7 @@ extension ProfilesControllerExt on AppController {
         _ref.read(v2boardSubscriptionProvider.notifier).fetch(),
         _ref.read(v2boardUserProvider.notifier).fetch(),
         _ref.read(v2boardPlansProvider.notifier).fetch(),
+        _ref.read(v2boardNoticesProvider.notifier).fetch(),
       ]);
       return null;
     } catch (e) {
@@ -528,6 +529,7 @@ extension ProfilesControllerExt on AppController {
         _ref.read(v2boardUserProvider.notifier).fetch(),
         _ref.read(v2boardSubscriptionProvider.notifier).fetch(),
         _ref.read(v2boardPlansProvider.notifier).fetch(),
+        _ref.read(v2boardNoticesProvider.notifier).fetch(),
       ]),
     );
   }

@@ -20,6 +20,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   void initState() {
     super.initState();
+    ref.listenManual<V2BoardApi?>(v2boardApiClientProvider, (previous, next) {
+      if (previous == null && next != null) {
+        _refresh();
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refresh();
     });
