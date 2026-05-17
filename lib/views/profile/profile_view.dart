@@ -485,7 +485,7 @@ class _SupportSection extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 18),
-          _ActionTile(
+          _SupportListTile(
             icon: Icons.receipt_long_rounded,
             title: '订单记录',
             onTap: () {
@@ -494,13 +494,11 @@ class _SupportSection extends ConsumerWidget {
               ).push(MaterialPageRoute(builder: (_) => const OrderListView()));
             },
           ),
-          const SizedBox(height: 12),
-          _ActionTile(
+          _SupportListTile(
             icon: Icons.donut_large_rounded,
             title: '流量明细',
             onTap: () => _showTrafficDetails(ref),
           ),
-          const SizedBox(height: 14),
           _SupportListTile(
             icon: Icons.support_agent_rounded,
             title: '我的工单',
@@ -563,53 +561,6 @@ class _SupportSection extends ConsumerWidget {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _ActionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const _ActionTile({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(18),
-      onTap: onTap,
-      child: Ink(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: context.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: context.colorScheme.onSurface),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: context.colorScheme.onSurfaceVariant,
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:v2box/services/v2board/v2board_endpoints.dart';
 import 'package:v2box/services/v2board/v2board_models.dart';
 import 'package:v2box/services/v2board/v2board_ticket_models.dart';
@@ -11,6 +12,29 @@ class V2BoardApiException implements Exception {
 
   @override
   String toString() => message;
+}
+
+@visibleForTesting
+List<dynamic> v2boardExtractListPayload(Map<String, dynamic> body) {
+  final data = body['data'];
+  if (data is List) {
+    return data;
+  }
+  if (data is Map) {
+    final nestedData = data['data'];
+    if (nestedData is List) {
+      return nestedData;
+    }
+    final list = data['list'];
+    if (list is List) {
+      return list;
+    }
+    final items = data['items'];
+    if (items is List) {
+      return items;
+    }
+  }
+  return const [];
 }
 
 class V2BoardApi {
@@ -228,9 +252,10 @@ class V2BoardApi {
   Future<List<V2BoardNotice>> getNotices() async {
     final response = await _request(() => _dio.get(_endpoints.noticeFetch));
     final body = _extractData(response);
-    final list = body['data'] as List<dynamic>? ?? [];
+    final list = v2boardExtractListPayload(body);
     return list
-        .map((e) => V2BoardNotice.fromJson(e as Map<String, dynamic>))
+        .whereType<Map>()
+        .map((e) => V2BoardNotice.fromJson(Map<String, dynamic>.from(e)))
         .toList();
   }
 

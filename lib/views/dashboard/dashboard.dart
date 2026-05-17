@@ -66,9 +66,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final selectedProxyName = currentGroupName == null
         ? null
         : ref.watch(getSelectedProxyNameProvider(currentGroupName));
-    final notices = noticesState is AsyncData<List<V2BoardNotice>>
-        ? noticesState.value
-        : const <V2BoardNotice>[];
+    final notices = noticesState.value ?? const <V2BoardNotice>[];
     final user = userState is AsyncData<V2BoardUser?> ? userState.value : null;
     final subscription = subState is AsyncData<V2BoardSubscription?>
         ? subState.value
@@ -118,12 +116,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               ),
               SizedBox(height: isMobile ? 12 : 16),
               if (!isMobile) ...[
-                Row(
-                  children: const [
-                    Expanded(child: _TunModeCard()),
-                    SizedBox(width: 18),
-                    Expanded(child: _OutboundModeCard()),
-                  ],
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: const [
+                      Expanded(child: _TunModeCard()),
+                      SizedBox(width: 18),
+                      Expanded(child: _OutboundModeCard()),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
               ] else ...[
@@ -508,6 +509,7 @@ class _TunModeCard extends ConsumerWidget {
     final subtitle = isAndroid ? '系统级代理开关' : '透明代理开关';
 
     return _DashboardCard(
+      key: const ValueKey('dashboard-tun-card'),
       compact: compact,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -713,6 +715,7 @@ class _OutboundModeCard extends ConsumerWidget {
       patchClashConfigProvider.select((state) => state.mode),
     );
     return _DashboardCard(
+      key: const ValueKey('dashboard-outbound-card'),
       compact: compact,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1208,7 +1211,12 @@ class _DashboardCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool compact;
 
-  const _DashboardCard({required this.child, this.onTap, this.compact = false});
+  const _DashboardCard({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.compact = false,
+  });
 
   @override
   Widget build(BuildContext context) {
