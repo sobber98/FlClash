@@ -25,7 +25,7 @@ var
   i: Integer;
   ResultCode: Integer;
 begin
-  Processes := ['v2box.exe', 'FlClashCore.exe', 'FlClashHelperService.exe'];
+  Processes := ['v2box.exe', 'v2boxCore.exe', 'v2boxHelperService.exe'];
 
   for i := 0 to GetArrayLength(Processes)-1 do
   begin
@@ -34,6 +34,12 @@ begin
 end;
 
 function InitializeSetup(): Boolean;
+begin
+  KillProcesses;
+  Result := True;
+end;
+
+function InitializeUninstall(): Boolean;
 begin
   KillProcesses;
   Result := True;

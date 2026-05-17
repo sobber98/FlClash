@@ -4,8 +4,9 @@
 //   - all Dart import statements under lib/
 //   - Android: strings.xml, AndroidManifest.xml (main & debug)
 //   - macOS: Runner/Configs/AppInfo.xcconfig
-//   - Windows: runner/Runner.rc, packaging/exe/make_config.yaml, packaging/exe/inno_setup.iss
-//   - Linux: packaging/deb|appimage|rpm/make_config.yaml
+//   - Windows: CMakeLists.txt, runner/main.cpp, runner/Runner.rc,
+//     packaging/exe/make_config.yaml, packaging/exe/inno_setup.iss
+//   - Linux: CMakeLists.txt, runner/my_application.cc, packaging/deb|appimage|rpm/make_config.yaml
 //   - distribute_options.yaml
 //
 // Usage: dart scripts/sync_package_name.dart
@@ -32,7 +33,11 @@ Future<void> main() async {
   }
 
   // Dart package names must be lowercase_with_underscores
-  final packageName = appName.replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '_').toLowerCase();
+  final packageName = appName
+      .replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '_')
+      .toLowerCase();
+  final coreExecutableName = '${appName}Core';
+  final helperServiceName = '${appName}HelperService';
 
   // 2. Read current package name from pubspec.yaml
   final pubspecFile = File(p.join(root, 'pubspec.yaml'));
@@ -41,7 +46,10 @@ Future<void> main() async {
     exit(1);
   }
   final pubspecContent = pubspecFile.readAsStringSync();
-  final nameMatch = RegExp(r'^name:\s*(\S+)', multiLine: true).firstMatch(pubspecContent);
+  final nameMatch = RegExp(
+    r'^name:\s*(\S+)',
+    multiLine: true,
+  ).firstMatch(pubspecContent);
   if (nameMatch == null) {
     stderr.writeln('Error: Could not find name: field in pubspec.yaml.');
     exit(1);
@@ -66,7 +74,10 @@ Future<void> main() async {
     await for (final entity in libDir.list(recursive: true)) {
       if (entity is! File || !entity.path.endsWith('.dart')) continue;
       final original = entity.readAsStringSync();
-      final updated = original.replaceAll('package:$oldPackageName/', 'package:$packageName/');
+      final updated = original.replaceAll(
+        'package:$oldPackageName/',
+        'package:$packageName/',
+      );
       if (updated != original) {
         entity.writeAsStringSync(updated);
         fileCount++;
@@ -97,77 +108,155 @@ Future<void> main() async {
 
   // 5. Android strings.xml
   // We keep the attribute name "FlClash" but update display value
-  if (replaceInFile(
-    'android/common/src/main/res/values/strings.xml',
-    {RegExp(r'>([^<]+)</string>'): '>$appName</string>'},
-  )) {
+  if (replaceInFile('android/common/src/main/res/values/strings.xml', {
+    RegExp(r'>([^<]+)</string>'): '>$appName</string>',
+  })) {
     print('  android/common/src/main/res/values/strings.xml: updated');
     changes++;
   }
 
   // 6. Android main AndroidManifest.xml — label attributes
-  if (replaceInFile(
-    'android/app/src/main/AndroidManifest.xml',
-    {RegExp(r'android:label="(?!.*Debug)[^"]*FlClash[^"]*"'): 'android:label="$appName"'},
-  )) {
+  if (replaceInFile('android/app/src/main/AndroidManifest.xml', {
+    RegExp(r'android:label="(?!.*Debug)[^"]*FlClash[^"]*"'):
+        'android:label="$appName"',
+  })) {
     print('  android/app/src/main/AndroidManifest.xml: updated');
     changes++;
   }
 
   // 7. Android debug AndroidManifest.xml
-  if (replaceInFile(
-    'android/app/src/debug/AndroidManifest.xml',
-    {RegExp(r'android:label="[^"]*FlClash[^"]*"'): 'android:label="$appName Debug"'},
-  )) {
+  if (replaceInFile('android/app/src/debug/AndroidManifest.xml', {
+    RegExp(r'android:label="[^"]*FlClash[^"]*"'):
+        'android:label="$appName Debug"',
+  })) {
     print('  android/app/src/debug/AndroidManifest.xml: updated');
     changes++;
   }
 
   // 8. macOS AppInfo.xcconfig
-  if (replaceInFile(
-    'macos/Runner/Configs/AppInfo.xcconfig',
-    {RegExp(r'^PRODUCT_NAME\s*=.*$', multiLine: true): 'PRODUCT_NAME = $appName'},
-  )) {
+  if (replaceInFile('macos/Runner/Configs/AppInfo.xcconfig', {
+    RegExp(r'^PRODUCT_NAME\s*=.*$', multiLine: true): 'PRODUCT_NAME = $appName',
+  })) {
     print('  macos/Runner/Configs/AppInfo.xcconfig: updated');
     changes++;
   }
 
-  // 9. Windows Runner.rc
-  if (replaceInFile(
-    'windows/runner/Runner.rc',
-    {
-      RegExp(r'VALUE "FileDescription", "[^"]*" "\\0"'): 'VALUE "FileDescription", "$appName" "\\0"',
-      RegExp(r'VALUE "OriginalFilename", "[^"]*" "\\0"'): 'VALUE "OriginalFilename", "$appName.exe" "\\0"',
-    },
-  )) {
+  // 9. macOS project display name overrides
+  if (replaceInFile('macos/Runner.xcodeproj/project.pbxproj', {
+    RegExp(r'INFOPLIST_KEY_CFBundleDisplayName = [^;]+;'):
+        'INFOPLIST_KEY_CFBundleDisplayName = $appName;',
+  })) {
+    print('  macos/Runner.xcodeproj/project.pbxproj: updated');
+    changes++;
+  }
+
+  // 10. Windows executable and window title
+  if (replaceInFile('windows/CMakeLists.txt', {
+    RegExp(r'^project\([^ ]+ LANGUAGES CXX\)$', multiLine: true):
+        'project($packageName LANGUAGES CXX)',
+    RegExp(r'^set\(BINARY_NAME "[^"]+"\)$', multiLine: true):
+        'set(BINARY_NAME "$appName")',
+    RegExp(r'\$\{CLASH_DIR\}/[^"/]+Core\.exe'):
+        '\${CLASH_DIR}/$coreExecutableName.exe',
+    RegExp(r'\$\{CLASH_DIR\}/[^"/]+HelperService\.exe'):
+        '\${CLASH_DIR}/$helperServiceName.exe',
+  })) {
+    print('  windows/CMakeLists.txt: updated');
+    changes++;
+  }
+
+  if (replaceInFile('windows/runner/main.cpp', {
+    RegExp(r'window\.Create\(L"[^"]+", origin, size\)'):
+        'window.Create(L"$appName", origin, size)',
+  })) {
+    print('  windows/runner/main.cpp: updated');
+    changes++;
+  }
+
+  // 11. Linux executable and window title
+  if (replaceInFile('linux/CMakeLists.txt', {
+    RegExp(r'^set\(BINARY_NAME "[^"]+"\)$', multiLine: true):
+        'set(BINARY_NAME "$appName")',
+    RegExp(r'\$\{CLASH_DIR\}/[^"/]+Core'): '\${CLASH_DIR}/$coreExecutableName',
+  })) {
+    print('  linux/CMakeLists.txt: updated');
+    changes++;
+  }
+
+  if (replaceInFile('linux/runner/my_application.cc', {
+    RegExp(r'gtk_header_bar_set_title\(header_bar, "[^"]+"\)'):
+        'gtk_header_bar_set_title(header_bar, "$appName")',
+    RegExp(r'gtk_window_set_title\(window, "[^"]+"\)'):
+        'gtk_window_set_title(window, "$appName")',
+  })) {
+    print('  linux/runner/my_application.cc: updated');
+    changes++;
+  }
+
+  // 12. Windows Runner.rc
+  if (replaceInFile('windows/runner/Runner.rc', {
+    RegExp(r'VALUE "FileDescription", "[^"]*" "\\0"'):
+        'VALUE "FileDescription", "$appName" "\\0"',
+    RegExp(r'VALUE "OriginalFilename", "[^"]*" "\\0"'):
+        'VALUE "OriginalFilename", "$appName.exe" "\\0"',
+  })) {
     print('  windows/runner/Runner.rc: updated');
     changes++;
   }
 
-  // 10. Windows packaging exe make_config.yaml
-  if (replaceInFile(
-    'windows/packaging/exe/make_config.yaml',
-    {
-      RegExp(r'^app_name:.*$', multiLine: true): 'app_name: $appName',
-      RegExp(r'^display_name:.*$', multiLine: true): 'display_name: $appName',
-      RegExp(r'^executable_name:.*\.exe$', multiLine: true): 'executable_name: $appName.exe',
-      RegExp(r'^output_base_file_name:.*\.exe$', multiLine: true): 'output_base_file_name: $appName.exe',
-    },
-  )) {
+  // 13. Runtime process names
+  if (replaceInFile('lib/common/constant.dart', {
+    RegExp(r"^const appName = '[^']+';$", multiLine: true):
+        "const appName = '$appName';",
+    RegExp(r"^const coreExecutableName = '[^']+';$", multiLine: true):
+        "const coreExecutableName = '$coreExecutableName';",
+    RegExp(r"^const appHelperService = '[^']+';$", multiLine: true):
+        "const appHelperService = '$helperServiceName';",
+  })) {
+    print('  lib/common/constant.dart: updated');
+    changes++;
+  }
+
+  if (replaceInFile('lib/common/path.dart', {
+    RegExp(r"'[^']*Core\$executableExtension'"):
+        "'\$coreExecutableName\$executableExtension'",
+  })) {
+    print('  lib/common/path.dart: updated');
+    changes++;
+  }
+
+  if (replaceInFile('services/helper/build.rs', {
+    RegExp(r'"[^"]*HelperService"\.to_string\(\)'):
+        '"$helperServiceName".to_string()',
+  })) {
+    print('  services/helper/build.rs: updated');
+    changes++;
+  }
+
+  // 14. Windows packaging exe make_config.yaml
+  if (replaceInFile('windows/packaging/exe/make_config.yaml', {
+    RegExp(r'^app_name:.*$', multiLine: true): 'app_name: $appName',
+    RegExp(r'^display_name:.*$', multiLine: true): 'display_name: $appName',
+    RegExp(r'^executable_name:.*\.exe$', multiLine: true):
+        'executable_name: $appName.exe',
+    RegExp(r'^output_base_file_name:.*\.exe$', multiLine: true):
+        'output_base_file_name: $appName.exe',
+  })) {
     print('  windows/packaging/exe/make_config.yaml: updated');
     changes++;
   }
 
-  // 11. Windows inno_setup.iss — kill process list
-  if (replaceInFile(
-    'windows/packaging/exe/inno_setup.iss',
-    {RegExp(r"'[^']*\.exe'(?=.*FlClashCore)"): "'$appName.exe'"},
-  )) {
+  // 15. Windows inno_setup.iss — kill process list
+  if (replaceInFile('windows/packaging/exe/inno_setup.iss', {
+    RegExp(
+      r'Processes := \[[^\]]+\];',
+    ): "Processes := ['$appName.exe', '$coreExecutableName.exe', '$helperServiceName.exe'];",
+  })) {
     print('  windows/packaging/exe/inno_setup.iss: updated');
     changes++;
   }
 
-  // 12. Linux packaging configs (deb, appimage, rpm)
+  // 16. Linux packaging configs (deb, appimage, rpm)
   for (final linuxConfig in [
     'linux/packaging/deb/make_config.yaml',
     'linux/packaging/appimage/make_config.yaml',
@@ -184,30 +273,38 @@ Future<void> main() async {
     }
   }
 
-  // 13. macOS packaging dmg make_config.yaml
-  if (replaceInFile(
-    'macos/packaging/dmg/make_config.yaml',
-    {
-      RegExp(r'^title:.*$', multiLine: true): 'title: $appName',
-      RegExp(r'path:\s+\S+\.app'): 'path: $appName.app',
-    },
-  )) {
+  // 17. macOS packaging dmg make_config.yaml
+  if (replaceInFile('macos/packaging/dmg/make_config.yaml', {
+    RegExp(r'^title:.*$', multiLine: true): 'title: $appName',
+    RegExp(r'path:\s+\S+\.app'): 'path: $appName.app',
+  })) {
     print('  macos/packaging/dmg/make_config.yaml: updated');
     changes++;
   }
 
-  // 14. distribute_options.yaml
-  if (replaceInFile(
-    'distribute_options.yaml',
-    {RegExp(r'^app_name:.*$', multiLine: true): 'app_name: \'$appName\''},
-  )) {
+  // 18. macOS core executable reference
+  if (replaceInFile('macos/Runner.xcodeproj/project.pbxproj', {
+    RegExp(r'\b[A-Za-z0-9_]+Core\b'): coreExecutableName,
+  })) {
+    print('  macos/Runner.xcodeproj/project.pbxproj: updated');
+    changes++;
+  }
+
+  // 19. distribute_options.yaml
+  if (replaceInFile('distribute_options.yaml', {
+    RegExp(r'^app_name:.*$', multiLine: true): 'app_name: \'$appName\'',
+  })) {
     print('  distribute_options.yaml: updated');
     changes++;
   }
 
   if (changes == 0) {
-    print('App name is already \'$appName\' across all configs. Nothing to do.');
+    print(
+      'App name is already \'$appName\' across all configs. Nothing to do.',
+    );
   } else {
-    print('\nDone ($changes update(s)). Run "dart run build_runner build --delete-conflicting-outputs" to regenerate code.');
+    print(
+      '\nDone ($changes update(s)). Run "dart run build_runner build --delete-conflicting-outputs" to regenerate code.',
+    );
   }
 }

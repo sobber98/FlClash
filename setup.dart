@@ -93,9 +93,19 @@ class Build {
     BuildItem(target: Target.android, arch: Arch.amd64, archName: 'x86_64'),
   ];
 
-  static String get appName => 'FlClash';
+  static String get appName {
+    final configFile = File(join(current, 'assets', 'config.json'));
+    final config = json.decode(configFile.readAsStringSync()) as Map;
+    final configuredName = (config['appName'] as String?)?.trim();
+    if (configuredName == null || configuredName.isEmpty) {
+      throw StateError('appName is missing or empty in assets/config.json.');
+    }
+    return configuredName;
+  }
 
-  static String get coreName => 'FlClashCore';
+  static String get coreName => '${appName}Core';
+
+  static String get helperServiceName => '${appName}HelperService';
 
   static String get libName => 'libclash';
 
@@ -113,30 +123,17 @@ class Build {
         : 'flutter_distributor';
     final pubCache = Platform.environment['PUB_CACHE'];
     final localAppData = Platform.environment['LOCALAPPDATA'];
-    final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
+    final home =
+        Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
     final candidates = [
-      if (pubCache != null && pubCache.isNotEmpty) join(pubCache, 'bin', executableName),
-      if (Platform.isWindows &&
-          localAppData != null &&
-          localAppData.isNotEmpty)
+      if (pubCache != null && pubCache.isNotEmpty)
+        join(pubCache, 'bin', executableName),
+      if (Platform.isWindows && localAppData != null && localAppData.isNotEmpty)
         join(localAppData, 'Pub', 'Cache', 'bin', executableName),
       if (Platform.isWindows && home != null && home.isNotEmpty)
-        join(
-          home,
-          'AppData',
-          'Local',
-          'Pub',
-          'Cache',
-          'bin',
-          executableName,
-        ),
+        join(home, 'AppData', 'Local', 'Pub', 'Cache', 'bin', executableName),
       if (!Platform.isWindows && home != null && home.isNotEmpty)
-        join(
-          home,
-          '.pub-cache',
-          'bin',
-          executableName,
-        ),
+        join(home, '.pub-cache', 'bin', executableName),
     ];
     for (final candidate in candidates) {
       if (File(candidate).existsSync()) {
@@ -312,7 +309,7 @@ class Build {
   static Future<void> buildHelper(Target target, String token) async {
     await exec(
       ['cargo', 'build', '--release', '--features', 'windows-service'],
-      environment: {'TOKEN': token},
+      environment: {'TOKEN': token, 'SERVICE_NAME': helperServiceName},
       name: 'build helper',
       workingDirectory: _servicesDir,
     );
@@ -325,7 +322,7 @@ class Build {
     final targetPath = join(
       outDir,
       target.name,
-      'FlClashHelperService${target.executableExtensionName}',
+      '$helperServiceName${target.executableExtensionName}',
     );
     await File(outPath).copy(targetPath);
   }
@@ -470,20 +467,17 @@ class BuildCommand extends Command {
     required String env,
   }) async {
     await Build.getDistributor();
-    await Build.exec(
-      name: name,
-      [
-        Build.distributorExecutable,
-        'package',
-        '--skip-clean',
-        '--platform',
-        target.name,
-        '--targets',
-        targets,
-        '--flutter-build-args=$flutterBuildArgs',
-        ...extraArgs,
-      ],
-    );
+    await Build.exec(name: name, [
+      Build.distributorExecutable,
+      'package',
+      '--skip-clean',
+      '--platform',
+      target.name,
+      '--targets',
+      targets,
+      '--flutter-build-args=$flutterBuildArgs',
+      ...extraArgs,
+    ]);
   }
 
   Future<String?> get systemArch async {
@@ -573,10 +567,7 @@ class BuildCommand extends Command {
           target: target,
           targets: 'apk',
           flutterBuildArgs: 'verbose,dart-define-from-file=env.json',
-          extraArgs: [
-            '--build-target-platform',
-            defaultTargets.join(','),
-          ],
+          extraArgs: ['--build-target-platform', defaultTargets.join(',')],
           env: env,
         );
         return;
