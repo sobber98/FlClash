@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:v2box/models/app_config.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
@@ -71,6 +72,17 @@ Future<void> _pumpProfile(WidgetTester tester) async {
 }
 
 void main() {
+  setUp(() {
+    PackageInfo.setMockInitialValues(
+      appName: 'FlClash',
+      packageName: 'com.follow.clash',
+      version: '1.2.3',
+      buildNumber: '45',
+      buildSignature: '',
+      installerStore: null,
+    );
+  });
+
   testWidgets('support actions share the plain list tile style', (
     tester,
   ) async {
@@ -86,5 +98,17 @@ void main() {
       find.ancestor(of: find.text('流量明细'), matching: find.byType(ListTile)),
       findsOneWidget,
     );
+  });
+
+  testWidgets('about app action opens version and update page', (tester) async {
+    await _pumpProfile(tester);
+
+    await tester.tap(find.text('关于应用'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('关于应用'), findsOneWidget);
+    expect(find.text('应用版本'), findsOneWidget);
+    expect(find.text('v1.2.3 (45)'), findsOneWidget);
+    expect(find.text('检查更新'), findsOneWidget);
   });
 }

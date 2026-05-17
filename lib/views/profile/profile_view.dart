@@ -5,6 +5,7 @@ import 'package:v2box/models/app_config.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
 import 'package:v2box/state.dart';
+import 'package:v2box/views/profile/about_app_view.dart';
 import 'package:v2box/views/subscription/order_list_view.dart';
 import 'package:v2box/views/subscription/ticket_list_view.dart';
 import 'package:v2box/views/v2board/login_view.dart';
@@ -537,6 +538,15 @@ class _SupportSection extends ConsumerWidget {
                       '账户余额: ¥${((user?.balance ?? 0) / 100).toStringAsFixed(2)}\n佣金余额: ¥${((user?.commissionBalance ?? 0) / 100).toStringAsFixed(2)}',
                 ),
               );
+            },
+          ),
+          _SupportListTile(
+            icon: Icons.info_outline_rounded,
+            title: '关于应用',
+            onTap: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const AboutAppView()));
             },
           ),
           const Divider(height: 24),
