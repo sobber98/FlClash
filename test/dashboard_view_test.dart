@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart' show Override;
+import 'package:v2box/enum/enum.dart';
 import 'package:v2box/l10n/l10n.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
@@ -201,5 +202,28 @@ void main() {
 
     expect(tunCard.top, closeTo(outboundCard.top, 1));
     expect(tunCard.bottom, closeTo(outboundCard.bottom, 1));
+  });
+
+  testWidgets('desktop dashboard fits key cards in a short client viewport', (
+    tester,
+  ) async {
+    await _pumpDashboard(
+      tester,
+      size: const Size(696, 604),
+      isMobile: false,
+      extraOverrides: [
+        connectionVisualStateProvider.overrideWithValue(
+          ConnectionVisualState.connected,
+        ),
+      ],
+    );
+
+    expect(find.text('已连接'), findsOneWidget);
+    expect(find.text('TUN 模式'), findsOneWidget);
+    expect(find.text('出站规则'), findsOneWidget);
+    expect(find.text('当前加速节点'), findsOneWidget);
+
+    final trafficSummary = tester.getRect(find.textContaining('剩余流量:'));
+    expect(trafficSummary.bottom, lessThanOrEqualTo(604));
   });
 }

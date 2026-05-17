@@ -61,7 +61,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final isMobile = ref.watch(isMobileViewProvider);
-    final sectionGap = isMobile ? 16.0 : 18.0;
+    final isShortDesktop =
+        !isMobile && MediaQuery.sizeOf(context).height <= 680;
+    final sectionGap = isMobile
+        ? 16.0
+        : isShortDesktop
+        ? 10.0
+        : 18.0;
+    final cardCompact = isMobile || isShortDesktop;
     final noticesState = ref.watch(v2boardNoticesProvider);
     final userState = ref.watch(v2boardUserProvider);
     final subState = ref.watch(v2boardSubscriptionProvider);
@@ -88,10 +95,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           onRefresh: _refresh,
           child: ListView(
             padding: EdgeInsets.fromLTRB(
-              isMobile ? 16 : 24,
-              isMobile ? 16 : 24,
-              isMobile ? 16 : 24,
-              isMobile ? 24 : 32,
+              isMobile ? 16 : (isShortDesktop ? 18 : 24),
+              isMobile ? 16 : (isShortDesktop ? 12 : 24),
+              isMobile ? 16 : (isShortDesktop ? 18 : 24),
+              isMobile ? 24 : (isShortDesktop ? 8 : 32),
             ),
             children: [
               V2BoardPageHeader(
@@ -104,41 +111,42 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       )
                     : _NodePill(name: selectedProxyName),
               ),
-              SizedBox(height: isMobile ? 12 : 18),
+              SizedBox(height: isMobile ? 12 : (isShortDesktop ? 10 : 18)),
               if (v2boardNoticePreview(notices).isNotEmpty) ...[
                 _AnnouncementBar(notices: notices),
-                const SizedBox(height: 14),
+                SizedBox(height: isShortDesktop ? 10 : 14),
               ],
               V2BoardCard(
                 padding: EdgeInsets.symmetric(
-                  horizontal: isMobile ? 18 : 24,
-                  vertical: isMobile ? 20 : 30,
+                  horizontal: isMobile ? 18 : (isShortDesktop ? 18 : 24),
+                  vertical: isMobile ? 20 : (isShortDesktop ? 14 : 30),
                 ),
                 child: _HeroStatusSection(
                   nodeName: selectedProxyName,
                   compact: isMobile,
+                  dense: isShortDesktop,
                 ),
               ),
-              SizedBox(height: isMobile ? 12 : 16),
+              SizedBox(height: isMobile ? 12 : (isShortDesktop ? 10 : 16)),
               if (!isMobile) ...[
                 IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: const [
-                      Expanded(child: _TunModeCard()),
-                      SizedBox(width: 18),
-                      Expanded(child: _OutboundModeCard()),
+                    children: [
+                      Expanded(child: _TunModeCard(compact: cardCompact)),
+                      SizedBox(width: isShortDesktop ? 12 : 18),
+                      Expanded(child: _OutboundModeCard(compact: cardCompact)),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: isShortDesktop ? 10 : 16),
               ] else ...[
                 const _TunModeCard(compact: true),
                 SizedBox(height: sectionGap),
                 const _OutboundModeCard(compact: true),
                 SizedBox(height: sectionGap),
               ],
-              _NodeCard(compact: isMobile),
+              _NodeCard(compact: cardCompact),
               SizedBox(height: sectionGap),
               _InlineSummary(
                 compact: isMobile,
@@ -431,13 +439,23 @@ class _AnnouncementBar extends StatelessWidget {
 class _HeroStatusSection extends ConsumerWidget {
   final String? nodeName;
   final bool compact;
+  final bool dense;
 
-  const _HeroStatusSection({this.nodeName, this.compact = false});
+  const _HeroStatusSection({
+    this.nodeName,
+    this.compact = false,
+    this.dense = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final connectionState = ref.watch(connectionVisualStateProvider);
-    final buttonSize = compact ? 128.0 : 160.0;
+    final buttonSize = dense
+        ? 84.0
+        : compact
+        ? 128.0
+        : 160.0;
+    final compactText = compact || dense;
     final title = switch (connectionState) {
       ConnectionVisualState.connected => '已连接',
       ConnectionVisualState.connecting => '连接中',
@@ -453,37 +471,39 @@ class _HeroStatusSection extends ConsumerWidget {
     return Column(
       children: [
         ConnectButton(size: buttonSize, showDetails: false),
-        SizedBox(height: compact ? 14 : 18),
+        SizedBox(height: dense ? 8 : (compact ? 14 : 18)),
         Text(
           title,
           style:
-              (compact
+              (dense
+                      ? context.textTheme.headlineSmall
+                      : compact
                       ? context.textTheme.headlineMedium
                       : context.textTheme.displaySmall)
                   ?.copyWith(fontWeight: FontWeight.w800, color: v2BoardInk),
         ),
-        SizedBox(height: compact ? 6 : 8),
+        SizedBox(height: dense ? 4 : (compact ? 6 : 8)),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: compact ? 12 : 0),
+          padding: EdgeInsets.symmetric(horizontal: compactText ? 12 : 0),
           child: Text(
             subtitle,
             textAlign: TextAlign.center,
             style:
-                (compact
+                (compactText
                         ? context.textTheme.bodySmall
                         : context.textTheme.bodyMedium)
                     ?.copyWith(color: v2BoardMuted),
           ),
         ),
         if (nodeName?.isNotEmpty == true) ...[
-          SizedBox(height: compact ? 8 : 10),
+          SizedBox(height: dense ? 6 : (compact ? 8 : 10)),
           Text(
             '当前节点: $nodeName',
             textAlign: TextAlign.center,
-            maxLines: compact ? 2 : 1,
+            maxLines: compactText ? 2 : 1,
             overflow: TextOverflow.ellipsis,
             style:
-                (compact
+                (compactText
                         ? context.textTheme.bodySmall
                         : context.textTheme.bodyMedium)
                     ?.copyWith(
