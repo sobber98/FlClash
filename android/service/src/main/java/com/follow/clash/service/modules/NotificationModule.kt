@@ -40,7 +40,10 @@ data class ExtendedNotificationParams(
 
 val NotificationParams.extended: ExtendedNotificationParams
     get() = ExtendedNotificationParams(
-        title, stopText, onlyStatisticsProxy, Core.getSpeedTrafficText(onlyStatisticsProxy)
+        title.ifBlank { GlobalState.applicationLabel },
+        stopText,
+        onlyStatisticsProxy,
+        Core.getSpeedTrafficText(onlyStatisticsProxy)
     )
 
 class NotificationModule(private val service: Service) : Module() {
@@ -91,7 +94,7 @@ class NotificationModule(private val service: Service) : Module() {
             )
         ) {
             setSmallIcon(R.drawable.ic)
-            setContentTitle("FlClash")
+            setContentTitle(GlobalState.applicationLabel)
             setContentIntent(intent.toPendingIntent)
             setPriority(NotificationCompat.PRIORITY_HIGH)
             setCategory(NotificationCompat.CATEGORY_SERVICE)

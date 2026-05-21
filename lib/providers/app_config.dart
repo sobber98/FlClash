@@ -1,3 +1,4 @@
+import 'package:v2box/common/constant.dart' as constants;
 import 'package:v2box/enum/enum.dart';
 import 'package:v2box/models/app_config.dart';
 import 'package:v2box/services/config_service.dart';
@@ -30,13 +31,8 @@ final appServerUrlProvider = Provider<String>((ref) {
       .maybeWhen(data: (config) => config.resolvedServerUrl, orElse: () => '');
 });
 
-final appDisplayNameProvider = Provider<String>((ref) {
-  return ref
-      .watch(appConfigProvider)
-      .maybeWhen(
-        data: (config) => config.resolvedAppName,
-        orElse: () => 'FlClash',
-      );
+final appDisplayNameProvider = Provider<String>((_) {
+  return constants.appName;
 });
 
 final appEnableRegistrationProvider = Provider<bool>((ref) {
@@ -66,8 +62,5 @@ final blockedNodeKeywordsProvider = Provider<List<String>>((ref) {
 final appUpdateManifestUrlProvider = Provider<String>((ref) {
   return ref
       .watch(appConfigProvider)
-      .maybeWhen(
-        data: (config) => config.updateManifestUrl,
-        orElse: () => '',
-      );
+      .maybeWhen(data: (config) => config.updateManifestUrl, orElse: () => '');
 });

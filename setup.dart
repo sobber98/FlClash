@@ -94,11 +94,11 @@ class Build {
   ];
 
   static String get appName {
-    final configFile = File(join(current, 'assets', 'config.json'));
+    final configFile = File(join(current, 'build.config.json'));
     final config = json.decode(configFile.readAsStringSync()) as Map;
     final configuredName = (config['appName'] as String?)?.trim();
     if (configuredName == null || configuredName.isEmpty) {
-      throw StateError('appName is missing or empty in assets/config.json.');
+      throw StateError('appName is missing or empty in build.config.json.');
     }
     return configuredName;
   }

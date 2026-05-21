@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:v2box/common/preferences.dart';
 import 'package:v2box/models/app_config.dart';
+import 'package:v2box/models/build_config.dart';
 import 'package:flutter/services.dart';
 
 class ConfigService {
+  static const _buildConfigAssetPath = 'build.config.json';
   static const _configAssetPath = 'assets/config.json';
   static const _configCacheKey = 'app_config_cache';
 
@@ -18,11 +20,10 @@ class ConfigService {
   );
 
   Future<AppConfig> load({bool forceRemote = false}) async {
+    final buildConfig = await loadBuildConfig();
     final localConfig = await loadLocalConfig();
     final cachedConfig = await loadCachedConfig();
-    final remoteUrl = localConfig.resolvedOssUrl.isNotEmpty
-        ? localConfig.resolvedOssUrl
-        : cachedConfig?.resolvedOssUrl ?? '';
+    final remoteUrl = buildConfig.ossUrl;
 
     if (remoteUrl.isEmpty) {
       return localConfig;
@@ -42,6 +43,22 @@ class ConfigService {
       }
       return localConfig;
     }
+  }
+
+  Future<BuildConfig> loadBuildConfig() async {
+    try {
+      final raw = await rootBundle.loadString(_buildConfigAssetPath);
+      final data = json.decode(raw);
+      if (data is Map<String, dynamic>) {
+        return BuildConfig.fromJson(data);
+      }
+      if (data is Map) {
+        return BuildConfig.fromJson(Map<String, dynamic>.from(data));
+      }
+    } catch (_) {
+      // Ignore invalid build configuration and keep immutable defaults.
+    }
+    return const BuildConfig();
   }
 
   Future<AppConfig> loadLocalConfig() async {

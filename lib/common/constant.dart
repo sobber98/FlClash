@@ -16,7 +16,7 @@ const coreName = 'clash.meta';
 const browserUa =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 const packageName = 'com.follow.clash';
-final unixSocketPath = '/tmp/FlClashSocket_${Random().nextInt(10000)}.sock';
+final unixSocketPath = '/tmp/${appName}Socket_${Random().nextInt(10000)}.sock';
 const helperPort = 47890;
 const maxTextScale = 1.4;
 const minTextScale = 0.8;
@@ -58,7 +58,7 @@ const double dialogCommonWidth = 300;
 const repository = 'chen08209/FlClash';
 const defaultUpdateManifestUrl = '';
 const defaultUpdateManifestUrlHint =
-    'https://your-s3.example.com/FlClash/latest.json';
+    'https://your-s3.example.com/$appName/latest.json';
 const defaultExternalController = '127.0.0.1:9090';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
@@ -124,9 +124,9 @@ double getWidgetHeight(num lines) {
 
 const maxLength = 1000;
 
-final mainIsolate = 'FlClashMainIsolate';
+final mainIsolate = '${appName}MainIsolate';
 
-final serviceIsolate = 'FlClashServiceIsolate';
+final serviceIsolate = '${appName}ServiceIsolate';
 
 const defaultPrimaryColors = [
   0xFF6366F1,

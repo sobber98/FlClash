@@ -179,13 +179,39 @@ FlClash/
 
 ---
 
+## 构建期配置
+
+应用会读取根目录 [build.config.json](../build.config.json) 作为构建期固定配置，主要字段如下：
+
+- `appName`: 应用名称，用于同步包名、窗口标题、可执行文件名、桌面分发配置等
+- `logoUrl`: 品牌 logo 图片地址，可使用项目内相对路径、绝对路径或 `https://`/`http://` URL；为空时不更新图标资源
+- `ossUrl`: 远程运行时配置地址，配置后会与本地运行时配置合并
+
+构建脚本会基于 `appName` 自动生成平台标识，规则为：将 `appName` 转为小写字母数字片段，片段不以字母开头时补 `app` 前缀，再加上 `com.` 前缀。例如 `v2box` 会生成 `com.v2box`，用于 Android `applicationId`、macOS `PRODUCT_BUNDLE_IDENTIFIER` 和 Linux `APPLICATION_ID`。Android/Kotlin 源码 `namespace` 与源码包路径保持稳定，不作为安装包身份。
+
+`logoUrl` 指向的源图建议满足以下要求：
+
+- 格式：优先使用 PNG，支持透明背景；脚本也可读取 WebP、JPEG、ICO、BMP、GIF、TIFF、PSD
+- 尺寸：推荐 `1024 x 1024 px` 或更高的正方形图片，最小不低于 `1024 x 1024 px`
+- 色彩：建议 sRGB、8-bit RGBA；不要预先裁圆角，系统会按平台样式处理
+- 留白：主体内容建议控制在画布中央约 80% 范围内，避免 Android adaptive icon 被裁切
+
+配置 `logoUrl` 后运行 `dart scripts/sync_package_name.dart` 会生成：
+
+- Android launcher：`48/72/96/144/192 px`
+- Android adaptive/splash foreground：`432 x 432 px`
+- Android TV banner：`320 x 180 px`
+- macOS AppIcon：`16/32/64/128/256/512/1024 px`
+- Windows icon：`256 x 256 px` ICO
+- Linux/打包通用图标：`assets/images/icon.png`，`1024 x 1024 px`
+
+`appName` 与 `ossUrl` 只允许由构建期配置决定。远程配置中的同名字段会被忽略，避免运行期覆盖应用身份或远程配置源。
+
 ## 运行时配置
 
-应用启动时会读取 [assets/config.json](../assets/config.json) 作为运行时品牌与服务端配置，主要字段如下：
+应用启动时会读取 [assets/config.json](../assets/config.json) 作为运行时服务端与功能配置，主要字段如下：
 
 - `serverUrl`: V2Board API 地址
-- `ossUrl`: 远程配置地址，配置后会与本地配置合并
-- `appName`: 应用展示名称
 - `enableRegistration`: 是否显示注册入口
 - `supportEmail`: 在线客服邮箱
 - `officialWebsite`: 官方网站地址，个人中心中的“官方网站”按钮优先使用该字段
@@ -617,9 +643,9 @@ ref.read(appSettingProvider.notifier).update(locale: newLocale);
 | 平台 | 输出产物 | 架构 |
 |------|----------|------|
 | Android | `libclash.so` | arm, arm64, x86_64 |
-| Linux | `FlClashCore` | amd64, arm64 |
-| macOS | `FlClashCore` | amd64, arm64 |
-| Windows | `FlClashCore.exe` | amd64, arm64 |
+| Linux | `<appName>Core` | amd64, arm64 |
+| macOS | `<appName>Core` | amd64, arm64 |
+| Windows | `<appName>Core.exe` | amd64, arm64 |
 
 ### Flutter 构建
 
