@@ -126,12 +126,14 @@ extension InitControllerExt on AppController {
     bool isUser = false,
   }) async {
     if (data != null) {
+      if (!_context.mounted) return;
       final submits = _resolveUpdateNotes(data);
       final textTheme = _context.textTheme;
+      final canForceInApp = data.forceUpdate && AppUpdater.isSupported;
       final res = await globalState.showMessage(
         title: appLocalizations.discoverNewVersion,
-        dismissible: !data.forceUpdate,
-        cancelable: !data.forceUpdate,
+        dismissible: !canForceInApp,
+        cancelable: !canForceInApp,
         message: TextSpan(
           text: 'v${data.version} \n',
           style: textTheme.headlineSmall,

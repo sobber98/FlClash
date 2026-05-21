@@ -44,6 +44,12 @@ class _UpdateProgressDialogState extends State<UpdateProgressDialog> {
     });
   }
 
+  @override
+  void dispose() {
+    _cancelToken?.cancel();
+    super.dispose();
+  }
+
   Future<void> _startUpdate() async {
     _cancelToken?.cancel();
     final token = CancelToken();
@@ -190,12 +196,13 @@ class _UpdateProgressDialogState extends State<UpdateProgressDialog> {
       overrideScroll: true,
       actions: [
         if (_status == _UpdateProgressStatus.failed) ...[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: Text(appLocalizations.cancel),
-          ),
+          if (!widget.forceUpdate)
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text(appLocalizations.cancel),
+            ),
           TextButton(
             onPressed: _startUpdate,
             child: Text(appLocalizations.retry),
