@@ -14,5 +14,5 @@
 
 [submodule "packages/yaml_writer"]
 	path = packages/yaml_writer
-	url = https://github.com/chen08209/yaml_writer.git
+	url = https://github.com/sobber98/yaml_writer.git
 	branch = master
