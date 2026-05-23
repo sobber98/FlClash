@@ -1,13 +1,20 @@
 class BuildConfig {
   final String appName;
+  final String version;
   final String logoUrl;
   final String ossUrl;
 
-  const BuildConfig({this.appName = '', this.logoUrl = '', this.ossUrl = ''});
+  const BuildConfig({
+    this.appName = '',
+    this.version = '',
+    this.logoUrl = '',
+    this.ossUrl = '',
+  });
 
   factory BuildConfig.fromJson(Map<String, dynamic> json) {
     return BuildConfig(
       appName: _readString(json['appName'] ?? json['app_name']),
+      version: _readString(json['version']),
       logoUrl: _readString(json['logoUrl'] ?? json['logo_url']),
       ossUrl: _readString(json['ossUrl'] ?? json['oss_url']),
     );

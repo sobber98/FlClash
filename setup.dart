@@ -103,6 +103,27 @@ class Build {
     return configuredName;
   }
 
+  static String get version {
+    final configFile = File(join(current, 'build.config.json'));
+    final config = json.decode(configFile.readAsStringSync()) as Map;
+    return (config['version'] as String?)?.trim() ?? '';
+  }
+
+  static String flutterBuildArgsForVersion(String baseArgs, String version) {
+    final trimmedVersion = version.trim();
+    if (trimmedVersion.isEmpty) {
+      return baseArgs;
+    }
+    final parts = trimmedVersion.split('+');
+    final args = [
+      baseArgs,
+      'build-name=${parts.first}',
+      if (parts.length > 1 && parts[1].trim().isNotEmpty)
+        'build-number=${parts[1].trim()}',
+    ];
+    return args.where((arg) => arg.trim().isNotEmpty).join(',');
+  }
+
   static String get coreName => '${appName}Core';
 
   static String get helperServiceName => '${appName}HelperService';
@@ -467,6 +488,10 @@ class BuildCommand extends Command {
     required String env,
   }) async {
     await Build.getDistributor();
+    final resolvedFlutterBuildArgs = Build.flutterBuildArgsForVersion(
+      flutterBuildArgs,
+      Build.version,
+    );
     await Build.exec(name: name, [
       Build.distributorExecutable,
       'package',
@@ -475,7 +500,7 @@ class BuildCommand extends Command {
       target.name,
       '--targets',
       targets,
-      '--flutter-build-args=$flutterBuildArgs',
+      '--flutter-build-args=$resolvedFlutterBuildArgs',
       ...extraArgs,
     ]);
   }
