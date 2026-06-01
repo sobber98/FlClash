@@ -153,8 +153,9 @@ class Utils {
   }
 
   String get traySuffix {
-    final suffix = system.isWindows ? 'ico' : 'png';
-    return 'assets/images/icon/status_2.$suffix';
+    return system.isWindows
+        ? 'assets/images/icon.ico'
+        : 'assets/images/icon.png';
   }
 
   int compareVersions(String version1, String version2) {

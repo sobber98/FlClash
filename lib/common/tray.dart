@@ -22,8 +22,10 @@ class Tray {
     return _instance!;
   }
 
-  String get trayIconSuffix {
-    return system.isWindows ? 'ico' : 'png';
+  String get trayIconPath {
+    return system.isWindows
+        ? 'assets/images/icon.ico'
+        : 'assets/images/icon.png';
   }
 
   Future<void> destroy() async {
@@ -31,13 +33,7 @@ class Tray {
   }
 
   String getTryIcon({required bool isStart, required bool tunEnable}) {
-    if (system.isMacOS || !isStart) {
-      return 'assets/images/icon/status_1.$trayIconSuffix';
-    }
-    if (!tunEnable) {
-      return 'assets/images/icon/status_2.$trayIconSuffix';
-    }
-    return 'assets/images/icon/status_3.$trayIconSuffix';
+    return trayIconPath;
   }
 
   Future _updateSystemTray({

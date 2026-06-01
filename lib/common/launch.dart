@@ -27,7 +27,9 @@ class AutoLaunch {
   }
 
   Future<bool> enable() async {
-    return await launchAtStartup.enable();
+    final result = await launchAtStartup.enable();
+    _syncLinuxDesktopIcon();
+    return result;
   }
 
   Future<bool> disable() async {
@@ -38,12 +40,42 @@ class AutoLaunch {
     if (kDebugMode) {
       return;
     }
-    if (await isEnable == isAutoLaunch) return;
-    if (isAutoLaunch == true) {
-      enable();
-    } else {
-      disable();
+    if (await isEnable == isAutoLaunch) {
+      if (isAutoLaunch) {
+        _syncLinuxDesktopIcon();
+      }
+      return;
     }
+    if (isAutoLaunch == true) {
+      await enable();
+    } else {
+      await disable();
+    }
+  }
+
+  void _syncLinuxDesktopIcon() {
+    if (!system.isLinux) {
+      return;
+    }
+    final home = Platform.environment['HOME'];
+    if (home == null || home.isEmpty) {
+      return;
+    }
+    final desktopFile = File('$home/.config/autostart/$appName.desktop');
+    if (!desktopFile.existsSync()) {
+      return;
+    }
+    final iconPath =
+        '${File(Platform.resolvedExecutable).parent.path}/data/flutter_assets/assets/images/icon.png';
+    final lines = desktopFile.readAsLinesSync();
+    final iconLine = 'Icon=$iconPath';
+    final iconIndex = lines.indexWhere((line) => line.startsWith('Icon='));
+    if (iconIndex >= 0) {
+      lines[iconIndex] = iconLine;
+    } else {
+      lines.add(iconLine);
+    }
+    desktopFile.writeAsStringSync('${lines.join('\n')}\n');
   }
 }
 

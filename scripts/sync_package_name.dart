@@ -462,6 +462,7 @@ Future<bool> _syncLogo({required String root, required String logoUrl}) async {
   );
 
   writePng('assets/images/icon.png', square(1024));
+  writeIco('assets/images/icon.ico', square(256));
 
   final androidIcons = {
     'mipmap-mdpi': 48,
