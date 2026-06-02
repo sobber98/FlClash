@@ -1,9 +1,9 @@
 {
-  "serverUrl": "https://ajhsdtihbk.v2box.world/api/v1",
-  "enableRegistration": true,
+  "serverUrl": "",
+  "enableRegistration": ,
   "supportEmail": "",
-  "officialWebsite": "https://www.nicev2box.com",
+  "officialWebsite": "",
   "telegramGroup": "",
-  "blockedNodeKeywords": ["剩余流量", "套餐到期", "官网", "群组", "重置流量"],
-  "updateManifestUrl": "https://pan.nicev2box.com/file/v2box-app/latest.json"
+  "blockedNodeKeywords": [],
+  "updateManifestUrl": ""
 }
