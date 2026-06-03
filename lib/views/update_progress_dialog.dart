@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:v2box/common/common.dart';
 import 'package:v2box/models/models.dart';
@@ -7,16 +8,32 @@ import 'package:flutter/material.dart';
 
 enum _UpdateProgressStatus { downloading, verifying, installing, failed }
 
+typedef UpdatePackageDownloader =
+    Future<File> Function({
+      required UpdateAsset asset,
+      required void Function(int received, int total) onProgress,
+      CancelToken? cancelToken,
+    });
+typedef UpdatePackageVerifier =
+    Future<bool> Function(File file, String expectedSha256);
+typedef UpdatePackageInstaller = Future<void> Function(File file);
+
 class UpdateProgressDialog extends StatefulWidget {
   final String version;
   final UpdateAsset asset;
   final bool forceUpdate;
+  final UpdatePackageDownloader downloadPackage;
+  final UpdatePackageVerifier verifyPackage;
+  final UpdatePackageInstaller installPackage;
 
   const UpdateProgressDialog({
     super.key,
     required this.version,
     required this.asset,
     required this.forceUpdate,
+    this.downloadPackage = AppUpdater.downloadPackage,
+    this.verifyPackage = AppUpdater.verifyPackage,
+    this.installPackage = AppUpdater.installPackage,
   });
 
   @override
@@ -34,6 +51,7 @@ class _UpdateProgressDialogState extends State<UpdateProgressDialog> {
   DateTime? _startedAt;
   DateTime? _lastProgressAt;
   int _lastProgressBytes = 0;
+  final _packageCache = AppUpdatePackageCache();
   String? _error;
 
   @override
@@ -52,41 +70,54 @@ class _UpdateProgressDialogState extends State<UpdateProgressDialog> {
 
   Future<void> _startUpdate() async {
     _cancelToken?.cancel();
-    final token = CancelToken();
+    final reusablePackage = _packageCache.reusableFile;
+    final shouldReusePackage = reusablePackage != null;
+    final token = shouldReusePackage ? null : CancelToken();
     setState(() {
       _cancelToken = token;
-      _status = _UpdateProgressStatus.downloading;
-      _received = 0;
-      _total = 0;
-      _speed = 0;
+      _status = shouldReusePackage
+          ? _UpdateProgressStatus.installing
+          : _UpdateProgressStatus.downloading;
+      if (!shouldReusePackage) {
+        _received = 0;
+        _total = 0;
+        _speed = 0;
+        _startedAt = DateTime.now();
+        _lastProgressAt = null;
+        _lastProgressBytes = 0;
+      }
       _error = null;
-      _startedAt = DateTime.now();
-      _lastProgressAt = null;
-      _lastProgressBytes = 0;
     });
     try {
-      final file = await AppUpdater.downloadPackage(
-        asset: widget.asset,
-        cancelToken: token,
-        onProgress: _handleProgress,
-      );
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _status = _UpdateProgressStatus.verifying;
-      });
-      final verified = await AppUpdater.verifyPackage(file, widget.asset.sha256);
-      if (!verified) {
-        await file.safeDelete();
+      File file;
+      if (shouldReusePackage) {
+        file = reusablePackage;
+      } else {
+        file = await widget.downloadPackage(
+          asset: widget.asset,
+          cancelToken: token,
+          onProgress: _handleProgress,
+        );
         if (!mounted) {
           return;
         }
         setState(() {
-          _status = _UpdateProgressStatus.failed;
-          _error = appLocalizations.verifyFailed;
+          _status = _UpdateProgressStatus.verifying;
         });
-        return;
+        final verified = await widget.verifyPackage(file, widget.asset.sha256);
+        if (!verified) {
+          await file.safeDelete();
+          _packageCache.clear();
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            _status = _UpdateProgressStatus.failed;
+            _error = appLocalizations.verifyFailed;
+          });
+          return;
+        }
+        _packageCache.rememberVerified(file);
       }
       if (!mounted) {
         return;
@@ -94,7 +125,7 @@ class _UpdateProgressDialogState extends State<UpdateProgressDialog> {
       setState(() {
         _status = _UpdateProgressStatus.installing;
       });
-      await AppUpdater.installPackage(file);
+      await widget.installPackage(file);
       if (mounted) {
         Navigator.of(context).pop(true);
       }
@@ -105,6 +136,7 @@ class _UpdateProgressDialogState extends State<UpdateProgressDialog> {
         }
         return;
       }
+      _packageCache.clear();
       if (!mounted) {
         return;
       }
@@ -150,8 +182,9 @@ class _UpdateProgressDialogState extends State<UpdateProgressDialog> {
     final elapsed = lastProgressAt == null
         ? now.difference(_startedAt ?? now).inMilliseconds.clamp(1, 1 << 31)
         : now.difference(lastProgressAt).inMilliseconds.clamp(1, 1 << 31);
-    final speedBytes =
-        lastProgressAt == null ? received : received - _lastProgressBytes;
+    final speedBytes = lastProgressAt == null
+        ? received
+        : received - _lastProgressBytes;
     setState(() {
       _received = received;
       _total = total;

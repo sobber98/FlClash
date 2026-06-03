@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.gradle.api.GradleException
 import java.util.Properties
 
 plugins {
@@ -22,6 +23,10 @@ val mKeyAlias: String? = localProperties.getProperty("keyAlias")
 val mKeyPassword: String? = localProperties.getProperty("keyPassword")
 val isRelease =
     mStoreFile.exists() && mStorePassword != null && mKeyAlias != null && mKeyPassword != null
+val buildEnv: String = System.getenv("FLCLASH_BUILD_ENV")
+    ?: localProperties.getProperty("buildEnv")
+    ?: "pre"
+val requiresReleaseSigning = buildEnv == "stable"
 
 
 android {
@@ -72,6 +77,11 @@ android {
             isShrinkResources = true
             if (isRelease) {
                 signingConfig = signingConfigs.getByName("release")
+            } else if (requiresReleaseSigning) {
+                throw GradleException(
+                    "Stable Android release requires android/app/keystore.jks and " +
+                        "storePassword/keyAlias/keyPassword in android/local.properties."
+                )
             } else {
                 signingConfig = signingConfigs.getByName("debug")
                 applicationIdSuffix = ".dev"

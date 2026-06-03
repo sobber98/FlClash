@@ -38,4 +38,11 @@ void main() {
       'verbose,dart-define-from-file=env.json,build-name=1.2.3,build-number=4',
     );
   });
+
+  test('build env is forwarded to distributor process', () {
+    expect(
+      setup.Build.distributorEnvironment('stable'),
+      containsPair('FLCLASH_BUILD_ENV', 'stable'),
+    );
+  });
 }

@@ -20,6 +20,30 @@ class AppUpdateException implements Exception {
   String toString() => message;
 }
 
+class AppUpdatePackageCache {
+  File? _verifiedPackageFile;
+
+  File? get reusableFile {
+    final file = _verifiedPackageFile;
+    if (file == null) {
+      return null;
+    }
+    if (!file.existsSync()) {
+      _verifiedPackageFile = null;
+      return null;
+    }
+    return file;
+  }
+
+  void rememberVerified(File file) {
+    _verifiedPackageFile = file;
+  }
+
+  void clear() {
+    _verifiedPackageFile = null;
+  }
+}
+
 class AppUpdater {
   const AppUpdater._();
 
@@ -30,10 +54,11 @@ class AppUpdater {
       return 'android';
     }
     if (system.isWindows) {
-      final arch = (Platform.environment['PROCESSOR_ARCHITEW6432'] ??
-              Platform.environment['PROCESSOR_ARCHITECTURE'] ??
-              '')
-          .toLowerCase();
+      final arch =
+          (Platform.environment['PROCESSOR_ARCHITEW6432'] ??
+                  Platform.environment['PROCESSOR_ARCHITECTURE'] ??
+                  '')
+              .toLowerCase();
       if (arch.contains('arm64')) {
         return 'windows-arm64';
       }

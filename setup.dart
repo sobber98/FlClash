@@ -124,6 +124,10 @@ class Build {
     return args.where((arg) => arg.trim().isNotEmpty).join(',');
   }
 
+  static Map<String, String> distributorEnvironment(String env) {
+    return {'FLCLASH_BUILD_ENV': env};
+  }
+
   static String get coreName => '${appName}Core';
 
   static String get helperServiceName => '${appName}HelperService';
@@ -502,7 +506,7 @@ class BuildCommand extends Command {
       targets,
       '--flutter-build-args=$resolvedFlutterBuildArgs',
       ...extraArgs,
-    ]);
+    ], environment: Build.distributorEnvironment(env));
   }
 
   Future<String?> get systemArch async {
