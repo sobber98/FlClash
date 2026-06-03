@@ -129,6 +129,10 @@ jobs:
           } >> android/local.properties
 
       - name: Build Android APK
+        env:
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: dart setup.dart android --env stable
 
       - name: Upload Android artifacts

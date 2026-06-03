@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:v2box/models/app_config.dart';
 import 'package:v2box/models/build_config.dart';
@@ -44,5 +46,17 @@ void main() {
       setup.Build.distributorEnvironment('stable'),
       containsPair('FLCLASH_BUILD_ENV', 'stable'),
     );
+  });
+
+  test('release Android workflow forwards signing env to build step', () {
+    final workflow = File('.github/workflows/build.yaml').readAsStringSync();
+    final buildStep = workflow.substring(
+      workflow.indexOf('      - name: Build Android APK'),
+      workflow.indexOf('      - name: Upload Android artifacts'),
+    );
+
+    expect(buildStep, contains('ANDROID_STORE_PASSWORD'));
+    expect(buildStep, contains('ANDROID_KEY_ALIAS'));
+    expect(buildStep, contains('ANDROID_KEY_PASSWORD'));
   });
 }
