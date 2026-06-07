@@ -582,7 +582,7 @@ final class FilterGroupsStateProvider
   }
 }
 
-String _$filterGroupsStateHash() => r'4154905606690c08f6775cb1661820b3f97a1145';
+String _$filterGroupsStateHash() => r'b07424ff46c2ed0d604a5b53a35f6097f1b7678a';
 
 final class FilterGroupsStateFamily extends $Family
     with $FunctionalFamilyOverride<GroupsState, String> {
@@ -891,7 +891,7 @@ final class ProxyGroupSelectorStateProvider
 }
 
 String _$proxyGroupSelectorStateHash() =>
-    r'c2a059873a38907071a2664409bacfe21b7d6c3c';
+    r'31484cf3d2131da7a4529c442f338ef17b429d39';
 
 final class ProxyGroupSelectorStateFamily extends $Family
     with $FunctionalFamilyOverride<ProxyGroupSelectorState, (String, String)> {
@@ -1734,7 +1734,7 @@ final class GetSelectedProxyNameProvider
 }
 
 String _$getSelectedProxyNameHash() =>
-    r'13aeae1fede234983d262d824a85c7375f9e4e78';
+    r'5a1bab21ae5821af37b2728bfaa89e9fcf48a74d';
 
 final class GetSelectedProxyNameFamily extends $Family
     with $FunctionalFamilyOverride<String?, String> {
