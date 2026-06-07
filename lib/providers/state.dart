@@ -254,37 +254,49 @@ GroupsState filterGroupsState(Ref ref, String query) {
   final selectorGroups = globalGroup != null
       ? [globalGroup]
       : allGroups.where((g) => g.type == GroupType.Selector).toList();
-  final displayGroups =
-      selectorGroups.isNotEmpty ? selectorGroups : allGroups;
+  final displayGroups = selectorGroups.isNotEmpty ? selectorGroups : allGroups;
 
   final lowQuery = query.toLowerCase();
+  final normalizedBlockedKeywords = _normalizeBlockedNodeKeywords(
+    blockedKeywords,
+  );
 
-  final groups = displayGroups.map((group) {
-    var proxies = group.all.where((proxy) {
-      // Filter out non-URLTest group-type proxies (e.g. Fallback, Selector).
-      if (hiddenGroupTypes.contains(proxy.type)) { return false; }
-      // Filter out built-in special proxies (DIRECT, REJECT).
-      if (hiddenProxyNames.contains(proxy.name)) { return false; }
-      // Apply compile-time blocked keyword filter.
-      if (blockedKeywords.any(
-        (kw) => kw.isNotEmpty && proxy.name.contains(kw),
-      )) { return false; }
-      // Apply search query filter.
-      if (query.isNotEmpty &&
-          !proxy.name.toLowerCase().contains(lowQuery)) { return false; }
-      return true;
-    }).toList();
+  final groups = displayGroups
+      .map((group) {
+        var proxies = group.all.where((proxy) {
+          final proxyName = proxy.name.toLowerCase();
+          // Filter out non-URLTest group-type proxies (e.g. Fallback, Selector).
+          if (hiddenGroupTypes.contains(proxy.type)) {
+            return false;
+          }
+          // Filter out built-in special proxies (DIRECT, REJECT).
+          if (hiddenProxyNames.contains(proxy.name)) {
+            return false;
+          }
+          // Apply compile-time blocked keyword filter.
+          if (_isBlockedProxyName(proxyName, normalizedBlockedKeywords)) {
+            return false;
+          }
+          // Apply search query filter.
+          if (query.isNotEmpty &&
+              !proxy.name.toLowerCase().contains(lowQuery)) {
+            return false;
+          }
+          return true;
+        }).toList();
 
-    // URLTest proxies (自动选择) are sorted to the top of the list.
-    proxies.sort((a, b) {
-      final aIsAuto = a.type == 'URLTest';
-      final bIsAuto = b.type == 'URLTest';
-      if (aIsAuto == bIsAuto) return 0;
-      return aIsAuto ? -1 : 1;
-    });
+        // URLTest proxies (自动选择) are sorted to the top of the list.
+        proxies.sort((a, b) {
+          final aIsAuto = a.type == 'URLTest';
+          final bIsAuto = b.type == 'URLTest';
+          if (aIsAuto == bIsAuto) return 0;
+          return aIsAuto ? -1 : 1;
+        });
 
-    return group.copyWith(all: proxies);
-  }).where((group) => group.all.isNotEmpty).toList();
+        return group.copyWith(all: proxies);
+      })
+      .where((group) => group.all.isNotEmpty)
+      .toList();
 
   return currentGroups.copyWith(value: groups);
 }
@@ -373,6 +385,10 @@ ProxyGroupSelectorState proxyGroupSelectorState(
   String query,
 ) {
   final proxiesStyle = ref.watch(proxiesStyleSettingProvider);
+  final blockedKeywords = ref.watch(blockedNodeKeywordsProvider);
+  final normalizedBlockedKeywords = _normalizeBlockedNodeKeywords(
+    blockedKeywords,
+  );
   final group = ref.watch(
     currentGroupsStateProvider.select(
       (state) => state.value.getGroup(groupName),
@@ -383,7 +399,11 @@ ProxyGroupSelectorState proxyGroupSelectorState(
   final lowQuery = query.toLowerCase();
   final proxies =
       group?.all.where((item) {
-        return item.name.toLowerCase().contains(lowQuery);
+        final proxyName = item.name.toLowerCase();
+        if (_isBlockedProxyName(proxyName, normalizedBlockedKeywords)) {
+          return false;
+        }
+        return proxyName.contains(lowQuery);
       }).toList() ??
       [];
   return ProxyGroupSelectorState(
@@ -532,10 +552,19 @@ String? getProxyName(Ref ref, String groupName) {
 @riverpod
 String? getSelectedProxyName(Ref ref, String groupName) {
   final proxyName = ref.watch(getProxyNameProvider(groupName));
+  final blockedKeywords = ref.watch(blockedNodeKeywordsProvider);
+  final normalizedBlockedKeywords = _normalizeBlockedNodeKeywords(
+    blockedKeywords,
+  );
   final group = ref.watch(
     groupsProvider.select((state) => state.getGroup(groupName)),
   );
-  return group?.getCurrentSelectedName(proxyName ?? '');
+  final selectedProxyName = group?.getCurrentSelectedName(proxyName ?? '');
+  if (selectedProxyName == null ||
+      _isBlockedProxyName(selectedProxyName, normalizedBlockedKeywords)) {
+    return null;
+  }
+  return selectedProxyName;
 }
 
 @riverpod
@@ -550,6 +579,21 @@ String getProxyDesc(Ref ref, Proxy proxy) {
     final state = ref.watch(realSelectedProxyStateProvider(proxy.name));
     return "${proxy.type}(${state.proxyName.isNotEmpty ? state.proxyName : '*'})";
   }
+}
+
+List<String> _normalizeBlockedNodeKeywords(List<String> keywords) {
+  return keywords
+      .map((kw) => kw.trim().toLowerCase())
+      .where((kw) => kw.isNotEmpty)
+      .toList();
+}
+
+bool _isBlockedProxyName(
+  String proxyName,
+  List<String> normalizedBlockedKeywords,
+) {
+  final normalizedProxyName = proxyName.toLowerCase();
+  return normalizedBlockedKeywords.any(normalizedProxyName.contains);
 }
 
 @riverpod
