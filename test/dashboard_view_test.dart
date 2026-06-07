@@ -207,6 +207,14 @@ void main() {
     expect(tunCard.bottom, closeTo(outboundCard.bottom, 1));
   });
 
+  testWidgets('dashboard shows mixed proxy port in outbound card', (
+    tester,
+  ) async {
+    await _pumpDashboard(tester, size: const Size(1080, 600), isMobile: false);
+
+    expect(find.text('mixed-port: 7890'), findsOneWidget);
+  });
+
   testWidgets('desktop dashboard fits key cards in a short client viewport', (
     tester,
   ) async {

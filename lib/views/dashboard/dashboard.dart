@@ -700,6 +700,9 @@ class _OutboundModeCard extends ConsumerWidget {
     final mode = ref.watch(
       patchClashConfigProvider.select((state) => state.mode),
     );
+    final mixedPort = ref.watch(
+      patchClashConfigProvider.select((state) => state.mixedPort),
+    );
     return _DashboardCard(
       key: const ValueKey('dashboard-outbound-card'),
       compact: compact,
@@ -723,7 +726,7 @@ class _OutboundModeCard extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '分流策略',
+                    compact ? 'mixed-port: $mixedPort' : '分流策略',
                     style:
                         (compact
                                 ? context.textTheme.bodySmall
@@ -778,6 +781,39 @@ class _OutboundModeCard extends ConsumerWidget {
               ],
             ),
           ),
+          if (!compact) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF4F6FB),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: v2BoardLine),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.settings_input_component_rounded,
+                    size: 18,
+                    color: v2BoardMuted,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'mixed-port: $mixedPort',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: v2BoardMuted,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
