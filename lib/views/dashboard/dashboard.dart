@@ -4,6 +4,7 @@ import 'package:v2box/enum/enum.dart';
 import 'package:v2box/models/models.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
+import 'package:v2box/state.dart';
 import 'package:v2box/views/v2board/v2board_design.dart';
 import 'package:v2box/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -903,6 +904,37 @@ class _NodeSelectorSheet extends ConsumerStatefulWidget {
 
 class _NodeSelectorSheetState extends ConsumerState<_NodeSelectorSheet> {
   String? _selectedGroupName;
+  bool _isRefreshing = false;
+
+  Future<void> _refreshNodes() async {
+    if (_isRefreshing) {
+      return;
+    }
+    setState(() {
+      _isRefreshing = true;
+    });
+    try {
+      final syncError = await appController.syncV2BoardSubscription();
+      if (syncError != null) {
+        final profile = ref.read(currentProfileProvider);
+        if (profile == null || profile.type == ProfileType.file) {
+          globalState.showNotifier('当前配置无法自动刷新');
+          return;
+        }
+        await appController.updateProfile(profile, showLoading: true);
+        await appController.applyProfile(force: true, silence: true);
+      }
+      globalState.showNotifier('节点已刷新');
+    } catch (e) {
+      globalState.showNotifier('刷新节点失败：$e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRefreshing = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -954,6 +986,27 @@ class _NodeSelectorSheetState extends ConsumerState<_NodeSelectorSheet> {
                         style: context.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: '刷新节点',
+                      onPressed: _isRefreshing ? null : _refreshNodes,
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 180),
+                        child: _isRefreshing
+                            ? SizedBox(
+                                key: const ValueKey('refreshing'),
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: context.colorScheme.primary,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.refresh_rounded,
+                                key: ValueKey('refresh'),
+                              ),
                       ),
                     ),
                     IconButton(
