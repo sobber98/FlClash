@@ -296,6 +296,62 @@ jobs:
           echo "Files in dist/:"
           ls -lh dist/
 
+      - name: Normalize release artifact names
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          dist_dir = Path('dist')
+
+          app_name = 'v2box'
+          options_path = Path('distribute_options.yaml')
+          if options_path.exists():
+              match = re.search(
+                  r"(?m)^app_name:\s*['\"]?([^'\"\n#]+)",
+                  options_path.read_text(encoding='utf-8'),
+              )
+              if match:
+                  app_name = match.group(1).strip()
+
+          version = ''
+          pubspec_path = Path('pubspec.yaml')
+          if pubspec_path.exists():
+              match = re.search(
+                  r"(?m)^version:\s*['\"]?([^'\"\n#]+)",
+                  pubspec_path.read_text(encoding='utf-8'),
+              )
+              if match:
+                  version = match.group(1).strip().split('+', 1)[0]
+
+          if not version:
+              raise SystemExit('Could not determine artifact version from pubspec.yaml')
+
+          prefixes = (f'{app_name}-{version}-', f'{app_name}-v{version}-')
+          renamed = []
+          for file_path in sorted(dist_dir.iterdir()):
+              if not file_path.is_file():
+                  continue
+              for prefix in prefixes:
+                  if file_path.name.startswith(prefix):
+                      target = file_path.with_name(f'{app_name}-{file_path.name[len(prefix):]}')
+                      if target.exists():
+                          raise SystemExit(f'Refusing to overwrite existing artifact: {target}')
+                      file_path.rename(target)
+                      renamed.append((file_path.name, target.name))
+                      break
+
+          if not renamed:
+              raise SystemExit(
+                  f'No artifacts matched expected versioned prefix for {app_name} {version}'
+              )
+
+          for old_name, new_name in renamed:
+              print(f'{old_name} -> {new_name}')
+          PY
+          echo "Normalized files in dist/:"
+          ls -lh dist/
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
