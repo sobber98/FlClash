@@ -223,7 +223,12 @@ class Build {
       print(utf8.decode(data));
     });
     final exitCode = await process.exitCode;
-    if (exitCode != 0) throw '${name ?? executable.first} error';
+    if (exitCode != 0) {
+      final commandName = name ?? executable.first;
+      throw '$commandName error (exit code $exitCode): '
+          '${executable.join(' ')}'
+          '${workingDirectory == null ? '' : ' in $workingDirectory'}';
+    }
   }
 
   static Future<String> calcSha256(String filePath) async {

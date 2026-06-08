@@ -144,6 +144,19 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
+      - name: Warm up Gradle wrapper
+        working-directory: android
+        run: |
+          for attempt in 1 2 3; do
+            if ./gradlew --version; then
+              exit 0
+            fi
+            if [[ "$attempt" == "3" ]]; then
+              exit 1
+            fi
+            sleep $((attempt * 15))
+          done
+
       - name: Build Android APK
         run: dart setup.dart android --env pre
 
