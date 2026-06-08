@@ -14,8 +14,10 @@ void main() {
       buildConfigLoader: () async =>
           const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
       localConfigLoader: () async => AppConfig.defaults(),
-      cachedConfigLoader: () async =>
-          const AppConfig(serverUrl: 'https://cached.example.com/api/v1'),
+      cachedConfigLoader: () async => const AppConfig(
+        serverUrl: 'https://cached.example.com/api/v1',
+        blockedNodeKeywords: ['官网'],
+      ),
       ossConfigLoader: (_) async {
         ossFetchCount++;
         return const AppConfig(serverUrl: 'https://remote.example.com/api/v1');
@@ -28,6 +30,28 @@ void main() {
     expect(config.serverUrl, 'https://cached.example.com/api/v1');
     expect(ossFetchCount, 0);
   });
+
+  test(
+    'cached reachable config without blocked keywords refreshes OSS config',
+    () async {
+      final service = ConfigService(
+        buildConfigLoader: () async =>
+            const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+        localConfigLoader: () async => AppConfig.defaults(),
+        cachedConfigLoader: () async =>
+            const AppConfig(serverUrl: 'https://cached.example.com/api/v1'),
+        ossConfigLoader: (_) async => const AppConfig(
+          serverUrl: 'https://cached.example.com/api/v1',
+          blockedNodeKeywords: ['官网'],
+        ),
+        serverReachabilityChecker: (_) async => true,
+      );
+
+      final config = await service.load();
+
+      expect(config.blockedNodeKeywords, ['官网']);
+    },
+  );
 
   test(
     'unreachable cached server refreshes config from OSS and caches it',

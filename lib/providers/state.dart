@@ -35,9 +35,8 @@ GroupsState currentGroupsState(Ref ref) {
   return GroupsState(
     value: switch (mode) {
       Mode.global => groups.toList(),
-      Mode.rule || Mode.direct => nonGlobalGroups.isNotEmpty
-          ? nonGlobalGroups
-          : visibleGroups,
+      Mode.rule || Mode.direct =>
+        nonGlobalGroups.isNotEmpty ? nonGlobalGroups : visibleGroups,
     },
   );
 }
@@ -133,7 +132,7 @@ TrayState trayState(Ref ref) {
       (state) => VM3(state.autoLaunch, state.locale, state.showTrayTitle),
     ),
   );
-  final groups = ref.watch(currentGroupsStateProvider).value;
+  final groups = ref.watch(filterGroupsStateProvider('')).value;
   final brightness = ref.watch(systemBrightnessProvider);
   final selectedMap = ref.watch(selectedMapProvider);
 
@@ -351,13 +350,12 @@ ConnectionVisualState connectionVisualState(Ref ref) {
   final transitionState = ref.watch(connectionTransitionProvider);
   if (isBusy) {
     return switch (transitionState) {
-      ConnectionTransitionState.stopping =>
-        ConnectionVisualState.disconnecting,
-      ConnectionTransitionState.starting =>
-        ConnectionVisualState.connecting,
-      ConnectionTransitionState.idle => coreStatus == CoreStatus.connected
-          ? ConnectionVisualState.disconnecting
-          : ConnectionVisualState.connecting,
+      ConnectionTransitionState.stopping => ConnectionVisualState.disconnecting,
+      ConnectionTransitionState.starting => ConnectionVisualState.connecting,
+      ConnectionTransitionState.idle =>
+        coreStatus == CoreStatus.connected
+            ? ConnectionVisualState.disconnecting
+            : ConnectionVisualState.connecting,
     };
   }
   if (coreStatus == CoreStatus.disconnected || !isRunning) {

@@ -56,7 +56,9 @@ class ConfigService {
       return cachedMergedConfig ?? localConfig;
     }
 
-    if (!forceRemote && cachedMergedConfig != null) {
+    if (!forceRemote &&
+        cachedMergedConfig != null &&
+        cachedMergedConfig.blockedNodeKeywords.isNotEmpty) {
       final cachedServerUrl = cachedMergedConfig.resolvedServerUrl;
       if (cachedServerUrl.isNotEmpty &&
           await isServerReachable(cachedServerUrl)) {

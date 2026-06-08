@@ -45,4 +45,22 @@ void main() {
 
     expect(container.read(getSelectedProxyNameProvider('Proxy')), isNull);
   });
+
+  test('blocked node keywords are applied to tray groups', () {
+    final container = ProviderContainer(
+      overrides: [
+        blockedNodeKeywordsProvider.overrideWithValue(['香港']),
+        currentGroupsStateProvider.overrideWithValue(
+          const GroupsState(value: groups),
+        ),
+        selectedMapProvider.overrideWithValue({}),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final trayGroups = container.read(trayStateProvider).groups;
+
+    expect(trayGroups, hasLength(1));
+    expect(trayGroups.single.all.map((proxy) => proxy.name), ['新加坡 标准节点']);
+  });
 }
