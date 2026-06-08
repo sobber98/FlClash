@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +10,11 @@ import 'package:v2box/models/models.dart';
 import 'package:v2box/pages/home.dart';
 import 'package:v2box/providers/providers.dart';
 import 'package:v2box/services/v2board/v2board.dart';
+
+class _LoadingAppConfigNotifier extends AppConfigNotifier {
+  @override
+  Future<AppConfig> build() => Completer<AppConfig>().future;
+}
 
 const _loggedInProps = V2BoardProps(
   serverUrl: 'https://example.com',
@@ -111,6 +118,39 @@ void main() {
     expect(find.byKey(const ValueKey('startup-login-shell')), findsOneWidget);
     expect(find.byKey(const ValueKey('register-page-shell')), findsNothing);
   });
+
+  testWidgets(
+    'startup login waits for remote config before showing no service',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            v2boardSettingProvider.overrideWithValue(null),
+            appConfigProvider.overrideWith(_LoadingAppConfigNotifier.new),
+            appDisplayNameProvider.overrideWithValue('v2box'),
+          ],
+          child: MaterialApp(
+            locale: const Locale('zh', 'CN'),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.delegate.supportedLocales,
+            home: const HomePage(),
+          ),
+        ),
+      );
+
+      expect(find.text('登录服务暂未配置，请联系管理员。'), findsNothing);
+    },
+  );
 
   testWidgets('desktop register form fits in the first viewport', (
     tester,

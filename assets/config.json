@@ -1,6 +1,6 @@
 {
   "serverUrl": "",
-  "enableRegistration": ,
+  "enableRegistration": null,
   "supportEmail": "",
   "officialWebsite": "",
   "telegramGroup": "",

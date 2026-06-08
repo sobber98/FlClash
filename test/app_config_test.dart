@@ -3,10 +3,125 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:v2box/models/app_config.dart';
 import 'package:v2box/models/build_config.dart';
+import 'package:v2box/services/config_service.dart';
 
 import '../setup.dart' as setup;
 
 void main() {
+  test('cached reachable config is used without fetching OSS config', () async {
+    var ossFetchCount = 0;
+    final service = ConfigService(
+      buildConfigLoader: () async =>
+          const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+      localConfigLoader: () async => AppConfig.defaults(),
+      cachedConfigLoader: () async =>
+          const AppConfig(serverUrl: 'https://cached.example.com/api/v1'),
+      ossConfigLoader: (_) async {
+        ossFetchCount++;
+        return const AppConfig(serverUrl: 'https://remote.example.com/api/v1');
+      },
+      serverReachabilityChecker: (_) async => true,
+    );
+
+    final config = await service.load();
+
+    expect(config.serverUrl, 'https://cached.example.com/api/v1');
+    expect(ossFetchCount, 0);
+  });
+
+  test(
+    'unreachable cached server refreshes config from OSS and caches it',
+    () async {
+      final writes = <AppConfig>[];
+      final service = ConfigService(
+        buildConfigLoader: () async =>
+            const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+        localConfigLoader: () async => AppConfig.defaults(),
+        cachedConfigLoader: () async =>
+            const AppConfig(serverUrl: 'https://old.example.com/api/v1'),
+        ossConfigLoader: (_) async =>
+            const AppConfig(serverUrl: 'https://new.example.com/api/v1'),
+        cacheWriter: (config) async => writes.add(config),
+        serverReachabilityChecker: (_) async => false,
+      );
+
+      final config = await service.load();
+
+      expect(config.serverUrl, 'https://new.example.com/api/v1');
+      expect(writes, hasLength(1));
+      expect(writes.single.serverUrl, 'https://new.example.com/api/v1');
+    },
+  );
+
+  test('cached config without server URL refreshes config from OSS', () async {
+    final service = ConfigService(
+      buildConfigLoader: () async =>
+          const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+      localConfigLoader: () async => AppConfig.defaults(),
+      cachedConfigLoader: () async => const AppConfig(supportEmail: 'old'),
+      ossConfigLoader: (_) async =>
+          const AppConfig(serverUrl: 'https://remote.example.com/api/v1'),
+    );
+
+    final config = await service.load();
+
+    expect(config.serverUrl, 'https://remote.example.com/api/v1');
+  });
+
+  test('missing cache fetches config from OSS and caches it', () async {
+    final writes = <AppConfig>[];
+    final service = ConfigService(
+      buildConfigLoader: () async =>
+          const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+      localConfigLoader: () async => AppConfig.defaults(),
+      cachedConfigLoader: () async => null,
+      ossConfigLoader: (_) async =>
+          const AppConfig(serverUrl: 'https://remote.example.com/api/v1'),
+      cacheWriter: (config) async => writes.add(config),
+    );
+
+    final config = await service.load();
+
+    expect(config.serverUrl, 'https://remote.example.com/api/v1');
+    expect(writes, hasLength(1));
+  });
+
+  test('OSS failure falls back to cached config', () async {
+    final service = ConfigService(
+      buildConfigLoader: () async =>
+          const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+      localConfigLoader: () async => AppConfig.defaults(),
+      cachedConfigLoader: () async =>
+          const AppConfig(serverUrl: 'https://cached.example.com/api/v1'),
+      ossConfigLoader: (_) async => throw const FormatException('bad config'),
+      serverReachabilityChecker: (_) async => false,
+    );
+
+    final config = await service.load();
+
+    expect(config.serverUrl, 'https://cached.example.com/api/v1');
+  });
+
+  test('force remote bypasses reachable cache and updates it', () async {
+    final writes = <AppConfig>[];
+    final service = ConfigService(
+      buildConfigLoader: () async =>
+          const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+      localConfigLoader: () async => AppConfig.defaults(),
+      cachedConfigLoader: () async =>
+          const AppConfig(serverUrl: 'https://cached.example.com/api/v1'),
+      ossConfigLoader: (_) async =>
+          const AppConfig(serverUrl: 'https://remote.example.com/api/v1'),
+      cacheWriter: (config) async => writes.add(config),
+      serverReachabilityChecker: (_) async => true,
+    );
+
+    final config = await service.load(forceRemote: true);
+
+    expect(config.serverUrl, 'https://remote.example.com/api/v1');
+    expect(writes, hasLength(1));
+  });
+
   test('runtime config does not own build-time fields', () {
     final config = AppConfig.fromJson({
       'appName': 'RemoteName',

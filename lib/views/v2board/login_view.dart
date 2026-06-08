@@ -133,6 +133,11 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final configState = ref.watch(appConfigProvider);
+    final isConfigLoading = configState.maybeWhen(
+      loading: () => true,
+      orElse: () => false,
+    );
     final configuredServer = ref.watch(appServerUrlProvider).trim();
     final storedProps = ref.watch(v2boardSettingProvider);
     final hasServerUrl =
@@ -184,6 +189,7 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
                 child: _buildLoginForm(
                   context,
                   hasServerUrl: hasServerUrl,
+                  isConfigLoading: isConfigLoading,
                   enableRegistration: enableRegistration,
                 ),
               ),
@@ -200,12 +206,16 @@ class _V2BoardLoginViewState extends ConsumerState<V2BoardLoginView> {
   Widget _buildLoginForm(
     BuildContext context, {
     required bool hasServerUrl,
+    required bool isConfigLoading,
     required bool enableRegistration,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!hasServerUrl) ...[
+        if (isConfigLoading && !hasServerUrl) ...[
+          const _AuthLoadingBar(),
+          const SizedBox(height: 16),
+        ] else if (!hasServerUrl) ...[
           const _AuthWarning(text: '登录服务暂未配置，请联系管理员。'),
           const SizedBox(height: 16),
         ],
@@ -477,15 +487,28 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    final configState = ref.watch(appConfigProvider);
+    final isConfigLoading = configState.maybeWhen(
+      loading: () => true,
+      orElse: () => false,
+    );
     final configuredServer = ref.watch(appServerUrlProvider).trim();
     final storedProps = ref.watch(v2boardSettingProvider);
     final hasServerUrl =
         configuredServer.isNotEmpty ||
         ((storedProps?.serverUrl.trim().isNotEmpty) ?? false);
-    return _buildRegisterForm(context, hasServerUrl);
+    return _buildRegisterForm(
+      context,
+      hasServerUrl: hasServerUrl,
+      isConfigLoading: isConfigLoading,
+    );
   }
 
-  Widget _buildRegisterForm(BuildContext context, bool hasServerUrl) {
+  Widget _buildRegisterForm(
+    BuildContext context, {
+    required bool hasServerUrl,
+    required bool isConfigLoading,
+  }) {
     final fieldGap = widget.compact ? 12.0 : 18.0;
     final labelGap = widget.compact ? 6.0 : 8.0;
     final buttonGap = widget.compact ? 16.0 : 24.0;
@@ -640,7 +663,10 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (!hasServerUrl) ...[
+          if (isConfigLoading && !hasServerUrl) ...[
+            const _AuthLoadingBar(),
+            const SizedBox(height: 16),
+          ] else if (!hasServerUrl) ...[
             const _AuthWarning(text: '注册服务暂未配置，请联系管理员。'),
             const SizedBox(height: 16),
           ],
@@ -676,6 +702,21 @@ class _V2BoardRegisterViewState extends ConsumerState<_V2BoardRegisterView> {
       ),
     );
     return form;
+  }
+}
+
+class _AuthLoadingBar extends StatelessWidget {
+  const _AuthLoadingBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 2,
+      decoration: BoxDecoration(
+        color: v2BoardPrimary.withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(1),
+      ),
+    );
   }
 }
 
