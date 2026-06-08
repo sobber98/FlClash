@@ -9,11 +9,27 @@ from pathlib import Path
 from urllib.parse import quote
 
 
-ASSET_SUFFIX_TO_KEY = {
-    '-android.apk': 'android',
-    '-windows-amd64-setup.exe': 'windows-amd64',
-    '-windows-arm64-setup.exe': 'windows-arm64',
-}
+WINDOWS_AMD64_MARKERS = ('windows-amd64', 'win-amd64', 'amd64', 'x86_64', 'x64')
+WINDOWS_ARM64_MARKERS = ('windows-arm64', 'win-arm64', 'arm64', 'aarch64')
+
+
+def asset_key_for_file(file_name: str) -> str | None:
+    lower_name = file_name.lower()
+    if lower_name.endswith('.apk'):
+        return 'android'
+    if not lower_name.endswith('.exe'):
+        return None
+
+    if any(marker in lower_name for marker in WINDOWS_ARM64_MARKERS):
+        return 'windows-arm64'
+    if any(marker in lower_name for marker in WINDOWS_AMD64_MARKERS):
+        return 'windows-amd64'
+    return None
+
+
+def is_update_package_candidate(file_name: str) -> bool:
+    lower_name = file_name.lower()
+    return lower_name.endswith('.apk') or lower_name.endswith('.exe')
 
 
 def compute_sha256(file_path: Path) -> str:
@@ -142,17 +158,37 @@ def main() -> int:
         file_hashes[file_path] = write_sha256_file(dist_dir, file_path)
 
     assets: dict[str, dict[str, object]] = {}
+    asset_files: dict[str, str] = {}
+    unclassified_update_packages: list[str] = []
     for file_path, digest in file_hashes.items():
         file_name = file_path.name
-        lower_name = file_name.lower()
-        for suffix, asset_key in ASSET_SUFFIX_TO_KEY.items():
-            if lower_name.endswith(suffix):
-                assets[asset_key] = {
-                    'url': build_asset_url(asset_base_url, file_name),
-                    'sha256': digest,
-                    'size': file_path.stat().st_size,
-                }
-                break
+        asset_key = asset_key_for_file(file_name)
+        if asset_key is None:
+            if is_update_package_candidate(file_name):
+                unclassified_update_packages.append(file_name)
+            continue
+        if asset_key in assets:
+            print(
+                f'Duplicate update package for {asset_key}: '
+                f'{asset_files[asset_key]} and {file_name}',
+                file=sys.stderr,
+            )
+            return 1
+        asset_files[asset_key] = file_name
+        assets[asset_key] = {
+            'url': build_asset_url(asset_base_url, file_name),
+            'sha256': digest,
+            'size': file_path.stat().st_size,
+        }
+
+    if unclassified_update_packages:
+        names = ', '.join(sorted(unclassified_update_packages))
+        print(
+            'Update package names must include a recognizable platform/arch '
+            f'marker: {names}',
+            file=sys.stderr,
+        )
+        return 1
 
     if not assets:
         print(
