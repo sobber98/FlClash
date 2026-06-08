@@ -36,13 +36,22 @@ class _AboutAppViewState extends ConsumerState<AboutAppView> {
       final manifest = manifestUrl.trim().isEmpty
           ? null
           : await request.checkForUpdate(manifestUrl);
+      if (!mounted) return;
       if (appController.isAttach) {
         await appController.checkUpdateResultHandle(
           data: manifest,
           isUser: true,
         );
+      } else if (manifest != null) {
+        await globalState.showMessage(
+          context: context,
+          title: appLocalizations.discoverNewVersion,
+          message: TextSpan(text: 'v${manifest.version}'),
+          cancelable: false,
+        );
       } else {
         await globalState.showMessage(
+          context: context,
           title: '检查更新',
           message: const TextSpan(text: '当前应用已经是最新版了'),
         );
