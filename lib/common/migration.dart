@@ -7,7 +7,7 @@ class Migration {
 
   Migration._internal();
 
-  final currentVersion = 2;
+  final currentVersion = 3;
 
   factory Migration() {
     _instance ??= Migration._internal();
@@ -43,6 +43,9 @@ class Migration {
     if (_oldVersion < 2 && data.configMap != null) {
       _migrateThemeToLight(data.configMap!);
     }
+    if (_oldVersion < 3 && data.configMap != null) {
+      enableAutoCheckUpdateByDefault(data.configMap!);
+    }
     final res = await sync(data);
     await preferences.setVersion(currentVersion);
     return res;
@@ -55,6 +58,15 @@ class Migration {
       if (themeProps['themeMode'] == 'system') {
         themeProps['themeMode'] = 'light';
       }
+    }
+  }
+
+  static void enableAutoCheckUpdateByDefault(Map<String, Object?> configMap) {
+    final appSettingProps = configMap['appSettingProps'];
+    if (appSettingProps is Map) {
+      appSettingProps['autoCheckUpdate'] = true;
+    } else {
+      configMap['appSettingProps'] = <String, Object?>{'autoCheckUpdate': true};
     }
   }
 

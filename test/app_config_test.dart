@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:v2box/common/migration.dart';
 import 'package:v2box/models/app_config.dart';
 import 'package:v2box/models/build_config.dart';
 import 'package:v2box/services/config_service.dart';
@@ -17,6 +18,7 @@ void main() {
       cachedConfigLoader: () async => const AppConfig(
         serverUrl: 'https://cached.example.com/api/v1',
         blockedNodeKeywords: ['官网'],
+        updateManifestUrl: 'https://oss.example.com/latest.json',
       ),
       ossConfigLoader: (_) async {
         ossFetchCount++;
@@ -30,6 +32,38 @@ void main() {
     expect(config.serverUrl, 'https://cached.example.com/api/v1');
     expect(ossFetchCount, 0);
   });
+
+  test(
+    'cached reachable config without update manifest refreshes OSS config',
+    () async {
+      final writes = <AppConfig>[];
+      final service = ConfigService(
+        buildConfigLoader: () async =>
+            const BuildConfig(ossUrl: 'https://oss.example.com/config.json'),
+        localConfigLoader: () async => AppConfig.defaults(),
+        cachedConfigLoader: () async => const AppConfig(
+          serverUrl: 'https://cached.example.com/api/v1',
+          blockedNodeKeywords: ['官网'],
+        ),
+        ossConfigLoader: (_) async => const AppConfig(
+          serverUrl: 'https://cached.example.com/api/v1',
+          blockedNodeKeywords: ['官网'],
+          updateManifestUrl: 'https://oss.example.com/latest.json',
+        ),
+        cacheWriter: (config) async => writes.add(config),
+        serverReachabilityChecker: (_) async => true,
+      );
+
+      final config = await service.load();
+
+      expect(config.updateManifestUrl, 'https://oss.example.com/latest.json');
+      expect(writes, hasLength(1));
+      expect(
+        writes.single.updateManifestUrl,
+        'https://oss.example.com/latest.json',
+      );
+    },
+  );
 
   test(
     'cached reachable config without blocked keywords refreshes OSS config',
@@ -168,6 +202,19 @@ void main() {
     });
 
     expect(config.version, '1.2.3+4');
+  });
+
+  test('migration enables auto update for existing app settings', () {
+    final configMap = <String, Object?>{
+      'appSettingProps': <String, Object?>{'autoCheckUpdate': false},
+    };
+
+    Migration.enableAutoCheckUpdateByDefault(configMap);
+
+    expect(
+      configMap,
+      containsPair('appSettingProps', containsPair('autoCheckUpdate', true)),
+    );
   });
 
   test('build version is converted to flutter build arguments', () {
