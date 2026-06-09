@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart';
+import 'package:yaml/yaml.dart';
 
 enum Target { windows, linux, android, macos }
 
@@ -104,9 +105,19 @@ class Build {
   }
 
   static String get version {
-    final configFile = File(join(current, 'build.config.json'));
-    final config = json.decode(configFile.readAsStringSync()) as Map;
-    return (config['version'] as String?)?.trim() ?? '';
+    final pubspecFile = File(join(current, 'pubspec.yaml'));
+    if (!pubspecFile.existsSync()) {
+      throw StateError('pubspec.yaml not found.');
+    }
+    final pubspec = loadYaml(pubspecFile.readAsStringSync());
+    if (pubspec is! YamlMap) {
+      throw StateError('pubspec.yaml must contain a YAML map.');
+    }
+    final version = pubspec['version']?.toString().trim() ?? '';
+    if (version.isEmpty) {
+      throw StateError('version is missing or empty in pubspec.yaml.');
+    }
+    return version;
   }
 
   static String flutterBuildArgsForVersion(String baseArgs, String version) {

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:v2box/common/migration.dart';
 import 'package:v2box/models/app_config.dart';
 import 'package:v2box/models/build_config.dart';
+import 'package:v2box/providers/app_config.dart';
 import 'package:v2box/services/config_service.dart';
 
 import '../setup.dart' as setup;
@@ -195,13 +196,25 @@ void main() {
     expect(config.toJson(), isNot(contains('version')));
   });
 
-  test('build config owns application version', () {
-    final config = BuildConfig.fromJson({
-      'appName': 'RemoteName',
-      'version': '1.2.3+4',
+  test('pubspec owns application build version', () {
+    final previousCurrent = Directory.current;
+    final tempDir = Directory.systemTemp.createTempSync(
+      'flclash_pubspec_version_',
+    );
+    addTearDown(() {
+      Directory.current = previousCurrent;
+      tempDir.deleteSync(recursive: true);
     });
+    Directory.current = tempDir;
+    File('pubspec.yaml').writeAsStringSync('''
+name: v2box
+version: 2.3.4+5
+''');
+    File(
+      'build.config.json',
+    ).writeAsStringSync('{"appName":"v2box","version":"9.9.9+9"}');
 
-    expect(config.version, '1.2.3+4');
+    expect(setup.Build.version, '2.3.4+5');
   });
 
   test('migration enables auto update for existing app settings', () {
@@ -233,6 +246,60 @@ void main() {
       containsPair('FLCLASH_BUILD_ENV', 'stable'),
     );
   });
+
+  test(
+    'manual update check reloads remote config when manifest URL is empty',
+    () async {
+      var didReload = false;
+      final manifestUrl = await resolveUpdateManifestUrl(
+        userUrl: '',
+        configUrl: '',
+        reloadConfig: () async {
+          didReload = true;
+        },
+        readConfigUrl: () => 'https://oss.example.com/latest.json',
+      );
+
+      expect(didReload, isTrue);
+      expect(manifestUrl, 'https://oss.example.com/latest.json');
+    },
+  );
+
+  test(
+    'manual update check keeps empty URL when remote reload has no manifest',
+    () async {
+      var didReload = false;
+      final manifestUrl = await resolveUpdateManifestUrl(
+        userUrl: '',
+        configUrl: '',
+        reloadConfig: () async {
+          didReload = true;
+        },
+        readConfigUrl: () => '',
+      );
+
+      expect(didReload, isTrue);
+      expect(manifestUrl, isEmpty);
+    },
+  );
+
+  test(
+    'manual update check prefers user manifest URL without reload',
+    () async {
+      var didReload = false;
+      final manifestUrl = await resolveUpdateManifestUrl(
+        userUrl: ' https://user.example.com/latest.json ',
+        configUrl: '',
+        reloadConfig: () async {
+          didReload = true;
+        },
+        readConfigUrl: () => 'https://oss.example.com/latest.json',
+      );
+
+      expect(didReload, isFalse);
+      expect(manifestUrl, 'https://user.example.com/latest.json');
+    },
+  );
 
   test('release Android workflow forwards signing env to build step', () {
     final workflow = File('.github/workflows/build.yaml').readAsStringSync();

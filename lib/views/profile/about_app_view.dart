@@ -30,12 +30,23 @@ class _AboutAppViewState extends ConsumerState<AboutAppView> {
       _checkingUpdate = true;
     });
     try {
-      final userUrl = ref.read(appSettingProvider).updateManifestUrl;
-      final configUrl = ref.read(appUpdateManifestUrlProvider);
-      final manifestUrl = userUrl.trim().isNotEmpty ? userUrl : configUrl;
-      final manifest = manifestUrl.trim().isEmpty
-          ? null
-          : await request.checkForUpdate(manifestUrl);
+      final manifestUrl = await resolveUpdateManifestUrl(
+        userUrl: ref.read(appSettingProvider).updateManifestUrl,
+        configUrl: ref.read(appUpdateManifestUrlProvider),
+        reloadConfig: () =>
+            ref.read(appConfigProvider.notifier).reload(forceRemote: true),
+        readConfigUrl: () => ref.read(appUpdateManifestUrlProvider),
+      );
+      if (!mounted) return;
+      if (manifestUrl.isEmpty) {
+        await globalState.showMessage(
+          context: context,
+          title: '检查更新',
+          message: const TextSpan(text: '更新源获取失败，请检查网络后重试'),
+        );
+        return;
+      }
+      final manifest = await request.checkForUpdate(manifestUrl);
       if (!mounted) return;
       if (appController.isAttach) {
         await appController.checkUpdateResultHandle(

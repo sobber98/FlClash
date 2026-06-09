@@ -64,3 +64,24 @@ final appUpdateManifestUrlProvider = Provider<String>((ref) {
       .watch(appConfigProvider)
       .maybeWhen(data: (config) => config.updateManifestUrl, orElse: () => '');
 });
+
+Future<String> resolveUpdateManifestUrl({
+  required String userUrl,
+  required String configUrl,
+  Future<void> Function()? reloadConfig,
+  String Function()? readConfigUrl,
+}) async {
+  final normalizedUserUrl = userUrl.trim();
+  if (normalizedUserUrl.isNotEmpty) {
+    return normalizedUserUrl;
+  }
+  final normalizedConfigUrl = configUrl.trim();
+  if (normalizedConfigUrl.isNotEmpty) {
+    return normalizedConfigUrl;
+  }
+  if (reloadConfig == null || readConfigUrl == null) {
+    return '';
+  }
+  await reloadConfig();
+  return readConfigUrl().trim();
+}
